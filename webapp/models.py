@@ -5,13 +5,14 @@ _MAX_PHONE = 20
 _MAX_ADDRESS = 150
 _MAX_FEEDBACK = 500
 _MAX_LINK = 100
+_DEFAULT_MAX = 150
 
 
 class FAQ(models.Model):
     """
     FAQ table. Stores the pull of answers and questions for FAQ page
     """
-    question = models.CharField(editable=False)
+    question = models.CharField(editable=False, max_length=_DEFAULT_MAX)
     answer = models.TextField(blank=True, db_default='', default='К сожалению, на этот вопрос пока не поступило ответа :(', editable=False)
 
     def __str__(self):
@@ -58,7 +59,7 @@ class UserFeedback(models.Model):
         # Lower rates with details first
         # ordering = ['rate', '-text']
         constraints = [
-            models.CheckConstraint(check=models.Q(rate__gte=0) | models.Q(text__neq=''), name='empty_feedback')
+            models.CheckConstraint(check=(models.Q(rate__gte=0) | ~models.Q(text='')), name='empty_feedback')
         ]
 
         pass
