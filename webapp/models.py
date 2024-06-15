@@ -9,6 +9,7 @@ _MAX_FEEDBACK = 500
 _MAX_LINK = 100
 _DEFAULT_MAX = 150
 _MAX_TRACK_NUM = 20
+_MAX_LOGIN_PW = 50
 
 class FAQ(models.Model):
     """
@@ -17,14 +18,12 @@ class FAQ(models.Model):
     question = models.CharField(editable=False, max_length=_DEFAULT_MAX)
     answer = models.TextField(blank=True, db_default='', default='К сожалению, на этот вопрос пока не поступило ответа :(', editable=False)
 
-    def __str__(self):
-        return self.question
-
     class Meta:
         # Random ordering for FAQ table
         ordering = ['?']
 
-    pass
+    def __str__(self):
+        return self.question
 
 
 class UserFeedback(models.Model):
@@ -63,9 +62,6 @@ class UserFeedback(models.Model):
     # DB linkage
     user = models.ForeignKey("User", on_delete=models.CASCADE, null=True, blank=False, db_default=None)
 
-    def __str__(self):
-        return self.rate.__str__() + ": " + self.text.__str__()
-
     class Meta:
         # Lower rates with details first
         # ordering = ['rate', '-text']
@@ -75,7 +71,8 @@ class UserFeedback(models.Model):
 
         pass
 
-    pass
+    def __str__(self):
+        return self.rate.__str__() + ": " + self.text.__str__()
 
 
 class User(models.Model):
@@ -105,9 +102,20 @@ class User(models.Model):
     email = models.EmailField(help_text='Действующий адрес электронной почты')
     birthdate = models.DateField(blank=True)
 
+    # Auth params
+    login = models.CharField(max_length=_MAX_NAME)
+    password = models.CharField(max_length=_MAX_NAME)
+
     # Possible delivery info
     pref_delivery_type = models.SmallIntegerField(default=0, db_default=0, blank=True, choices=_DELIVERY_TYPE)
     main_address = models.CharField(max_length=_MAX_ADDRESS, blank=True, default='', db_default='')
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['login'], name='unique_login'),
+            models.UniqueConstraint(fields=['email'], name='unique_email'),
+
+        ]
 
     def __str__(self):
         return self.name.__str__() + " " + self.second_name.__str__() + " " + self.last_name.__str__()
@@ -119,6 +127,7 @@ class Order(models.Model):
     # TODO: check constraints on all dates
     # TODO: unify delivery types with User
     # TODO: total price (atm = agg by ProductList + price from Delivery)
+    # TODO: add price counting
     """
     _DELIVERY_TYPE = {
         0: "Самовывоз",
@@ -148,9 +157,12 @@ class Order(models.Model):
     delivery_type = models.SmallIntegerField(default=0, db_default=0, blank=True, choices=_DELIVERY_TYPE)
     description = models.TextField(blank=True, max_length=_MAX_FEEDBACK, default='', db_default='')
 
+    # Product price
+    price = models.FloatField(default=0, db_default=0)
+
     # DB linkage
     user = models.ForeignKey("User", on_delete=models.CASCADE, null=True, blank=False, db_default=None)
-    delivery = models.ForeignKey("Delivery", on_delete=models.CASCADE, null=True, blank=False, db_default=None)
+    delivery = models.OneToOneField("Delivery", on_delete=models.CASCADE, null=True, blank=False, db_default=None)
 
     def __str__(self):
         return self.order_id
@@ -185,3 +197,65 @@ class Delivery(models.Model):
 
     def __str__(self):
         return self.delivery_id
+
+
+class Product(models.Model):
+    """
+    Base product parameters
+    """
+
+    _MATERIAL = {
+        0: "Дуб",
+        1: "Орех",
+        2: "Ясень",
+        3: "Акация",
+        4: "Каучуковое дерево",
+        5: "Манговое дерево",
+        6: "Бамбук",
+    }
+
+    _USE_TYPE = {
+        0: "Разделочная доска",
+        1: "Сервировочная доска",
+        2: "Подставка",
+    }
+
+    # Dimensional characteristics
+    length = models.PositiveSmallIntegerField()
+    width = models.PositiveSmallIntegerField()
+    height = models.PositiveSmallIntegerField()
+
+    # Additional features
+    legs = models.BooleanField(default=False)
+    handles = models.BooleanField(default=True)
+    groove = models.BooleanField(default=False)
+
+    # Flavours
+    material = models.SmallIntegerField(default=0, db_default=0, choices=_MATERIAL)
+
+    # Categorical description
+    use_type = models.SmallIntegerField(default=0, db_default=0, choices=_USE_TYPE)
+
+    def __str__(self):
+        return self.use_type.__str__() + ", " + self.material.__str__()
+
+
+class ProductList(models.Model):
+    """
+    Transitive entity for source many-to-many relation between order and product
+    """
+    number = models.SmallIntegerField(default=1, db_default=1)
+
+    # DB linkage
+    order = models.ForeignKey("Order", on_delete=models.CASCADE, db_default=None)
+    product = models.ForeignKey("Product", on_delete=models.CASCADE, db_default=None)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['order', 'product'], name='unique_product_in_list')
+        ]
+
+        pass
+
+    def __str__(self):
+        return self.order.__str__() + " - " + self.product.__str__()
