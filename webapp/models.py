@@ -11,16 +11,19 @@ _DEFAULT_MAX = 150
 _MAX_TRACK_NUM = 20
 _MAX_LOGIN_PW = 50
 
+
 class FAQ(models.Model):
     """
     FAQ table. Stores the pull of answers and questions for FAQ page
     """
-    question = models.CharField(editable=False, max_length=_DEFAULT_MAX)
-    answer = models.TextField(blank=True, db_default='', default='К сожалению, на этот вопрос пока не поступило ответа :(', editable=False)
+    question = models.CharField(max_length=_DEFAULT_MAX)
+    answer = models.TextField(blank=True, db_default='', default='К сожалению, на этот вопрос пока не поступило ответа :(')
 
     class Meta:
         # Random ordering for FAQ table
         ordering = ['?']
+        verbose_name = "FAQ"
+        verbose_name_plural = "FAQ"
 
     def __str__(self):
         return self.question
@@ -148,10 +151,10 @@ class Order(models.Model):
     order_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     # Date fields indicating stages of completion
-    registration_date = models.DateTimeField(auto_now_add=True, editable=False)
-    confirmation_date = models.DateTimeField(blank=True, editable=False)
-    done_date = models.DateTimeField(blank=True, editable=False)
-    received_date = models.DateTimeField(blank=True, editable=False)
+    registration_date = models.DateTimeField(auto_now_add=True)
+    confirmation_date = models.DateTimeField(blank=True)
+    done_date = models.DateTimeField(blank=True)
+    received_date = models.DateTimeField(blank=True)
 
     # Additional fields
     delivery_type = models.SmallIntegerField(default=0, db_default=0, blank=True, choices=_DELIVERY_TYPE)
@@ -194,6 +197,9 @@ class Delivery(models.Model):
 
     # Delivery price
     price = models.FloatField(default=0, db_default=0)
+
+    class Meta:
+        verbose_name_plural = "Deliveries"
 
     def __str__(self):
         return self.delivery_id
