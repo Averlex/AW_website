@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models
+from django.utils.timezone import now
 
 _MAX_NAME = 50
 _MAX_PHONE = 20
@@ -63,7 +64,7 @@ class UserFeedback(models.Model):
     feedback_source = models.SmallIntegerField(default=0, db_default=0, choices=_FEEDBACK_SOURCE)
 
     # DB linkage
-    user = models.ForeignKey("User", on_delete=models.CASCADE, null=True, blank=False, db_default=None)
+    user = models.ForeignKey("User", on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
         # Lower rates with details first
@@ -89,6 +90,7 @@ class User(models.Model):
     }
 
     _DELIVERY_TYPE = {
+        -1: "Не указан",
         0: "Самовывоз",
         1: "СДЭК",
     }
@@ -101,24 +103,24 @@ class User(models.Model):
     name = models.CharField(max_length=_MAX_NAME)
     second_name = models.CharField(max_length=_MAX_NAME)
     last_name = models.CharField(max_length=_MAX_NAME)
-    phone = models.CharField(max_length=_MAX_PHONE, help_text='Основной контактный номер')
-    email = models.EmailField(help_text='Действующий адрес электронной почты')
-    birthdate = models.DateField(blank=True)
+    phone = models.CharField(max_length=_MAX_PHONE, help_text='Основной контактный номер', unique=True)
+    email = models.EmailField(help_text='Действующий адрес электронной почты', unique=True)
+    birthdate = models.DateField(blank=True, null=True)
 
     # Auth params
-    login = models.CharField(max_length=_MAX_NAME)
+    login = models.CharField(max_length=_MAX_NAME, unique=True)
     password = models.CharField(max_length=_MAX_NAME)
 
     # Possible delivery info
-    pref_delivery_type = models.SmallIntegerField(default=0, db_default=0, blank=True, choices=_DELIVERY_TYPE)
+    pref_delivery_type = models.SmallIntegerField(default=-1, db_default=-1, blank=False, choices=_DELIVERY_TYPE, verbose_name='Preferable delivery type')
     main_address = models.CharField(max_length=_MAX_ADDRESS, blank=True, default='', db_default='')
 
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['login'], name='unique_login'),
-            models.UniqueConstraint(fields=['email'], name='unique_email'),
-
-        ]
+    # class Meta:
+    #     constraints = [
+    #         models.UniqueConstraint(fields=['login'], name='unique_login'),
+    #         models.UniqueConstraint(fields=['email'], name='unique_email'),
+    #         models.UniqueConstraint(fields=['phone'], name='unique_phone')
+    #     ]
 
     def __str__(self):
         return self.name.__str__() + " " + self.second_name.__str__() + " " + self.last_name.__str__()
@@ -151,24 +153,26 @@ class Order(models.Model):
     order_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     # Date fields indicating stages of completion
-    registration_date = models.DateTimeField(auto_now_add=True)
-    confirmation_date = models.DateTimeField(blank=True)
-    done_date = models.DateTimeField(blank=True)
-    received_date = models.DateTimeField(blank=True)
+    registration_date = models.DateTimeField(auto_now_add=True, editable=False)
+    confirmation_date = models.DateTimeField(blank=True, default=now)
+    done_date = models.DateTimeField(blank=True, default=now)
+    received_date = models.DateTimeField(blank=True, default=now)
 
     # Additional fields
     delivery_type = models.SmallIntegerField(default=0, db_default=0, blank=True, choices=_DELIVERY_TYPE)
     description = models.TextField(blank=True, max_length=_MAX_FEEDBACK, default='', db_default='')
+    status = models.SmallIntegerField(default=0, db_default=0, blank=True, choices=_ORDER_STATUS)
 
     # Product price
     price = models.FloatField(default=0, db_default=0)
 
     # DB linkage
-    user = models.ForeignKey("User", on_delete=models.CASCADE, null=True, blank=False, db_default=None)
-    delivery = models.OneToOneField("Delivery", on_delete=models.CASCADE, null=True, blank=False, db_default=None)
+    user = models.ForeignKey("User", on_delete=models.CASCADE)
+    # OneToOneField here?
+    delivery = models.ForeignKey("Delivery", on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return self.order_id
+        return str(self.order_id)
 
 
 class Delivery(models.Model):
