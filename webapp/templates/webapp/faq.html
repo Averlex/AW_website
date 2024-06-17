@@ -10,11 +10,11 @@
             <li>{{ faq.question }}: {{ faq.answer }}</li>
         {% endfor %}
     </ul>
-    <h2>Ask a Question</h2>
+    <h2>Задайте вопрос или оцените работу сайта:</h2>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Submit</button>
+        <button type="submit">Отправить</button>
     </form>
 </body>
 </html>

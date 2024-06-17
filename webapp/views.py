@@ -2,17 +2,24 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .models import FAQ, Order, User, UserFeedback, Product
 from .forms import FAQForm, OrderForm, UserUpdateForm
+import random
 
-def landing_page(request):
-    return render(request, 'webapp/landing_page.html')
+
+def index(request):
+    return render(request, 'webapp/index.html')
+
 
 def gallery(request):
     # Sample photos context; replace with actual photo context
     photos = ["photo1.jpg", "photo2.jpg", "photo3.jpg"]
     return render(request, 'webapp/gallery.html', {'photos': photos})
 
+
 def faq(request):
-    faqs = FAQ.objects.all()
+    faqs = list(FAQ.objects.all())
+    random.shuffle(faqs)
+    faqs = faqs[:3]
+
     if request.method == 'POST':
         form = FAQForm(request.POST)
         if form.is_valid():
@@ -20,31 +27,35 @@ def faq(request):
             return redirect('faq')
     else:
         form = FAQForm()
+    form.fields['question'].label = ''
     return render(request, 'webapp/faq.html', {'faqs': faqs, 'form': form})
 
+
 @login_required
-def make_order(request):
+def order(request):
     if request.method == 'POST':
         form = OrderForm(request.POST)
         if form.is_valid():
-            order = form.save(commit=False)
-            order.user = request.user
-            order.save()
-            return redirect('personal_page')
+            order_form = form.save(commit=False)
+            order_form.user = request.user
+            order_form.save()
+            return redirect('profile')
     else:
         form = OrderForm()
-    return render(request, 'webapp/make_order.html', {'form': form})
+    return render(request, 'webapp/order.html', {'form': form})
+
 
 @login_required
-def personal_page(request):
-    user = request.user  # Ensure request.user is a User instance
+def profile(request):
+    # Ensure request.user is a User instance
+    user = request.user
     user_orders = Order.objects.filter(user=user)
 
     if request.method == 'POST':
         form = UserUpdateForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
-            return redirect('personal_page')
+            return redirect('profile')
     else:
         form = UserUpdateForm(instance=user)
-    return render(request, 'webapp/personal_page.html', {'orders': user_orders, 'form': form})
+    return render(request, 'webapp/profile.html', {'orders': user_orders, 'form': form})
