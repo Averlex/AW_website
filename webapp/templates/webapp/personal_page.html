@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Personal Page</title>
+</head>
+<body>
+    <h1>Personal Page</h1>
+    <h2>Your Orders</h2>
+    <ul>
+        {% for order in orders %}
+            <li>{{ order.description }} - Status: {{ order.status }}</li>
+        {% endfor %}
+    </ul>
+    <h2>Update Personal Info</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Update</button>
+    </form>
+</body>
+</html>

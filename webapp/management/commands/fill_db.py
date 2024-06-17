@@ -19,13 +19,24 @@ class Command(BaseCommand):
 
         users = [
             {
+                'name': 'Admin',
+                'second_name': 'Admin',
+                'last_name': 'Admin',
+                'phone': '89876543210',
+                'email': 'admin@mail.ru',
+                'username': 'admin',
+                'password': 'admin',
+                'pref_delivery_type': -1,
+                'user_group': 0
+            },
+            {
                 'name': 'Ефросинья',
                 'second_name': 'Агафьевна',
                 'last_name': 'Иванова',
                 'phone': '88005553535',
                 'email': '88005553535@mail.ru',
                 'birthdate': '1953-02-16',
-                'login': 'Agafrosya',
+                'username': 'Agafrosya',
                 'password': '88005553535',
                 'pref_delivery_type': 1,
                 'main_address': 'г. Москва, ул. Пушкина, д. 42, кв. 69'
@@ -37,7 +48,7 @@ class Command(BaseCommand):
                 'phone': '89261234567',
                 'email': '89261234567@mail.ru',
                 'birthdate': '1969-09-13',
-                'login': 'Nastalo_moe_vremya',
+                'username': 'Nastalo_moe_vremya',
                 'password': 'Valera_reshala',
                 'pref_delivery_type': 0,
                 'main_address': ''
@@ -48,22 +59,22 @@ class Command(BaseCommand):
                 'last_name': 'Мастерской',
                 'phone': '89060358025',
                 'email': 'somebody_once_told_me@mail.ru',
-                'login': 'the_world_is_gonna',
+                'username': 'the_world_is_gonna',
                 'password': 'roll_me',
                 'pref_delivery_type': -1,
                 'user_group': 1
             },
             {
-                'name': 'Волков',
-                'second_name': 'Евгений',
-                'last_name': 'Александрович',
+                'name': 'Евгений',
+                'second_name': 'Александрович',
+                'last_name': 'Волков',
                 'phone': '89154015847',
                 'email': 'john@yandex.ru',
                 'birthdate': '1996-05-07',
-                'login': 'john',
+                'username': 'john',
                 'password': 'sdam_psp_pozhe',
                 'pref_delivery_type': -1,
-                'user_group': 2
+                'user_group': 1
             },
         ]
 
@@ -86,8 +97,8 @@ class Command(BaseCommand):
         user_objs = {}
         for user_data in users:
             user, created = models.User.objects.get_or_create(**user_data)
-            if user.__str__() == 'Ефросинья Агафьевна Иванова':
-                user_objs['Ефросинья Агафьевна Иванова'] = user
+            if user.__str__() == 'Иванова Ефросинья Агафьевна':
+                user_objs['Иванова Ефросинья Агафьевна'] = user
             if created:
                 self.stdout.write(self.style.SUCCESS(f'Created user: {user}'))
             else:
@@ -108,7 +119,7 @@ class Command(BaseCommand):
                 'delivery_type': 1,
                 'description': 'Тут описание самого успешного заказа, да еще и с доставкой!',
                 'price': 2345.69,
-                'user': user_objs['Ефросинья Агафьевна Иванова'],
+                'user': user_objs['Иванова Ефросинья Агафьевна'],
                 'status': 6,
                 'delivery': delivery_objs['CDEC-12345'],
             },
@@ -116,7 +127,7 @@ class Command(BaseCommand):
                 'delivery_type': 0,
                 'description': '',
                 'price': 4000,
-                'user': user_objs['Ефросинья Агафьевна Иванова'],
+                'user': user_objs['Иванова Ефросинья Агафьевна'],
                 'status': 3,
             },
 
@@ -200,7 +211,7 @@ class Command(BaseCommand):
                 'text': 'Тамада хороший, и конкурсы интересные',
                 'reply': 'Благодарим за тёплые слова!',
                 'feedback_type': 2,
-                'user': user_objs['Ефросинья Агафьевна Иванова'],
+                'user': user_objs['Иванова Ефросинья Агафьевна'],
             },
             {
                 'text': 'Вроде норм',

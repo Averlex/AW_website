@@ -2,6 +2,7 @@ import uuid
 
 from django.db import models
 from django.utils.timezone import now
+from django.contrib.auth.models import AbstractUser
 
 _MAX_NAME = 50
 _MAX_PHONE = 20
@@ -79,13 +80,13 @@ class UserFeedback(models.Model):
         return self.rate.__str__() + ": " + self.text.__str__()
 
 
-class User(models.Model):
+class User(AbstractUser):
     """
     Base user info
     """
     _USER_GROUP = {
         0: "Администратор",
-        1: "Сотрудник магазина",
+        1: "Сотрудник мастерской",
         2: "Довольный клиент",
     }
 
@@ -108,22 +109,19 @@ class User(models.Model):
     birthdate = models.DateField(blank=True, null=True)
 
     # Auth params
-    login = models.CharField(max_length=_MAX_NAME, unique=True)
+    username = models.CharField(max_length=_MAX_NAME, unique=True)
     password = models.CharField(max_length=_MAX_NAME)
 
     # Possible delivery info
     pref_delivery_type = models.SmallIntegerField(default=-1, db_default=-1, blank=False, choices=_DELIVERY_TYPE, verbose_name='Preferable delivery type')
     main_address = models.CharField(max_length=_MAX_ADDRESS, blank=True, default='', db_default='')
 
-    # class Meta:
-    #     constraints = [
-    #         models.UniqueConstraint(fields=['login'], name='unique_login'),
-    #         models.UniqueConstraint(fields=['email'], name='unique_email'),
-    #         models.UniqueConstraint(fields=['phone'], name='unique_phone')
-    #     ]
+    # Need for assigning permissions
+    def get_user_group(self, num):
+        return self._USER_GROUP[num]
 
     def __str__(self):
-        return self.name.__str__() + " " + self.second_name.__str__() + " " + self.last_name.__str__()
+        return self.last_name.__str__() + " " + self.name.__str__() + " " + self.second_name.__str__()
 
 
 class Order(models.Model):
