@@ -1,8 +1,14 @@
 {% extends './base.html' %}
 
 {% block title %}Logged out{% endblock %}
+
+{% block head %}
+    <meta http-equiv="refresh" content="3;url=../home">
+{% endblock %}
+
 {% block content %}
 
-<h2>Вы успешно вышли из акаунта</h2>
+    <h2>Вы успешно вышли из акаунта</h2>
+    <small>Вы будете автоматически перенаправлены на главную страницу через 3 секунды...</small>
 
 {% endblock %}
