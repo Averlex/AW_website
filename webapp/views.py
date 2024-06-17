@@ -86,7 +86,7 @@ def signup_view(request):
             save_form = form.save(commit=False)
             save_form.set_password(form.cleaned_data.get('password'))
             save_form.save()
-            messages.success(request, 'User registered successfully')
+            messages.success(request, 'Регистрация прошла успешно!')
             return redirect('profile')
         else:
             return render(request, 'webapp/signup.html', {'form': form})

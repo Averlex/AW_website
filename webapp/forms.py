@@ -47,7 +47,6 @@ class UserUpdateForm(forms.ModelForm):
 class SignUpForm(UserCreationForm):
     help_text = 'Обязательное поле'
     # TODO: change max_length
-    # TODO: policy
     # TODO: password validadors, password help
     # TODO: link properly with database
     # TODO: протестить функции
@@ -63,36 +62,36 @@ class SignUpForm(UserCreationForm):
             'name': 'Имя', 'email': 'Почта', 'phone': 'Телефон'
         }
 
-    # DO form cleanig here
+    # DO form cleaning here
     def clean_username(self):
         username = self.cleaned_data['username']
         if User.objects.filter(username=username).exists():
-            raise ValidationError('Username is not available')
+            raise ValidationError('Указанное имя пользователя уже используется')
         return username
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if User.objects.filter(email=email).exists():
-            raise ValidationError("Email not available for use")
+            raise ValidationError("Указанная почта уже используется")
         return email
 
     def clean_password(self):
         password = self.cleaned_data.get('password')
 
-        # check password length
+        # Сheck password length
         if len(password) < 8:
-            raise ValidationError("Password can't be less than 8 characters")
-        # check for number and letters is password
+            raise ValidationError("Длина пароля должна быть не менее 8 символов")
+        # Сheck for number and letters is password
         if password.isalpha() or password.isnumeric():
-            raise ValidationError("Password should contains both letters and numbers")
+            raise ValidationError("Пароль должен содержать цифры и буквы")
 
         return password
 
     def clean_phone_number(self):
         phone_number = self.cleaned_data.get('phone_number')
         if phone_number == "":
-            raise ValidationError("phone number can't be empty")
+            raise ValidationError("Обязательное поле")
         else:
             if User.objects.filter(phone_number=phone_number):
-                raise ValidationError("phone number not available for use")
+                raise ValidationError("Указанный номер телефона уже используется")
         return phone_number
