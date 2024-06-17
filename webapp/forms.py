@@ -1,11 +1,25 @@
 from django import forms
-from .models import FAQ, Order, User
+from .models import UserFeedback, Order, User
 
 
 class FAQForm(forms.ModelForm):
+    RATING_CHOICES = [
+        (1, '1'),
+        (2, '2'),
+        (3, '3'),
+        (4, '4'),
+        (5, '5'),
+    ]
+
+    rate = forms.ChoiceField(choices=RATING_CHOICES, widget=forms.RadioSelect, label='Оцените работу сервиса')
+    text = forms.Textarea()
+
     class Meta:
-        model = FAQ
-        fields = ['question']
+        model = UserFeedback
+        fields = ['text', 'rate']
+        labels = {
+            'text': 'Текст отзыва или вопрос, который вы хотели бы задать:', 'rate': ''
+        }
 
 
 class OrderForm(forms.ModelForm):

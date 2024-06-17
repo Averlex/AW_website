@@ -2,6 +2,28 @@
 <html>
 <head>
     <title>FAQ</title>
+    <style>
+        /* Star rating styles */
+        .rating {
+            direction: ltr;
+            unicode-bidi: bidi-override;
+            font-size: 2em;
+            margin: 10px 0;
+        }
+        .rating input {
+            display: none;
+        }
+        .rating label {
+            color: #ddd;
+            font-size: 2em;
+            padding: 0;
+            cursor: pointer;
+        }
+        .rating input:checked + label,
+        .rating input:checked ~ label {
+            color: #f5b301;
+        }
+    </style>
 </head>
 <body>
     <h1>FAQ</h1>
@@ -10,11 +32,37 @@
             <li>{{ faq.question }}: {{ faq.answer }}</li>
         {% endfor %}
     </ul>
-    <h2>Задайте вопрос или оцените работу сайта:</h2>
+    <h2>Обратная связь</h2>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form.text.label_tag }}<br>
+        {{ form.text }}<br>
+        {{ form.rate.label_tag }}<br>
+        <div class="rating">
+            {% for choice in form.rate %}
+                {{ choice.tag }}
+                <label for="{{ choice.id_for_label }}">&#9733;</label>
+            {% endfor %}
+        </div>
         <button type="submit">Отправить</button>
     </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const stars = document.querySelectorAll('.rating input');
+            stars.forEach(star => {
+                star.addEventListener('change', () => {
+                    const checkedStars = document.querySelectorAll('.rating input:checked');
+                    checkedStars.forEach(checkedStar => {
+                        const labels = checkedStar.closest('.rating').querySelectorAll('label');
+                        labels.forEach(label => label.style.color = '#ddd');
+                        for (let i = 0; i < checkedStar.value; i++) {
+                            labels[i].style.color = '#f5b301';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 </html>

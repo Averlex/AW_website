@@ -16,18 +16,30 @@ def gallery(request):
 
 
 def faq(request):
+    # Getting random top-3 FAQs to display on the page
     faqs = list(FAQ.objects.all())
     random.shuffle(faqs)
     faqs = faqs[:3]
 
+    # Actions on submit button
     if request.method == 'POST':
-        form = FAQForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('faq')
+        if request.user.is_authenticated:
+            form = FAQForm(request.POST)
+            if form.is_valid():
+                text = form.cleaned_data['text']
+                rate = form.cleaned_data['rate']
+
+                # TODO: user is unlinked to a feedback
+                feedback = UserFeedback(text=text, rate=rate, feedback_type=1, user=request.user)
+                feedback.save()
+
+                # TODO: change form for a success message
+                return redirect('faq')
+        else:
+            # TODO: login button here
+            pass
     else:
         form = FAQForm()
-    form.fields['question'].label = ''
     return render(request, 'webapp/faq.html', {'faqs': faqs, 'form': form})
 
 
