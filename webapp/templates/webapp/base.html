@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <title>{% block title %}Axion Wood{% endblock %}</title>
+    <link rel="stylesheet" href="{% static '/css/styles.css' %}">
+    <!-- Add other CSS files or CDN links for styling -->
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <a href="{% url 'index' %}" class="brand-logo">Axiom Wood</a>
+                <ul class="nav-links">
+                    <li><a href="{% url 'index' %}" class="navlink">Home</a></li>
+                    <li><a href="{% url 'gallery' %}" class="navlink">Галерея работ</a></li>
+                    <li><a href="{% url 'faq' %}" class="navlink">FAQ</a></li>
+                    <li><a href="{% url 'order' %}" class="navlink">Оформить заказ</a></li>
+                    {% if request.user.is_authenticated %}
+                        <li><a href="{% url 'profile' %}" class="navlink">Личный кабинет</a></li>
+                        <li><a href="{% url 'logout' %}" class="navlink">Выйти</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}" class="navlink">Войти в аккаунт</a></li>
+                        <li><a href="{% url 'signup' %}" class="navlink">Зарегистрироваться</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <!-- Footer content -->
+    </footer>
+
+    <!-- Add JavaScript files or CDN links as needed -->
+</body>
+</html>

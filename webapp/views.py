@@ -32,10 +32,12 @@ def faq(request):
                 # TODO: user is unlinked to a feedback
                 feedback = UserFeedback(text=text, rate=rate, feedback_type=1, user=request.user)
                 feedback.save()
+                form.save()
 
                 # TODO: change form for a success message
                 return redirect('faq')
         else:
+            form = FAQForm()
             # TODO: login button here
             pass
     else:
@@ -71,3 +73,15 @@ def profile(request):
     else:
         form = UserUpdateForm(instance=user)
     return render(request, 'webapp/profile.html', {'orders': user_orders, 'form': form})
+
+
+def login(request):
+    return render(request, 'webapp/index.html')
+
+
+def logout(request):
+    return render(request, 'webapp/index.html')
+
+
+def signup(request):
+    return render(request, 'webapp/index.html')
