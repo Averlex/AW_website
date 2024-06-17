@@ -114,3 +114,7 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return render(request, 'webapp/logout.html', {})
+
+
+def policy(request):
+    return render(request, 'webapp/policy.html', {})
