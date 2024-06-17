@@ -6,6 +6,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
 import random
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 
 
 def index(request):
@@ -79,13 +80,24 @@ def profile(request):
 
 
 def signup_view(request):
-
+    form = None
     if request.method == 'POST':
-        form = SignUpForm(request.POST)
+        try:
+            form = SignUpForm(request.POST)
+        except ValidationError as err:
+            # Field were filled incorrectly
+            messages.error(request, err)
+            return render(request, 'webapp/signup.html', {'form': form})
+
         if form.is_valid():
             save_form = form.save(commit=False)
             save_form.set_password(form.cleaned_data.get('password'))
             save_form.save()
+
+            user = User(username=save_form.username, password=save_form.password, name=save_form.name,
+                        email=save_form.email, phone=save_form.phone)
+            user.save()
+
             messages.success(request, 'Регистрация прошла успешно!')
             return redirect('profile')
         else:

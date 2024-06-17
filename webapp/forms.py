@@ -35,6 +35,7 @@ class OrderForm(forms.ModelForm):
 
 
 class UserUpdateForm(forms.ModelForm):
+    # TODO: smart password change
     class Meta:
         model = User
         fields = ['name', 'second_name', 'last_name', 'phone', 'email', 'birthdate', 'main_address']

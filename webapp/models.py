@@ -96,14 +96,16 @@ class User(AbstractUser):
         1: "СДЭК",
     }
 
+    REQUIRED_FIELDS = ['phone', 'email']
+
     # Administrator info
     user_group = models.SmallIntegerField(default=2, db_default=2, choices=_USER_GROUP)
     registration_date = models.DateField(auto_now_add=True, editable=False)
 
     # Personal info fields
-    name = models.CharField(max_length=_MAX_NAME)
+    name = models.CharField(max_length=_MAX_NAME, blank=True)
     second_name = models.CharField(max_length=_MAX_NAME, blank=True)
-    last_name = models.CharField(max_length=_MAX_NAME)
+    last_name = models.CharField(max_length=_MAX_NAME, blank=True)
     phone = models.CharField(max_length=_MAX_PHONE, help_text='Основной контактный номер', unique=True)
     email = models.EmailField(help_text='Действующий адрес электронной почты', unique=True)
     birthdate = models.DateField(blank=True, null=True)
