@@ -102,7 +102,7 @@ class User(AbstractUser):
 
     # Personal info fields
     name = models.CharField(max_length=_MAX_NAME)
-    second_name = models.CharField(max_length=_MAX_NAME)
+    second_name = models.CharField(max_length=_MAX_NAME, blank=True)
     last_name = models.CharField(max_length=_MAX_NAME)
     phone = models.CharField(max_length=_MAX_PHONE, help_text='Основной контактный номер', unique=True)
     email = models.EmailField(help_text='Действующий адрес электронной почты', unique=True)
