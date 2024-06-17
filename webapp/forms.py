@@ -1,5 +1,7 @@
 from django import forms
 from .models import UserFeedback, Order, User
+from django.contrib.auth.forms import UserCreationForm
+from django.core.exceptions import ValidationError
 
 
 class FAQForm(forms.ModelForm):
@@ -23,6 +25,7 @@ class FAQForm(forms.ModelForm):
 
 
 class OrderForm(forms.ModelForm):
+    # TODO: нужны действия, когда нет логина в аккаунт
     class Meta:
         model = Order
         fields = ['description', 'delivery_type']
@@ -39,3 +42,57 @@ class UserUpdateForm(forms.ModelForm):
             'name': 'Имя', 'second_name': 'Отчество', 'last_name': 'Фамилия', 'phone': 'Телефон',
             'email': 'Почта', 'birthdate': 'Дата рождения', 'main_address': 'Основной адрес'
         }
+
+
+class SignUpForm(UserCreationForm):
+    help_text = 'Обязательное поле'
+    # TODO: change max_length
+    # TODO: policy
+    # TODO: password validadors, password help
+    # TODO: link properly with database
+    # TODO: протестить функции
+    email = forms.EmailField(max_length=150, help_text=help_text, label='Почта')
+    phone = forms.CharField(max_length=20, help_text=help_text, label='Телефон')
+    name = forms.CharField(max_length=50, help_text=help_text, label='Имя')
+
+    class Meta:
+        model = User
+        fields = ['username', 'password1', 'name', 'second_name', 'last_name', 'email', 'phone']
+        labels = {
+            'username': 'Логин', 'password': 'Пароль',
+            'name': 'Имя', 'email': 'Почта', 'phone': 'Телефон'
+        }
+
+    # DO form cleanig here
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        if User.objects.filter(username=username).exists():
+            raise ValidationError('Username is not available')
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise ValidationError("Email not available for use")
+        return email
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+
+        # check password length
+        if len(password) < 8:
+            raise ValidationError("Password can't be less than 8 characters")
+        # check for number and letters is password
+        if password.isalpha() or password.isnumeric():
+            raise ValidationError("Password should contains both letters and numbers")
+
+        return password
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get('phone_number')
+        if phone_number == "":
+            raise ValidationError("phone number can't be empty")
+        else:
+            if User.objects.filter(phone_number=phone_number):
+                raise ValidationError("phone number not available for use")
+        return phone_number

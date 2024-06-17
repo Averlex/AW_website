@@ -51,6 +51,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+LOGOUT_REDIRECT_URL = 'home'
+
 ROOT_URLCONF = 'AW_website.urls'
 
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
