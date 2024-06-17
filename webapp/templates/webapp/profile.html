@@ -1,9 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Личный кабинет</title>
-</head>
-<body>
+{% extends './base.html' %}
+
+{% block title %}Личный кабинет{% endblock %}
+
+{% block content %}
     <h1>Личный кабинет</h1>
     <h2>Заказы</h2>
     <ul>
@@ -17,5 +16,4 @@
         {{ form.as_p }}
         <button type="submit">Обновить</button>
     </form>
-</body>
-</html>
+{% endblock %}

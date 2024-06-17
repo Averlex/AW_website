@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Gallery</title>
-</head>
-<body>
-    <h1>Gallery</h1>
+{% extends './base.html' %}
+
+{% block title %}Галарея{% endblock %}
+
+{% block content %}
+    <h1>Галерея работ</h1>
     {% for photo in photos %}
         <img src="{{ photo }}" alt="Photo {{ forloop.counter }}">
     {% endfor %}
-</body>
-</html>
+{% endblock %}
