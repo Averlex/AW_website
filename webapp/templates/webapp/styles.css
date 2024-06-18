@@ -61,3 +61,7 @@
 .rating input:checked ~ label {
     color: #f5b301;
 }
+
+.close span {
+    color: #912c2c;
+}

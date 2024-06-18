@@ -53,49 +53,58 @@ class SignUpForm(forms.ModelForm):
     # TODO: протестить функции
     username = forms.CharField(max_length=20, help_text=help_text, label='Логин')
     password = forms.CharField(max_length=50, help_text=help_text, label='Пароль', widget=forms.PasswordInput)
-    email = forms.EmailField(max_length=150, help_text=help_text, label='Почта')
+    email = forms.CharField(max_length=150, help_text=help_text, label='Почта')
     phone = forms.CharField(max_length=20, help_text=help_text, label='Телефон')
-    name = forms.CharField(max_length=50, help_text=help_text, label='Имя')
-    last_name = forms.CharField(max_length=50, help_text=help_text, label='Фамилия')
+    name = forms.CharField(max_length=50, help_text=help_text, label='Имя', validators=[])
+    last_name = forms.CharField(max_length=50, help_text=help_text, label='Фамилия', validators=[], required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.cleaned_data = {}
 
     class Meta:
+        success = False
+        success_message = 'Регистрация прошла успешно!'
         model = User
         fields = ['username', 'password', 'name', 'email', 'phone', 'last_name']
-        labels = {
+        labels ={
             'username': 'Логин', 'password': 'Пароль', 'name': 'Имя',
             'last_name': 'Фамилия', 'email': 'Почта', 'phone': 'Телефон'
         }
 
     # DO form cleaning here
-    # def clean_username(self):
-    #     username = self.cleaned_data['username']
-    #     if User.objects.filter(username=username).exists():
-    #         raise ValidationError('Указанное имя пользователя уже используется')
-    #     return username
-    #
-    # def clean_email(self):
-    #     email = self.cleaned_data.get('email')
-    #     if User.objects.filter(email=email).exists():
-    #         raise ValidationError("Указанная почта уже используется")
-    #     return email
-    #
-    # def clean_password(self):
-    #     password = self.cleaned_data.get('password')
-    #
-    #     # Сheck password length
-    #     if len(password) < 8:
-    #         raise ValidationError("Длина пароля должна быть не менее 8 символов")
-    #     # Сheck for number and letters is password
-    #     if password.isalpha() or password.isnumeric():
-    #         raise ValidationError("Пароль должен содержать цифры и буквы")
-    #
-    #     return password
-    #
-    # def clean_phone_number(self):
-    #     phone = self.cleaned_data.get('phone')
-    #     if phone == "":
-    #         raise ValidationError("Обязательное поле")
-    #     else:
-    #         if User.objects.filter(phone=phone):
-    #             raise ValidationError("Указанный номер телефона уже используется")
-    #     return phone
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if User.objects.filter(username=username).exists():
+            raise ValidationError('Указанное имя пользователя уже используется')
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise ValidationError("Указанная почта уже используется")
+        return email
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        # Сheck password length
+        if len(password) < 8:
+            raise ValidationError("Длина пароля должна быть не менее 8 символов")
+        # Сheck for number and letters is password
+        if password.isalpha() or password.isnumeric():
+            raise ValidationError("Пароль должен содержать цифры и буквы")
+
+        return password
+
+    def clean_phone(self):
+        phone = self.cleaned_data.get('email')
+        if phone == "":
+            raise ValidationError("Обязательное поле")
+        else:
+            if User.objects.filter(phone=phone):
+                raise ValidationError("Указанный номер телефона уже используется")
+        return phone
+
+    def clean(self):
+        self.cleaned_data = super().clean()
+        return self.cleaned_data

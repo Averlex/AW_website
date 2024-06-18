@@ -7,6 +7,7 @@ from .models import User
 
 @receiver(post_migrate)
 def create_groups_and_permissions(sender, **kwargs):
+    # TODO: remove this option on migrage probably? Wrap in a separate command
     if sender.name == 'webapp':  # Ensure this only runs for your app
         # content_types = ContentType.objects.all()
         groups_permissions = {

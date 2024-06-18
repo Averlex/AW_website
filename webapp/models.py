@@ -12,6 +12,7 @@ _MAX_LINK = 100
 _DEFAULT_MAX = 150
 _MAX_TRACK_NUM = 20
 _MAX_LOGIN_PW = 50
+_MAX_EMAIL = 50
 
 
 class FAQ(models.Model):
@@ -107,7 +108,7 @@ class User(AbstractUser):
     second_name = models.CharField(max_length=_MAX_NAME, blank=True)
     last_name = models.CharField(max_length=_MAX_NAME, blank=True)
     phone = models.CharField(max_length=_MAX_PHONE, help_text='Основной контактный номер', unique=True)
-    email = models.EmailField(help_text='Действующий адрес электронной почты', unique=True)
+    email = models.CharField(max_length=_MAX_EMAIL, help_text='Действующий адрес электронной почты', unique=True)
     birthdate = models.DateField(blank=True, null=True)
 
     # Auth params

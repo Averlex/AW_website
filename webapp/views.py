@@ -5,8 +5,8 @@ from .forms import FAQForm, OrderForm, UserUpdateForm, SignUpForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
 import random
-from django.contrib import messages
-from django.core.exceptions import ValidationError
+import django.contrib.messages as messages
+import time
 
 
 def index(request):
@@ -63,8 +63,11 @@ def order(request):
     return render(request, 'webapp/order.html', {'form': form})
 
 
-@login_required
 def profile(request):
+    # Redirecting unauthorized users
+    if not request.user.is_authenticated:
+        return redirect('login')
+
     # Ensure request.user is a User instance
     user = request.user
     user_orders = Order.objects.filter(user=user)
@@ -81,28 +84,28 @@ def profile(request):
 
 def signup_view(request):
     # TODO: set group by default
-    form = None
+
+    # Redirect to profile page if the user is already authenticated
+    if request.user.is_authenticated:
+        return redirect('profile')
+
     if request.method == 'POST':
-        try:
-            form = SignUpForm(request.POST)
-        except ValidationError as err:
-            # Field were filled incorrectly
-            messages.error(request, err)
+        form = SignUpForm(request.POST)
+        if form.errors:
             return render(request, 'webapp/signup.html', {'form': form})
-        else:
-            for err in form.errors:
-                messages.warning(request, err)
 
         if form.is_valid():
             save_form = form.save(commit=False)
             save_form.set_password(form.cleaned_data.get('password'))
-            # save_form.save()
 
             user = User(username=save_form.username, password=save_form.password, name=save_form.name,
                         email=save_form.email, phone=save_form.phone)
             user.save()
 
-            messages.success(request, 'Регистрация прошла успешно!')
+            form.success = True
+            login(request, user)
+            # TODO: sleep is cringe
+            time.sleep(3)
             return redirect('profile')
         else:
             return render(request, 'webapp/signup.html', {'form': form})
@@ -126,8 +129,12 @@ def login_view(request):
     return render(request, 'webapp/login.html', {'form': form})
 
 
-@login_required
 def logout_view(request):
+    # TODO: something more elegant (e.g., suggestion to logout)
+    # TODO: custom 404 page
+    if not request.user.is_authenticated:
+        return redirect('home')
+
     logout(request)
     return render(request, 'webapp/logout.html', {})
 
