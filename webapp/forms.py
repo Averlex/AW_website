@@ -1,7 +1,7 @@
 from django import forms
 from .models import UserFeedback, Order, User
-from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
+from django.contrib.auth.forms import AuthenticationForm
 
 
 class FAQForm(forms.ModelForm):
@@ -36,6 +36,7 @@ class OrderForm(forms.ModelForm):
 
 class UserUpdateForm(forms.ModelForm):
     # TODO: smart password change
+    # TODO: success messages here
     class Meta:
         model = User
         fields = ['name', 'second_name', 'last_name', 'phone', 'email', 'birthdate', 'main_address']
@@ -108,3 +109,13 @@ class SignUpForm(forms.ModelForm):
     def clean(self):
         self.cleaned_data = super().clean()
         return self.cleaned_data
+
+
+class LoginForm(AuthenticationForm):
+    username = forms.CharField(max_length=20, label='Логин')
+    password = forms.CharField(max_length=50, label='Пароль', widget=forms.PasswordInput)
+
+    class Meta:
+        model = User
+        fields = ['username', 'password']
+        labels = {'username': 'Логин', 'password': 'Пароль'}

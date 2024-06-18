@@ -1,11 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .models import FAQ, Order, User, UserFeedback, Product
-from .forms import FAQForm, OrderForm, UserUpdateForm, SignUpForm
-from django.contrib.auth.forms import AuthenticationForm
+from .forms import FAQForm, OrderForm, UserUpdateForm, SignUpForm, LoginForm
+
 from django.contrib.auth import login, authenticate, logout
 import random
-import django.contrib.messages as messages
 import time
 
 
@@ -115,8 +114,11 @@ def signup_view(request):
 
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('profile')
+
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
+        form = LoginForm(request, data=request.POST)
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
@@ -125,7 +127,7 @@ def login_view(request):
                 login(request, user)
                 return redirect('profile')
     else:
-        form = AuthenticationForm()
+        form = LoginForm()
     return render(request, 'webapp/login.html', {'form': form})
 
 
