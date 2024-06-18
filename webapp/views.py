@@ -48,8 +48,11 @@ def faq(request):
     return render(request, 'webapp/faq.html', {'faqs': faqs, 'form': form})
 
 
-@login_required
 def order(request):
+    # Redirect to profile page if the user is already authenticated
+    if not request.user.is_authenticated:
+        return redirect('profile')
+
     if request.method == 'POST':
         form = OrderForm(request.POST)
         if form.is_valid():

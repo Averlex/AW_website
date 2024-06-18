@@ -4,7 +4,7 @@
 
 {% block content %}
     <h1>Личный кабинет</h1>
-    <h2>Заказы</h2>
+    <h1>Заказы</h2>
     <ul>
         {% for order in orders %}
             <li>{{ order.description }} - Status: {{ order.status }}</li>
