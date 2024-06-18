@@ -2,11 +2,67 @@
 
 {% block title %}Оформление заказа{% endblock %}
 
+{% block head %}
+    <style>
+        .product-item { margin-bottom: 10px; }
+        .expanded { display: block; }
+        .collapsed { display: none; }
+    </style>
+    <script>
+        function toggleProduct(id) {
+            var elements = document.getElementsByClassName('product-item');
+            for (var i = 0; i < elements.length; i++) {
+                if (elements[i].id === id) {
+                    elements[i].classList.toggle('expanded');
+                    elements[i].classList.toggle('collapsed');
+                } else {
+                    elements[i].classList.add('collapsed');
+                    elements[i].classList.remove('expanded');
+                }
+            }
+        }
+
+        function collapseAll() {
+            var elements = document.getElementsByClassName('product-item');
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].classList.add('collapsed');
+                elements[i].classList.remove('expanded');
+            }
+        }
+    </script>
+{% endblock %}
+
 {% block content %}
-    <h1>Оформить заказ</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Оформить</button>
-    </form>
+        <h1>Список товаров</h1>
+        <div>
+            <button onclick="toggleProduct('new-product')">Добавить товар</button>
+            <div id="new-product" class="product-item collapsed">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit">Оформить заказ</button>
+                </form>
+            </div>
+        </div>
+        <hr>
+        <div id="products">
+            {% for product in products %}
+                <div id="product-{{ product.id }}" class="product-item collapsed">
+                    <div onclick="toggleProduct('product-{{ product.id }}')">
+                        <strong>{{ product.name }}</strong> - {{ product.quantity }}
+                    </div>
+                    <div>
+                        <p>Description: {{ product.description }}</p>
+                        <p>Price: {{ product.price }}</p>
+                        <p>Width: {{ product.width }}</p>
+                        <p>Length: {{ product.length }}</p>
+                        <p>Material: {{ product.material }}</p>
+                        <label>Quantity: <input type="number" value="{{ product.quantity }}" min="1"></label>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div>
+            <button onclick="collapseAll()">Описание</button>
+        </div>
 {% endblock %}

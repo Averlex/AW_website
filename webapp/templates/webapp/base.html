@@ -1,7 +1,11 @@
-{% load static %}
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    {% load static %}
+    {% load bootstrap4 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Axion Wood{% endblock %}</title>

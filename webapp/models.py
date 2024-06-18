@@ -175,6 +175,10 @@ class Order(models.Model):
     def __str__(self):
         return str(self.order_id)
 
+    @staticmethod
+    def get_delivery_types():
+        return Order._DELIVERY_TYPE
+
 
 class Delivery(models.Model):
     """
@@ -248,7 +252,15 @@ class Product(models.Model):
     use_type = models.SmallIntegerField(default=0, db_default=0, choices=_USE_TYPE)
 
     def __str__(self):
-        return self.use_type.__str__() + ", " + self.material.__str__()
+        return self._USE_TYPE[self.use_type.__str__()] + ", " + self._MATERIAL[self.material.__str__()]
+
+    @staticmethod
+    def get_materials():
+        return Product._MATERIAL
+
+    @staticmethod
+    def get_use_types():
+        return Product._USE_TYPE
 
 
 class ProductList(models.Model):

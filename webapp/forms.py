@@ -1,5 +1,5 @@
 from django import forms
-from .models import UserFeedback, Order, User
+from .models import UserFeedback, Order, User, Product
 from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import AuthenticationForm
 
@@ -14,7 +14,7 @@ class FAQForm(forms.ModelForm):
     ]
 
     rate = forms.ChoiceField(choices=RATING_CHOICES, widget=forms.RadioSelect, label='Оцените работу сервиса')
-    text = forms.Textarea()
+    text = forms.CharField(max_length=1000, widget=forms.TextInput)
 
     class Meta:
         model = UserFeedback
@@ -25,13 +25,43 @@ class FAQForm(forms.ModelForm):
 
 
 class OrderForm(forms.ModelForm):
-    # TODO: нужны действия, когда нет логина в аккаунт
+    # TODO: unify order -> max_length's, min/max values
+    length = forms.IntegerField(min_value=40, max_value=700, validators=[], label='Длина, мм', initial=450)
+    width = forms.IntegerField(min_value=40, max_value=700, validators=[], label='Ширина, мм', initial=350)
+    height = forms.IntegerField(min_value=10, max_value=80, validators=[], label='Высота, мм', initial=40)
+
+    handles = forms.BooleanField(widget=forms.CheckboxInput, label='Ручки', initial=True)
+    legs = forms.BooleanField(widget=forms.CheckboxInput, label='Ножки', initial=False)
+    groove = forms.BooleanField(widget=forms.CheckboxInput, label='Канавка', initial=False)
+
+    material = forms.ChoiceField(choices=Product.get_materials(), label='Материал', initial=0)
+    use_type = forms.ChoiceField(choices=Product.get_use_types(), label='Вид', initial=0)
+
+    description = forms.CharField(max_length=1000, widget=forms.TextInput, label='Комментарий для мастера')
+    price = forms.CharField(max_length=20, widget=forms.TextInput, validators=[], label='', disabled=True, initial='0 ₽')
+    # price = forms.DecimalField(decimal_places=2, min_value=0, widget=forms.TextInput, disabled=True, label='', validators=[])
+
+    delivery_type = forms.ChoiceField(choices=Order.get_delivery_types(), label='Способ получения заказа', initial=0)
+    address = forms.CharField(max_length=500, widget=forms.TextInput, label='Адрес доставки')
+    delivery_description = forms.CharField(max_length=1000, widget=forms.TextInput, label='Комментарий курьеру')
+    # TODO: delivery price calculation
+    delivery_price = forms.CharField(max_length=20, widget=forms.TextInput, validators=[], label='', disabled=True, initial='0 ₽')
+
+    def __init__(self):
+        super().__init__()
+        # Initial states
+        self.fields['description'].widget.attrs.update({'placeholder': 'Детали заказа, которые Вам бы хотелось уточнить'})
+        self.fields['address'].widget.attrs.update({'placeholder': 'Адрес, по которому необходимо доставить заказ'})
+        self.fields['delivery_description'].widget.attrs.update({'placeholder': 'Уточнения по доставке: будут передану курьеру'})
+
     class Meta:
-        model = Order
+        model = Product
         fields = ['description', 'delivery_type']
         labels = {
             'description': 'Детали', 'delivery_type': 'Способ доставки'
         }
+
+    # def clean_field(self): ...
 
 
 class UserUpdateForm(forms.ModelForm):
@@ -50,8 +80,6 @@ class SignUpForm(forms.ModelForm):
     help_text = 'Обязательное поле'
     # TODO: change max_length
     # TODO: password validadors, password help - сделать inline
-    # TODO: link properly with database
-    # TODO: протестить функции
     username = forms.CharField(max_length=20, help_text=help_text, label='Логин')
     password = forms.CharField(max_length=50, help_text=help_text, label='Пароль', widget=forms.PasswordInput)
     email = forms.CharField(max_length=150, help_text=help_text, label='Почта')
