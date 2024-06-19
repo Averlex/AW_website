@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'webapp',
-    'bootstrap4',
     'compressor',
+    'sass_processor'
 ]
 
 MIDDLEWARE = [
@@ -57,21 +57,23 @@ LOGOUT_REDIRECT_URL = 'home'
 
 ROOT_URLCONF = 'AW_website.urls'
 
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
-STATIC_ROOT = 'webapp/static'
+STATIC_ROOT = BASE_DIR + 'webapp/static'
+SASS_PROCESSOR_ROOT = BASE_DIR + STATIC_ROOT
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'webapp', 'static'),
-]
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'webapp', 'static'),
+# ]
 
 STATICFILES_FINDERS = [
-    'compressor.finders.CompressorFinder',
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'sass_processor.finders.CssFinder',
 ]
 
-COMPRESS_PRECOMPILERS = (
-    ('text/x-scss', 'django_libsass.SassCompiler'),
-)
+# COMPRESS_PRECOMPILERS = (
+#     ('text/x-scss', 'django_libsass.SassCompiler'),
+# )
 
 TEMPLATES = [
     {
