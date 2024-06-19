@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'webapp',
     'bootstrap4',
+    'compressor',
 ]
 
 MIDDLEWARE = [
@@ -58,11 +59,19 @@ ROOT_URLCONF = 'AW_website.urls'
 
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
+STATIC_ROOT = 'webapp/static'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'webapp', 'static'),
 ]
 
+STATICFILES_FINDERS = [
+    'compressor.finders.CompressorFinder',
+]
+
+COMPRESS_PRECOMPILERS = (
+    ('text/x-scss', 'django_libsass.SassCompiler'),
+)
 
 TEMPLATES = [
     {

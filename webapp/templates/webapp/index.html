@@ -1,6 +1,15 @@
 {% extends './base.html' %}
 
+{% load static %}
+{% load compress %}
+
 {% block title %}Axiom Wood{% endblock %}
+
+{% block head %}
+    {% compress css %}
+        {# <link type="text/x-scss" href="{% static '/css/_carousel.scss' %}" rel="stylesheet" media="screen"> #}
+    {% endcompress %}
+{% endblock %}
 
 {% block content %}
     <h1>Добро пожаловать в Axiom Wood!</h1>
