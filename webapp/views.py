@@ -9,6 +9,10 @@ import time
 
 
 def index(request):
+    # TODO: add logo
+    # TODO: add button 'наверх' instead of link
+    # TODO: change policy and terms links
+    # TODO: make footer stay at the bottom of the page
     return render(request, 'webapp/index.html')
 
 
