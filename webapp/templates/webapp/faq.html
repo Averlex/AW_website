@@ -1,6 +1,12 @@
 {% extends './base.html' %}
 
+{% load static %}
+
 {% block title %}FAQ{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static '/css/faq.css' %}">
+{% endblock %}
 
 {% block content %}
     <h1>FAQ</h1>
@@ -41,4 +47,10 @@
             });
         });
     </script>
+{% endblock %}
+
+{% block externals %}
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+
 {% endblock %}

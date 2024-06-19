@@ -1,0 +1,20 @@
+/* Star rating styles */
+.rating {
+    direction: ltr;
+    unicode-bidi: bidi-override;
+    font-size: 2em;
+    margin: 10px 0;
+}
+.rating input {
+    display: none;
+}
+.rating label {
+    color: #ddd;
+    font-size: 2em;
+    padding: 0;
+    cursor: pointer;
+}
+.rating input:checked + label,
+.rating input:checked ~ label {
+    color: #f5b301;
+}

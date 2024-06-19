@@ -1,34 +1,56 @@
-{% load sass_tags %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Axion Wood{% endblock %}</title>
     
-    <link type="text/x-scss" href="{% static '/scss/bootstrap.scss' %}" rel="stylesheet" media="screen">
+    <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}" >
+    <script src="{% static '/js/color-modes.js' %}"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
+    <link rel="stylesheet" href="{% static '/css/carousel.css' %}">
     {% block head %}
     {% endblock %}
 </head>
 <body>
-    <header>
-        <nav class="navbar">
-            <div class="container">
-                <a href="{% url 'index' %}" class="brand-logo">Axiom Wood</a>
-                <ul class="nav-links">
-                    <li><a href="{% url 'index' %}" class="navlink">Главная</a></li>
-                    <li><a href="{% url 'gallery' %}" class="navlink">Галерея работ</a></li>
-                    <li><a href="{% url 'faq' %}" class="navlink">FAQ</a></li>
-                    <li><a href="{% url 'order' %}" class="navlink">Оформить заказ</a></li>
-                    {% if request.user.is_authenticated %}
-                        <li><a href="{% url 'profile' %}" class="navlink">Личный кабинет</a></li>
-                        <li><a href="{% url 'logout' %}" class="navlink">Выйти</a></li>
-                    {% else %}
-                        <li><a href="{% url 'login' %}" class="navlink">Войти в аккаунт</a></li>
-                        <li><a href="{% url 'signup' %}" class="navlink">Зарегистрироваться</a></li>
-                    {% endif %}
-                </ul>
+
+    <header data-bs-theme="dark">
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{% url 'home' %}">Axiom Wood</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="{% url 'home' %}">Главная</a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="{% url 'gallery' %}">Галерея работ</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="{% url 'order' %}">Оформить заказ</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="{% url 'faq' %}">О нас</a>
+                        </li>
+
+                    </ul>
+                    <form class="d-flex" role="navigation">
+                        {% if request.user.is_authenticated %}
+                            <a href="{% url 'profile' %}" class="a" aria-current="page"><button class="btn btn-outline" type="button">Личный кабинет</button></a>
+                            <a href="{% url 'logout' %}" class="a" aria-current="page"><button class="btn btn-outline" type="button">Выйти</button></a>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="a" aria-current="page"><button class="btn btn-outline" type="button">Войти в аккаунт</button></a>
+                            <a href="{% url 'signup' %}" class="a" aria-current="page"><button class="btn btn-outline" type="button">Зарегистрироваться</button></a>
+                        {% endif %}
+                    </form>
+                </div>
             </div>
         </nav>
     </header>
@@ -38,14 +60,15 @@
         {% endblock %}
     </main>
 
-    <footer>
-        <!-- Footer content -->
+    <footer class="container">
+        <p class="float-end"><a href="#">Наверх</a></p>
+        <p>&copy; 2024 Axiom Wood &middot; <a href="../policy">Политика конфиденциальности</a> &middot; <a href="#">Условия сотрудничества</a></p>
     </footer>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block externals %}
+    {% endblock %}
+
     <script>let errorElements = document.getElementsByClassName('alert-error'); [...errorElements].forEach(el=>{el.classList.add('alert-danger')})</script>
 
-    <!-- Add JavaScript files or CDN links as needed -->
 </body>
 </html>
