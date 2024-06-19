@@ -14,6 +14,7 @@ def index(request):
     # TODO: change policy and terms links
     # TODO: make footer stay at the bottom of the page
     # TODO: deal with footer svg (center)
+    # TODO: navbar fix
     return render(request, 'webapp/index.html')
 
 
