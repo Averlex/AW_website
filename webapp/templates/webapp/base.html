@@ -59,11 +59,22 @@
         {% block content %}
         {% endblock %}
     </main>
-
-    <footer class="container">
-        <p class="float-end"><a href="#">Наверх</a></p>
-        <p>&copy; 2024 Axiom Wood &middot; <a href="../policy">Политика конфиденциальности</a> &middot; <a href="#">Условия сотрудничества</a></p>
-    </footer>
+ 
+    <div class="container">
+        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+            <p class="col-md-4 mb-0 text-body-secondary">&copy; 2024 Axiom Wood</p>
+      
+            <a href="{% url 'home' %}" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+                <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
+            </a>
+      
+            <ul class="nav col-md-4 justify-content-end small">
+                <li class="nav-item"><a href="{% url 'policy' %}" class="nav-link px-2 text-body-secondary">Политика конфиденциальности</a></li>
+                <!-- <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Условия сотрудничества</a></li> -->
+            </ul>
+        </footer>
+    </span>
+      </div>
 
     {% block externals %}
     {% endblock %}

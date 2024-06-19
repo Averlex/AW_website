@@ -13,6 +13,7 @@ def index(request):
     # TODO: add button 'наверх' instead of link
     # TODO: change policy and terms links
     # TODO: make footer stay at the bottom of the page
+    # TODO: deal with footer svg (center)
     return render(request, 'webapp/index.html')
 
 
