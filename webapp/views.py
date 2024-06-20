@@ -1,11 +1,15 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .models import FAQ, Order, User, UserFeedback, Product
-from .forms import FAQForm, OrderForm, UserUpdateForm, SignUpForm, LoginForm
+from .models import FAQ, Order, User, UserFeedback, Product, Delivery
+from .forms import FAQForm, ProductForm, OrderForm, UserUpdateForm, SignUpForm, LoginForm
+from django.forms import formset_factory
 
 from django.contrib.auth import login, authenticate, logout
 import random
 import time
+
+# TODO: fix delivery price
+_DEFAULT_PRICE = 666
 
 
 def index(request):
@@ -59,16 +63,56 @@ def order(request):
     if not request.user.is_authenticated:
         return redirect('profile')
 
+    product_formset = formset_factory(ProductForm)
+
+    # For tracking the state of the page
+    stages = {1: 'product', 2: 'details', 3: 'confirm', 4: 'done'}
+
+    # Getting defaults (GET case)
+    stage = request.get('stage', 1)
+    formset = request.get('formset', product_formset())
+    order_form = request.get('order_form', OrderForm())
+
     if request.method == 'POST':
-        form = OrderForm(request.POST)
-        if form.is_valid():
-            order_form = form.save(commit=False)
-            order_form.user = request.user
-            order_form.save()
-            return redirect('profile')
+        formset = product_formset(request.POST)
+        # Here we go for the initial check meaning that the user only dealt with product list
+        if formset.is_valid():
+            product_forms = formset.save(commit=False)
+
+            # TODO: calcualate new prices for each product if stage <= 1
+
+            stage += 1
+            if stage <= 3:
+                return render(request, 'webapp/order.html',
+                              {'formset': formset, 'order_form': order_form, 'stage': stage})
+            else:
+                # TODO: redirect to success page and save all data
+                # TODO: success page = stage == 4 with reset of context so the next call will be a new order
+                user = request.user
+                # This time with saving to DB
+                total_price = 0
+                for item in product_forms:
+                    product = item.save()
+                    total_price += product.price
+
+                if order_form.delivery_type.value() == 1:
+                    delivery = Delivery(address=order_form.address.value(), description=order_form.delivery_description.value(),
+                                        price=_DEFAULT_PRICE)
+                    total_price += delivery.price
+                else:
+                    delivery = None
+
+                order = Order(delivery_type=order_form.delivery_type.value(), description=order_form.description.value(),
+                              user=user, delivery=delivery, price=total_price)
+
+                return redirect('profile')
+        else:
+            # TODO: handle form errors
+            pass
     else:
-        form = OrderForm()
-    return render(request, 'webapp/order.html', {'form': form})
+        # Loading page for the first time, we've assigned initials earlier
+        pass
+    return render(request, 'webapp/order.html', {'formset': formset, 'order_form': order_form, 'stage': stage})
 
 
 def profile(request):

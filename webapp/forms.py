@@ -24,7 +24,7 @@ class FAQForm(forms.ModelForm):
         }
 
 
-class OrderForm(forms.ModelForm):
+class ProductForm(forms.ModelForm):
     # TODO: unify order -> max_length's, min/max values
     length = forms.IntegerField(min_value=40, max_value=700, validators=[], label='Длина, мм', initial=450)
     width = forms.IntegerField(min_value=40, max_value=700, validators=[], label='Ширина, мм', initial=350)
@@ -37,10 +37,21 @@ class OrderForm(forms.ModelForm):
     material = forms.ChoiceField(choices=Product.get_materials(), label='Материал', initial=0)
     use_type = forms.ChoiceField(choices=Product.get_use_types(), label='Вид', initial=0)
 
-    description = forms.CharField(max_length=1000, widget=forms.TextInput, label='Комментарий для мастера')
+    # Number of products in a given order
+    number = forms.IntegerField(min_value=0, max_value=99, validators=[], label='', initial=1)
+
     price = forms.CharField(max_length=20, widget=forms.TextInput, validators=[], label='', disabled=True, initial='0 ₽')
     # price = forms.DecimalField(decimal_places=2, min_value=0, widget=forms.TextInput, disabled=True, label='', validators=[])
 
+    class Meta:
+        model = Product
+        fields = ['length', 'width', 'height', 'handles', 'legs', 'groove', 'material', 'use_type', 'price']
+
+    # def clean_field(self): ...
+
+
+class OrderForm(forms.ModelForm):
+    description = forms.CharField(max_length=1000, widget=forms.TextInput, label='Комментарий для мастера')
     delivery_type = forms.ChoiceField(choices=Order.get_delivery_types(), label='Способ получения заказа', initial=0)
     address = forms.CharField(max_length=500, widget=forms.TextInput, label='Адрес доставки')
     delivery_description = forms.CharField(max_length=1000, widget=forms.TextInput, label='Комментарий курьеру')
@@ -53,13 +64,6 @@ class OrderForm(forms.ModelForm):
         self.fields['description'].widget.attrs.update({'placeholder': 'Детали заказа, которые Вам бы хотелось уточнить'})
         self.fields['address'].widget.attrs.update({'placeholder': 'Адрес, по которому необходимо доставить заказ'})
         self.fields['delivery_description'].widget.attrs.update({'placeholder': 'Уточнения по доставке: будут передану курьеру'})
-
-    class Meta:
-        model = Product
-        fields = ['description', 'delivery_type']
-        labels = {
-            'description': 'Детали', 'delivery_type': 'Способ доставки'
-        }
 
     # def clean_field(self): ...
 

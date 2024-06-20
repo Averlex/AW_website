@@ -190,22 +190,24 @@ class Delivery(models.Model):
         2: "Заказ вручен",
         3: "Заказ выдан на доставку курьеру",
         4: "Заказ не вручен",
+        5: "Заказ не создан"
     }
 
     # Additional ID generated for user
-    delivery_id = models.CharField(max_length=_MAX_TRACK_NUM, unique=True)
+    # TODO: unique constraint was removed from delivery_id because of unkown value on order creation
+    delivery_id = models.CharField(max_length=_MAX_TRACK_NUM, blank=True)
 
     # Delivery address
     address = models.CharField(max_length=_MAX_ADDRESS, default='', db_default='')
 
     # Delivery status (expanded CDEC classification)
-    status = models.SmallIntegerField(default=0, db_default=0, blank=True, choices=_CDEC_STATUS)
+    status = models.SmallIntegerField(default=0, blank=True, choices=_CDEC_STATUS)
 
     # Additional comment for delivery
     description = models.TextField(blank=True, max_length=_MAX_FEEDBACK, default='', db_default='')
 
     # Delivery price
-    price = models.FloatField(default=0, db_default=0)
+    price = models.FloatField(default=0)
 
     class Meta:
         verbose_name_plural = "Deliveries"
@@ -250,6 +252,9 @@ class Product(models.Model):
 
     # Categorical description
     use_type = models.SmallIntegerField(default=0, db_default=0, choices=_USE_TYPE)
+
+    # Given product price
+    price = models.FloatField(default=0, db_default=0)
 
     def __str__(self):
         return self._USE_TYPE[self.use_type.__str__()] + ", " + self._MATERIAL[self.material.__str__()]

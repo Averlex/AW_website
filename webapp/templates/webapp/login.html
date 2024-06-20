@@ -3,10 +3,10 @@
 {% block title %}Авторизация{% endblock %}
 
 {% block content %}
-    <h2>Войти в аккаунт</h2>
+    <h2>Авторизация</h2>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Login</button>
+        <button type="submit">Войти</button>
     </form>
 {% endblock %}
