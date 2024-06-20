@@ -5,15 +5,15 @@
 {% block content %}
     <h1>Личный кабинет</h1>
     <h1>Заказы</h2>
-    <ul>
+    <div>
         {% for order in orders %}
-            <li>{{ order.description }} - Status: {{ order.status }}</li>
+            <div>{{order.registration_date}}: {{ order.product.get_material_display }}, {{ order.product.get_use_type_display }} - {{ order.description }} -> {{ order.get_status_display }}</div>
         {% endfor %}
-    </ul>
+    </div>
     <h2>Обновить данные профиля</h2>
     <form method="POST">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form.as_table }}
         <button type="submit">Обновить</button>
     </form>
 {% endblock %}

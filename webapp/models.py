@@ -179,6 +179,10 @@ class Order(models.Model):
     def get_delivery_types():
         return Order._DELIVERY_TYPE
 
+    @staticmethod
+    def get_status():
+        return Order._ORDER_STATUS
+
 
 class Delivery(models.Model):
     """

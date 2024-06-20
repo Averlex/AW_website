@@ -171,7 +171,7 @@ def profile(request):
             return redirect('profile')
     else:
         form = UserUpdateForm(instance=user)
-    return render(request, 'webapp/profile.html', {'orders': user_orders, 'form': form})
+    return render(request, 'webapp/profile.html', {'orders': user_orders, 'form': form, 'material': Product.get_materials(), 'use_type': Product.get_use_types(), 'status': Order.get_status()})
 
 
 def signup_view(request):
