@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .models import FAQ, Order, User, UserFeedback, Product, Delivery
+from .models import FAQ, Order, User, UserFeedback, Product, Delivery, ProductList
 from .forms import FAQForm, ProductForm, OrderForm, UserUpdateForm, SignUpForm, LoginForm
-from django.forms import modelformset_factory
+from django.forms import formset_factory
 
 from django.contrib.auth import login, authenticate, logout
 import random
@@ -63,82 +63,96 @@ def order(request):
     if not request.user.is_authenticated:
         return redirect('profile')
 
-    fields = ('length', 'width', 'height', 'handles', 'legs', 'groove', 'material', 'use_type', 'price')
-    product_formset = modelformset_factory(Product, fields=fields)
+    product_formset = formset_factory(ProductForm)
 
-    class Stages():
-        stages = {1: 'product', 2: 'details', 3: 'confirm', 4: 'done'}
-
-        def __init__(self):
-            self.stage = 1
-
-        def inc_stage(self):
-            self.stage += 1
-            return self.stage
-
-        def dec_stage(self):
-            self.stage -= 2
-            return self.stage
-
-    stage = Stages()
-
-    # For tracking the state of the page
-    # stages = {1: 'product', 2: 'details', 3: 'confirm', 4: 'done'}
-    #
-    # if request.method == 'POST':
-    #     data = request.POST
-    # else:
-    #     data = request.GET
-
-    # Getting defaults (GET case)
-    # stage = data.get('stage', 1)
-    # formset = data.get('formset', product_formset())
-    # order_form = data.get('order_form', OrderForm())
-
-    formset = product_formset(queryset=Product.objects.none())
+    formset = product_formset()
     order_form = OrderForm()
 
     if request.method == 'POST':
         formset = product_formset(request.POST)
+        order_form = OrderForm(request.POST)
         # Here we go for the initial check meaning that the user only dealt with product list
         if formset.is_valid():
-            product_forms = formset.save(commit=False)
+            for form in formset:
+                form.submitted = True
+
+            # product_forms = formset.save(commit=False)
+
+            if order_form.is_valid():
+                order_form.submitted = True
+
+            else:
+                order_form.submitted = False
+                # TODO: handle order_form errors
+                pass
 
             # TODO: calcualate new prices for each product if stage <= 1
 
-            stage.stage += 1
-            if stage.stage <= 3:
-                return render(request, 'webapp/order.html',
-                              {'formset': formset, 'order_form': order_form, 'stage': stage})
-            else:
-                # TODO: redirect to success page and save all data
-                # TODO: success page = stage == 4 with reset of context so the next call will be a new order
-                user = request.user
-                # This time with saving to DB
-                total_price = 0
-                for item in product_forms:
-                    product = item.save()
-                    total_price += product.price
+            # TODO: redirect to success page and save all data
+            # TODO: success page = stage == 4 with reset of context so the next call will be a new order
+            user = request.user
+            # This time with saving to DB
+            total_price = 0
+            product_instances = []
 
-                if order_form.delivery_type.value() == 1:
-                    delivery = Delivery(address=order_form.address.value(), description=order_form.delivery_description.value(),
-                                        price=_DEFAULT_PRICE)
-                    total_price += delivery.price
-                else:
-                    delivery = None
+            for form in formset:
+                # TODO: proper form save
+                product_attrs = {
+                    'material': form.cleaned_data['material'],
+                    'use_type': form.cleaned_data['use_type'],
+                    'length': form.cleaned_data['length'],
+                    'width': form.cleaned_data['width'],
+                    'height': form.cleaned_data['height'],
+                    'handles': form.cleaned_data['handles'],
+                    'legs': form.cleaned_data['legs'],
+                    'groove': form.cleaned_data['groove'],
+                    'price': float(form.cleaned_data['price'][:-2])
+                }
+                try:
+                    product = Product.objects.get(**product_attrs)
+                except Product.DoesNotExist as err:
+                    product = Product(**product_attrs)
 
-                order_instance = Order(delivery_type=order_form.delivery_type.value(), description=order_form.description.value(),
-                                       user=user, delivery=delivery, price=total_price)
-                order_instance.save()
+                # product = item.save()
+                total_price += product.price * form.cleaned_data['number']
+                
+                product.save()
+                product_instances.append(product)
 
-                return redirect('profile')
+            delivery_type = request.POST.get('delivery_type')
+            order_attrs = {
+                'description': order_form.cleaned_data['description'],
+                'delivery_type': order_form.cleaned_data['delivery_type'],
+                'user': user,
+                'delivery': None
+            }
+
+            if delivery_type == 1:
+                delivery = Delivery(address=order_form.cleaned_data['address'],
+                                    description=order_form.cleaned_data['delivery_description'],
+                                    price=_DEFAULT_PRICE)
+                delivery.save()
+                total_price += delivery.price
+                order_attrs['delivery'] = delivery
+
+            order_instance = Order(**order_attrs)
+            order_instance.save()
+
+            for this_item in product_instances:
+                product_list = ProductList(product=this_item, order=order_instance)
+                product_list.save()
+
+            print('Everything is saved!')
+            return redirect('profile')
         else:
+            formset.submitted = False
             # TODO: handle form errors
             pass
+
     else:
         # Loading page for the first time, we've assigned initials earlier
         pass
-    return render(request, 'webapp/order.html', {'formset': formset, 'order_form': order_form, 'stage': stage})
+    return render(request, 'webapp/order.html', {'formset': formset, 'order_form': order_form})
 
 
 def profile(request):

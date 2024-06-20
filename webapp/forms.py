@@ -24,46 +24,47 @@ class FAQForm(forms.ModelForm):
         }
 
 
-class ProductForm(forms.ModelForm):
+class ProductForm(forms.Form):
     # TODO: unify order -> max_length's, min/max values
+    material = forms.ChoiceField(choices=Product.get_materials(), label='Материал', initial=0)
+    use_type = forms.ChoiceField(choices=Product.get_use_types(), label='Вид', initial=0)
+
     length = forms.IntegerField(min_value=40, max_value=700, validators=[], label='Длина, мм', initial=450)
     width = forms.IntegerField(min_value=40, max_value=700, validators=[], label='Ширина, мм', initial=350)
     height = forms.IntegerField(min_value=10, max_value=80, validators=[], label='Высота, мм', initial=40)
 
-    handles = forms.BooleanField(widget=forms.CheckboxInput, label='Ручки', initial=True)
-    legs = forms.BooleanField(widget=forms.CheckboxInput, label='Ножки', initial=False)
-    groove = forms.BooleanField(widget=forms.CheckboxInput, label='Канавка', initial=False)
-
-    material = forms.ChoiceField(choices=Product.get_materials(), label='Материал', initial=0)
-    use_type = forms.ChoiceField(choices=Product.get_use_types(), label='Вид', initial=0)
+    handles = forms.BooleanField(widget=forms.CheckboxInput, label='Ручки', initial=True, required=False)
+    legs = forms.BooleanField(widget=forms.CheckboxInput, label='Ножки', initial=False, required=False)
+    groove = forms.BooleanField(widget=forms.CheckboxInput, label='Канавка', initial=False, required=False)
 
     # Number of products in a given order
     number = forms.IntegerField(min_value=0, max_value=99, validators=[], label='', initial=1)
 
-    price = forms.CharField(max_length=20, widget=forms.TextInput, validators=[], label='', initial='0 ₽')
+    price = forms.CharField(max_length=20, widget=forms.TextInput, validators=[], label='', initial='0 ₽', disabled=True)
     # price = forms.DecimalField(decimal_places=2, min_value=0, widget=forms.TextInput, disabled=True, label='', validators=[])
 
-    class Meta:
-        model = Product
-        fields = ['length', 'width', 'height', 'handles', 'legs', 'groove', 'material', 'use_type', 'price']
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.submitted = False
 
     # def clean_field(self): ...
 
 
 class OrderForm(forms.Form):
-    description = forms.CharField(max_length=1000, widget=forms.TextInput, label='Комментарий для мастера')
+    description = forms.CharField(max_length=1000, widget=forms.TextInput, label='Комментарий для мастера', required=False)
     delivery_type = forms.ChoiceField(choices=Order.get_delivery_types(), label='Способ получения заказа', initial=0)
-    address = forms.CharField(max_length=500, widget=forms.TextInput, label='Адрес доставки')
-    delivery_description = forms.CharField(max_length=1000, widget=forms.TextInput, label='Комментарий курьеру')
+    address = forms.CharField(max_length=500, widget=forms.TextInput, label='Адрес доставки', required=False)
+    delivery_description = forms.CharField(max_length=1000, widget=forms.TextInput, label='Комментарий курьеру', required=False)
     # TODO: delivery price calculation
-    delivery_price = forms.CharField(max_length=20, widget=forms.TextInput, validators=[], label='', disabled=True, initial='0 ₽')
+    delivery_price = forms.CharField(max_length=20, widget=forms.TextInput, validators=[], label='Стоимость доставки', disabled=True, initial='0 ₽')
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         # Initial states
         self.fields['description'].widget.attrs.update({'placeholder': 'Детали заказа, которые Вам бы хотелось уточнить'})
         self.fields['address'].widget.attrs.update({'placeholder': 'Адрес, по которому необходимо доставить заказ'})
         self.fields['delivery_description'].widget.attrs.update({'placeholder': 'Уточнения по доставке: будут передану курьеру'})
+        self.submitted = False
 
     # def clean_field(self): ...
 
