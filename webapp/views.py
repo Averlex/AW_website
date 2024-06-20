@@ -68,10 +68,15 @@ def order(request):
     # For tracking the state of the page
     stages = {1: 'product', 2: 'details', 3: 'confirm', 4: 'done'}
 
+    if request.method == 'POST':
+        data = request.POST
+    else:
+        data = request.GET
+
     # Getting defaults (GET case)
-    stage = request.get('stage', 1)
-    formset = request.get('formset', product_formset())
-    order_form = request.get('order_form', OrderForm())
+    stage = data.get('stage', 1)
+    formset = data.get('formset', product_formset())
+    order_form = data.get('order_form', OrderForm())
 
     if request.method == 'POST':
         formset = product_formset(request.POST)
