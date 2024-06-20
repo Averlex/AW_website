@@ -12,7 +12,7 @@
             {% csrf_token %}
 
             {% if form.errors %}
-                {% for field, message in form.errors.items %}
+                {% for field, message in form.errors.itaems %}
                     <div class="error-rounded-alert-dismissible" role="alert">
                         <button type="button" class="close" data-dismiss="alert" aria-label="Закрыть">
                             <span aria-hidden="true" class="close">&times;</span>

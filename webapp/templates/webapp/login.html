@@ -4,7 +4,7 @@
 
 {% block content %}
     <h2>Авторизация</h2>
-    <form method="post">
+    <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Войти</button>

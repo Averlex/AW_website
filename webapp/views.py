@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .models import FAQ, Order, User, UserFeedback, Product, Delivery
 from .forms import FAQForm, ProductForm, OrderForm, UserUpdateForm, SignUpForm, LoginForm
-from django.forms import formset_factory
+from django.forms import modelformset_factory
 
 from django.contrib.auth import login, authenticate, logout
 import random
@@ -63,20 +63,40 @@ def order(request):
     if not request.user.is_authenticated:
         return redirect('profile')
 
-    product_formset = formset_factory(ProductForm)
+    fields = ('length', 'width', 'height', 'handles', 'legs', 'groove', 'material', 'use_type', 'price')
+    product_formset = modelformset_factory(Product, fields=fields)
+
+    class Stages():
+        stages = {1: 'product', 2: 'details', 3: 'confirm', 4: 'done'}
+
+        def __init__(self):
+            self.stage = 1
+
+        def inc_stage(self):
+            self.stage += 1
+            return self.stage
+
+        def dec_stage(self):
+            self.stage -= 2
+            return self.stage
+
+    stage = Stages()
 
     # For tracking the state of the page
-    stages = {1: 'product', 2: 'details', 3: 'confirm', 4: 'done'}
-
-    if request.method == 'POST':
-        data = request.POST
-    else:
-        data = request.GET
+    # stages = {1: 'product', 2: 'details', 3: 'confirm', 4: 'done'}
+    #
+    # if request.method == 'POST':
+    #     data = request.POST
+    # else:
+    #     data = request.GET
 
     # Getting defaults (GET case)
-    stage = data.get('stage', 1)
-    formset = data.get('formset', product_formset())
-    order_form = data.get('order_form', OrderForm())
+    # stage = data.get('stage', 1)
+    # formset = data.get('formset', product_formset())
+    # order_form = data.get('order_form', OrderForm())
+
+    formset = product_formset(queryset=Product.objects.none())
+    order_form = OrderForm()
 
     if request.method == 'POST':
         formset = product_formset(request.POST)
@@ -86,8 +106,8 @@ def order(request):
 
             # TODO: calcualate new prices for each product if stage <= 1
 
-            stage += 1
-            if stage <= 3:
+            stage.stage += 1
+            if stage.stage <= 3:
                 return render(request, 'webapp/order.html',
                               {'formset': formset, 'order_form': order_form, 'stage': stage})
             else:
@@ -107,8 +127,9 @@ def order(request):
                 else:
                     delivery = None
 
-                order = Order(delivery_type=order_form.delivery_type.value(), description=order_form.description.value(),
-                              user=user, delivery=delivery, price=total_price)
+                order_instance = Order(delivery_type=order_form.delivery_type.value(), description=order_form.description.value(),
+                                       user=user, delivery=delivery, price=total_price)
+                order_instance.save()
 
                 return redirect('profile')
         else:

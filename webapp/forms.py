@@ -40,7 +40,7 @@ class ProductForm(forms.ModelForm):
     # Number of products in a given order
     number = forms.IntegerField(min_value=0, max_value=99, validators=[], label='', initial=1)
 
-    price = forms.CharField(max_length=20, widget=forms.TextInput, validators=[], label='', disabled=True, initial='0 ₽')
+    price = forms.CharField(max_length=20, widget=forms.TextInput, validators=[], label='', initial='0 ₽')
     # price = forms.DecimalField(decimal_places=2, min_value=0, widget=forms.TextInput, disabled=True, label='', validators=[])
 
     class Meta:
@@ -50,7 +50,7 @@ class ProductForm(forms.ModelForm):
     # def clean_field(self): ...
 
 
-class OrderForm(forms.ModelForm):
+class OrderForm(forms.Form):
     description = forms.CharField(max_length=1000, widget=forms.TextInput, label='Комментарий для мастера')
     delivery_type = forms.ChoiceField(choices=Order.get_delivery_types(), label='Способ получения заказа', initial=0)
     address = forms.CharField(max_length=500, widget=forms.TextInput, label='Адрес доставки')

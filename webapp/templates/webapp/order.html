@@ -36,15 +36,56 @@
         <h1>Список товаров</h1>
         <div>
             <button onclick="toggleProduct('new-product')">Добавить товар</button>
-            <div id="new-product" class="product-item collapsed">
-                <form method="post">
+            <div id="new-product" class="product-item expanded">
+                <form method="POST">
                     {% csrf_token %}
-                    {{ form.as_p }}
+
+
+                    {{ formset.management_form }}
+                    <div id="form_set">
+                        {% for form in formset.forms %}
+                            <table class='no_error'>
+                                {{ form.as_table }}
+                            </table>
+                        {% endfor %}
+                    </div>
+                    <input type="button" value="Add More" id="add_more">
+                    <div id="empty_form" style="display:none">
+                        <table class='no_error'>
+                            {{ formset.empty_form.as_table }}
+                        </table>
+                    </div>
+                    <script>
+                        $('#add_more').click(function() {
+                            var form_idx = $('#id_form-TOTAL_FORMS').val();
+                            $('#form_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+                            $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+                        });
+                    </script>
+                    
+                    
                     <button type="submit">Оформить заказ</button>
                 </form>
+                <script>
+                    function cloneMore(selector, type) {
+                    var newElement = $(selector).clone(true);
+                    var total = $('#id_' + type + '-TOTAL_FORMS').val();
+                    newElement.find(':input').each(function() {
+                        var name = $(this).attr('name').replace('-' + (total-1) + '-','-' + total + '-');
+                        var id = 'id_' + name;
+                        $(this).attr({'name': name, 'id': id}).val('').removeAttr('checked');
+                    });
+                    newElement.find('label').each(function() {
+                        var newFor = $(this).attr('for').replace('-' + (total-1) + '-','-' + total + '-');
+                        $(this).attr('for', newFor);
+                    });
+                    total++;
+                    $('#id_' + type + '-TOTAL_FORMS').val(total);
+                    $(selector).after(newElement);
+                }
+                </script>
             </div>
         </div>
-        <hr>
         <div id="products">
             {% for product in products %}
                 <div id="product-{{ product.id }}" class="product-item collapsed">
