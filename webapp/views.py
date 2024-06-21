@@ -163,6 +163,12 @@ def profile(request):
     # Ensure request.user is a User instance
     user = request.user
     user_orders = Order.objects.filter(user=user)
+    user_products = []
+    for order in user_orders:
+        user_products.append({
+            'order': order,
+            'products': ProductList.objects.filter(order=order).select_related('product')
+        })
 
     if request.method == 'POST':
         form = UserUpdateForm(request.POST, instance=user)
@@ -171,7 +177,7 @@ def profile(request):
             return redirect('profile')
     else:
         form = UserUpdateForm(instance=user)
-    return render(request, 'webapp/profile.html', {'orders': user_orders, 'form': form, 'material': Product.get_materials(), 'use_type': Product.get_use_types(), 'status': Order.get_status()})
+    return render(request, 'webapp/profile.html', {'form': form,  'orders': user_products})
 
 
 def signup_view(request):
