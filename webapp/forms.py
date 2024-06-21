@@ -38,7 +38,7 @@ class ProductForm(forms.Form):
     groove = forms.BooleanField(widget=forms.CheckboxInput, label='Канавка', initial=False, required=False)
 
     # Number of products in a given order
-    number = forms.IntegerField(min_value=0, max_value=99, validators=[], label='', initial=1)
+    number = forms.IntegerField(min_value=1, max_value=99, validators=[], label='', initial=1)
 
     price = forms.CharField(max_length=20, widget=forms.TextInput, validators=[], label='', initial='0 ₽', disabled=True)
     # price = forms.DecimalField(decimal_places=2, min_value=0, widget=forms.TextInput, disabled=True, label='', validators=[])
@@ -51,10 +51,10 @@ class ProductForm(forms.Form):
 
 
 class OrderForm(forms.Form):
-    description = forms.CharField(max_length=1000, widget=forms.TextInput, label='Комментарий для мастера', required=False)
+    description = forms.CharField(max_length=1000, widget=forms.Textarea, label='Комментарий для мастера', required=False)
     delivery_type = forms.ChoiceField(choices=Order.get_delivery_types(), label='Способ получения заказа', initial=0)
     address = forms.CharField(max_length=500, widget=forms.TextInput, label='Адрес доставки', required=False)
-    delivery_description = forms.CharField(max_length=1000, widget=forms.TextInput, label='Комментарий курьеру', required=False)
+    delivery_description = forms.CharField(max_length=1000, widget=forms.Textarea, label='Комментарий курьеру', required=False)
     # TODO: delivery price calculation
     delivery_price = forms.CharField(max_length=20, widget=forms.TextInput, validators=[], label='Стоимость доставки', disabled=True, initial='0 ₽')
 
@@ -63,7 +63,6 @@ class OrderForm(forms.Form):
         # Initial states
         self.fields['description'].widget.attrs.update({'placeholder': 'Детали заказа, которые Вам бы хотелось уточнить'})
         self.fields['address'].widget.attrs.update({'placeholder': 'Адрес, по которому необходимо доставить заказ'})
-        self.fields['delivery_description'].widget.attrs.update({'placeholder': 'Уточнения по доставке: будут передану курьеру'})
         self.submitted = False
 
     # def clean_field(self): ...

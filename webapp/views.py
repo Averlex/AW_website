@@ -60,6 +60,8 @@ def faq(request):
 
 def order(request):
     # Redirect to profile page if the user is already authenticated
+    # TODO: handle deleting the last and only form from a formset
+    # TODO: fill forms with initials (change .empty_table -> <filled table>
     if not request.user.is_authenticated:
         return redirect('profile')
 
@@ -71,6 +73,7 @@ def order(request):
     if request.method == 'POST':
         formset = product_formset(request.POST)
         order_form = OrderForm(request.POST)
+
         # Here we go for the initial check meaning that the user only dealt with product list
         if formset.is_valid():
             for form in formset:
@@ -142,7 +145,6 @@ def order(request):
                 product_list = ProductList(product=this_item, order=order_instance)
                 product_list.save()
 
-            print('Everything is saved!')
             return redirect('profile')
         else:
             formset.submitted = False

@@ -3,32 +3,64 @@
 {% block title %}Оформление заказа{% endblock %}
 
 {% block head %}
-    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#add-form').click(function() {
+                var form_idx = $('#id_form-TOTAL_FORMS').val();
+                var form_html = $('#empty-form').html().replace(/__prefix__/g, form_idx);
+                $('#formset-container').append(form_html);
+                $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+            });
+
+            $(document).on('click', '.delete-form', function() {
+                if ($('.form-row').length > 1) {
+                    $(this).closest('.form-row').remove();
+                }
+            });
+        });
+    </script>
 {% endblock %}
 
 {% block content %}
-        <h1>Список товаров</h1>
+        <h1>Новый заказ</h1>
         <div>
-            <form method="POST">
+            <form method="POST" action="">
                 {% csrf_token %}
 
-
                 {{ formset.management_form }}
-                <div id="form_set">
-                    {% for form in formset.forms %}
-                        <table class='no_error'>
-                            {{ form.as_table }}
-                        </table>
-                        
+
+                <div id="formset-container">
+                    <button type="button" id="add-form">Добавить</button>
+                    {% for form in formset %}
+                        <div class="form-row">
+                            <table>
+                                {{ form.as_table }}
+                            </table>
+                            <button type="button" class="delete-form">Удалить</button>
+                        </div>
                     {% endfor %}
                 </div>
-                <div>
-                    
-                {{ order_form }}
-                </div>
-                
+
+                <table>
+                    {{ order_form.as_table }}
+                </table>
+
                 <button type="submit">Оформить заказ</button>
-            </form>        
+            </form>
+        
+            <div id="empty-form" style="display:none;">
+                <div class="form-row">
+                    <table>
+                        {{ formset.empty_form.as_table }}
+                    </table>
+                    <button type="button" class="delete-form">Удалить</button>
+                </div>
+            </div>
         </div>
+
+{% endblock %}
+
+{% block externals %}
 
 {% endblock %}
