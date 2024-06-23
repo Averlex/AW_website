@@ -14,9 +14,29 @@
             });
 
             $(document).on('click', '.delete-form', function() {
-                if ($('.form-row').length > 1) {
+                if ($('#id_form-TOTAL_FORMS').val() > 1) {
                     $(this).closest('.form-row').remove();
                 }
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            function toggleFields() {
+                $('select#id_delivery_type').print();
+                if ($('#id_delivery_type').find(":selected").val() === 'Самовывоз') {
+                    $('.dynamic').slideUp();
+                } else {
+                    $('.dynamic').slideDown();
+                }
+            }
+
+            // Initial check
+            toggleFields();
+
+            // Check on change
+            $('#id_delivery_type').change(function() {
+                toggleFields();
             });
         });
     </script>
@@ -42,11 +62,40 @@
                     {% endfor %}
                 </div>
 
-                <table>
-                    {{ order_form.as_table }}
-                </table>
-
                 <button type="submit">Оформить заказ</button>
+
+                <table>
+                    <div class="details-group static">
+                        <tr>
+                            <td>{{ order_form.description.label_tag }}</td>
+                            <td>{{ order_form.description }}</td>
+                        </tr>
+                    </div>
+                    <div class="details-group static">
+                        <tr>
+                            <td>{{ order_form.delivery_type.label_tag }}</td>
+                            <td>{{ order_form.delivery_type }}</td>
+                        </tr>
+                    </div>
+                    <div class="details-group dynamic" id="dynamic-order">
+                        <tr>
+                            <td>{{ order_form.delivery_description.label_tag }}</td>
+                            <td>{{ order_form.delivery_description }}</td>
+                        </tr>
+                    </div>
+                    <div class="details-group dynamic" id="dynamic-order">
+                        <tr>
+                            <td>{{ order_form.address.label_tag }}</td>
+                            <td>{{ order_form.address }}</td>
+                        </tr>
+                    </div>
+                    <div class="details-group static">
+                        <tr>
+                            <td>{{ order_form.delivery_price.label_tag }}</td>
+                            <td>{{ order_form.delivery_price }}</td>
+                        </tr>
+                    </div>
+                </table>    
             </form>
         
             <div id="empty-form" style="display:none;">
@@ -57,6 +106,7 @@
                     <button type="button" class="delete-form">Удалить</button>
                 </div>
             </div>
+
         </div>
 
 {% endblock %}
