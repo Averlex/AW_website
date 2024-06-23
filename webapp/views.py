@@ -62,6 +62,7 @@ def order(request):
     # Redirect to profile page if the user is already authenticated
     # TODO: handle deleting the last and only form from a formset
     # TODO: fill forms with initials (change .empty_table -> <filled table>
+    # TODO: resolve: forms hide on page reload
     if not request.user.is_authenticated:
         return redirect('profile')
 

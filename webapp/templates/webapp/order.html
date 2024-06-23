@@ -6,6 +6,13 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
+            if ($('#id_form-TOTAL_FORMS').val() === 1) {
+                $('.delete-form').hide();
+            }
+            else {
+                $('.delete-form').show();
+            }
+
             $('#add-form').click(function() {
                 var form_idx = $('#id_form-TOTAL_FORMS').val();
                 var form_html = $('#empty-form').html().replace(/__prefix__/g, form_idx);
@@ -15,7 +22,9 @@
 
             $(document).on('click', '.delete-form', function() {
                 if ($('#id_form-TOTAL_FORMS').val() > 1) {
+                    var form_idx = $('#id_form-TOTAL_FORMS').val();
                     $(this).closest('.form-row').remove();
+                    $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) - 1);
                 }
             });
         });
@@ -23,8 +32,8 @@
     <script type="text/javascript">
         $(document).ready(function() {
             function toggleFields() {
-                $('select#id_delivery_type').print();
-                if ($('#id_delivery_type').find(":selected").val() === 'Самовывоз') {
+                $('.dynamic').slideToggle();
+                if ($('#id_delivery_type').val() === '0') {
                     $('.dynamic').slideUp();
                 } else {
                     $('.dynamic').slideDown();
