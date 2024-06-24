@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .models import FAQ, Order, User, UserFeedback, Product, Delivery, ProductList
 from .forms import FAQForm, ProductForm, OrderForm, UserUpdateForm, SignUpForm, LoginForm
 from django.forms import formset_factory
+from django.http import HttpResponse
 
 from django.contrib.auth import login, authenticate, logout
 import random
@@ -72,6 +73,24 @@ def order(request):
     order_form = OrderForm()
 
     if request.method == 'POST':
+        material = request.POST.get('material', None)
+        length = request.POST.get('length', None)
+        width = request.POST.get('width', None)
+        height = request.POST.get('height', None)
+        handles = request.POST.get('handles', None)
+        legs = request.POST.get('legs', None)
+        groove = request.POST.get('groove', None)
+        number = request.POST.get('number', None)
+        price = request.POST.get('price', None)
+
+        # Any should be able or none
+        # TODO: proper validation (including types) should be implemented
+        if material:
+            # Response to ajax request
+            res_price = Product.get_price(material=material, length=length, width=width, height=height, handles=handles,
+                                          legs=legs, groove=groove, number=number, price=float(price))
+            return HttpResponse(f'{round(res_price, 2)}')
+
         formset = product_formset(request.POST)
         order_form = OrderForm(request.POST)
 

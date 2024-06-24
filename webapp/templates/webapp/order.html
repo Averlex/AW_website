@@ -16,7 +16,7 @@
         function cloneMore(selector, prefix) {
             var newElement = $(selector).clone(true, true);
             var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
-            
+
             $(newElement).find(':input').each(function() {
                 updateElementIndex(this, prefix, total);
             });
@@ -65,6 +65,91 @@
         });
 
     </script>
+    <script type="text/javascript">
+        const baseTimeout = 1000;
+
+        // function debounce(callback, wait) {
+        //     let timeout;
+            
+        //     return (...args) => {
+        //         clearTimeout(timeout);
+        //         timeout = setTimeout(function () { callback.apply(this, args); }, wait);
+        //     }
+        // }
+
+        function ajax_request() {
+            
+        }
+
+        $('#formset-container input').change(function () {
+            $.ajax({
+                type: 'POST',
+                url: '/pricing',
+                data: {
+                    material: parseInt($(this).closest('[name*="material"]').val()),
+                    length: parseInt($(this).closest('[name*="length"]').val()),
+                    width: parseInt($(this).closest('[name*="width"]').val()),
+                    height: parseInt($(this).closest('[name*="height"]').val()),
+                    handles: $(this).closest('[name*="handles"]').is(':checked'),
+                    legs: $(this).closest('[name*="legs"]').is(':checked'),
+                    groove: $(this).closest('[name*="groove"]').is(':checked'),
+                    number: parseInt($(this).closest('[name*="number"]').val()),
+                    price: $(this).closest('[name*="number"]').val(),
+                    someRandomStuff: console.log('dictionary formed'),
+                },
+                dataType: 'text',
+                success: function(data) {
+                    $(this).closest('[id*=price]').val(html(data) + ' ₽');
+                }
+                /* 
+                    Simple: fire ajax request on each form change. Send the changed form only
+                    Hard: manage send cancelation on subsequent
+                */
+                // data: $('#submitRequest').serialize(), // serialize the form
+                // type: $('#submitRequest').attr('method'), // GET or POST from the form
+                // url: $('#submitRequest').attr('action'), // the file to call from the form
+                // success: function(response) { // on success..
+                //     showTable();
+                // }
+            });
+        });
+
+        // $('#formset-container input').change(function (e) {
+        //     $.ajax({
+
+        //         /* 
+        //             Simple: fire ajax request on each form change. Send the changed form only
+        //             Hard: manage send cancelation on subsequent
+        //         */
+        //         // data: $('#submitRequest').serialize(), // serialize the form
+        //         // type: $('#submitRequest').attr('method'), // GET or POST from the form
+        //         // url: $('#submitRequest').attr('action'), // the file to call from the form
+        //         // success: function(response) { // on success..
+        //         //     showTable();
+        //         // }
+        //     });
+
+        // });
+    </script>
+    <script type="text/javascript">
+        $().ready(function() {
+            function toggleFields(element, target) {
+                if ($(element).val() === '0') {
+                    $(target).slideUp();
+                } else {
+                    $(target).slideDown();
+                }
+            }
+
+            // Initial check
+            toggleFields();
+
+            // Check on change
+            $('[name*="delivery_type"]').change(function() {
+                toggleFields($(this), $(this).closest('.dynamic'));
+            });
+        });
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -81,9 +166,8 @@
                     {% for form in formset %}
 
                         <div class="row form-row spacer">
-                            <div class="col-2">
-                            </div>
-                            <div class="col-4">
+                            <div class="col-1"></div>
+                            <div class="col-6">
                                 <div class="input-group">
                                     <table>
                                         {{form.as_table}}
@@ -93,55 +177,55 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-5"></div>
                         </div>
                     {% endfor %}
                 </div>
 
-                <table>
-                    <div class="details-group static">
-                        <tr>
-                            <td>{{ order_form.description.label_tag }}</td>
-                            <td>{{ order_form.description }}</td>
-                        </tr>
+                <div class="row form-row spacer">
+                    <div class="col-1"></div>
+                    <div class="col-6">
+                        <div class="input-group">
+                            <table>
+                                <div class="details-group static">
+                                    <tr>
+                                        <th>{{ order_form.description.label_tag }}</th>
+                                        <td>{{ order_form.description }}</td>
+                                    </tr>
+                                </div>
+                                <div class="details-group static">
+                                    <tr>
+                                        <th>{{ order_form.delivery_type.label_tag }}</th>
+                                        <td>{{ order_form.delivery_type }}</td>
+                                    </tr>
+                                </div>
+                                <div class="details-group dynamic" id="dynamic-order">
+                                    <tr>
+                                        <th>{{ order_form.delivery_description.label_tag }}</th>
+                                        <td>{{ order_form.delivery_description }}</td>
+                                    </tr>
+                                </div>
+                                <div class="details-group dynamic" id="dynamic-order">
+                                    <tr>
+                                        <th>{{ order_form.address.label_tag }}</th>
+                                        <td>{{ order_form.address }}</td>
+                                    </tr>
+                                </div>
+                                <div class="details-group static">
+                                    <tr>
+                                        <th>{{ order_form.delivery_price.label_tag }}</th>
+                                        <td>{{ order_form.delivery_price }}</td>
+                                    </tr>
+                                </div>
+                            </table> 
+                        </div>
                     </div>
-                    <div class="details-group static">
-                        <tr>
-                            <td>{{ order_form.delivery_type.label_tag }}</td>
-                            <td>{{ order_form.delivery_type }}</td>
-                        </tr>
-                    </div>
-                    <div class="details-group dynamic" id="dynamic-order">
-                        <tr>
-                            <td>{{ order_form.delivery_description.label_tag }}</td>
-                            <td>{{ order_form.delivery_description }}</td>
-                        </tr>
-                    </div>
-                    <div class="details-group dynamic" id="dynamic-order">
-                        <tr>
-                            <td>{{ order_form.address.label_tag }}</td>
-                            <td>{{ order_form.address }}</td>
-                        </tr>
-                    </div>
-                    <div class="details-group static">
-                        <tr>
-                            <td>{{ order_form.delivery_price.label_tag }}</td>
-                            <td>{{ order_form.delivery_price }}</td>
-                        </tr>
-                    </div>
-                </table>  
-                
+                    <div class="col-5"></div>
+                </div>
+
                 <button type="submit">Оформить заказ</button>
 
             </form>
-        
-            <div id="empty-form" style="display:none;">
-                <div class="form-row">
-                    <table>
-                        {{ formset.0.as_table }}
-                    </table>
-                    <button type="button" class="delete-form">Удалить</button>
-                </div>
-            </div>
 
         </div>
 

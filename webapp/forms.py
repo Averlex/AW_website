@@ -26,6 +26,7 @@ class FAQForm(forms.ModelForm):
 
 class ProductForm(forms.Form):
     # TODO: unify order -> max_length's, min/max values
+    # TODO: fix price count (per stack -> per unit)
     material = forms.ChoiceField(choices=Product.get_materials(), label='Материал', initial=0)
     use_type = forms.ChoiceField(choices=Product.get_use_types(), label='Вид', initial=0)
 

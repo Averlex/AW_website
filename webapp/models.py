@@ -271,6 +271,47 @@ class Product(models.Model):
     def get_use_types():
         return Product._USE_TYPE
 
+    @staticmethod
+    def get_price(**kwargs):
+        material = kwargs.get('material', None)
+        length = kwargs.get('length', None)
+        width = kwargs.get('width', None)
+        height = kwargs.get('height', None)
+        handles = kwargs.get('handles', None)
+        legs = kwargs.get('legs', None)
+        groove = kwargs.get('groove', None)
+        number = kwargs.get('number', None)
+        price = kwargs.get('price', None)
+
+        if not price:
+            return '0.00'
+
+        material_mapping = {
+            0: 1.0,
+            1: 1.1,
+            2: 1.05,
+            3: 1.18,
+            4: 1.66,
+            5: 1.69,
+            6: 2.0,
+        }
+        handles_price = 420
+        legs_price = 200
+        groove_price = 300
+        base_price = 0.83
+
+        res = material_mapping[material] * base_price * round(length * width * height / 1000, 0)
+        if handles:
+            res += handles_price
+        if legs:
+            res += legs_price
+        if groove:
+            res += groove_price
+
+        res *= number
+
+        return res
+
 
 class ProductList(models.Model):
     """
