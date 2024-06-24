@@ -152,7 +152,9 @@ def order(request):
             # TODO: handle form errors
             pass
 
-    else:
+    elif request.method == 'GET':
+        formset = product_formset(request.GET or None)
+        order_form = OrderForm(request.GET or None)
         # Loading page for the first time, we've assigned initials earlier
         pass
     return render(request, 'webapp/order.html', {'formset': formset, 'order_form': order_form})
