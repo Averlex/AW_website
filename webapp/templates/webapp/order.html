@@ -16,29 +16,19 @@
         function cloneMore(selector, prefix) {
             var newElement = $(selector).clone(true, true);
             var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
-            newElement.find(selector + ':input:not([type=button]):not([type=submit]):not([type=reset])').each(function() {
-                var name = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');
-                var id = 'id_' + name;
-                $(this).attr({'name': name, 'id': id}).val($(selector).val())
+            
+            $(newElement).find(':input').each(function() {
+                updateElementIndex(this, prefix, total);
             });
-
-            newElement.find('label').each(function() {
-                var forValue = $(this).attr('for');
-                if (forValue) {
-                    forValue = forValue.replace('-' + (total-1) + '-', '-' + total + '-');
-                    $(this).attr({'for': forValue});
-                }
+            $(newElement).find('label').each(function() {
+                updateElementIndex(this, prefix, total);
             });
 
             total++;
             $('#id_' + prefix + '-TOTAL_FORMS').val(total);
             console.log($('#id_' + prefix + '-TOTAL_FORMS').val());
-            $(selector).after(newElement);
-            var conditionRow = $('.form-row:not(:last)');
-            conditionRow.find('.btn.add-form-row')
-                .removeClass('btn-success').addClass('btn-danger')
-                .removeClass('add-form-row').addClass('remove-form-row')
-                .html('<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>');
+            $(selector).before(newElement);
+            
             return false;
         }
 
@@ -51,6 +41,9 @@
                 var forms = $('.form-row');
                 for (var i=0; i<forms.length; i++) {
                     $(forms.get(i)).find(':input').each(function() {
+                        updateElementIndex(this, prefix, i);
+                    });
+                    $(forms.get(i)).find('label').each(function() {
                         updateElementIndex(this, prefix, i);
                     });
                 }
@@ -83,7 +76,6 @@
                 {{ formset.management_form }}
                 <div id="formset-container">
 
-                    <button type="button" id="add-form">Добавить</button>
                     <button class="btn btn-success add-form-row">+</button>
 
                     {% for form in formset %}
@@ -104,8 +96,6 @@
                         </div>
                     {% endfor %}
                 </div>
-
-                <button type="submit">Оформить заказ</button>
 
                 <table>
                     <div class="details-group static">
@@ -138,7 +128,10 @@
                             <td>{{ order_form.delivery_price }}</td>
                         </tr>
                     </div>
-                </table>    
+                </table>  
+                
+                <button type="submit">Оформить заказ</button>
+
             </form>
         
             <div id="empty-form" style="display:none;">
