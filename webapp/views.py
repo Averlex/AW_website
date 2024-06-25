@@ -100,9 +100,10 @@ def order(request):
             # TODO: proper validation (including types) should be implemented
             if material is not None:
                 # Response to ajax request
-                res_price = Product.get_price(material=material, length=length, width=width, height=height, handles=handles,
+                res_price = Product.get_price(material=material, length=length, width=width, height=height,
+                                              handles=handles,
                                               legs=legs, groove=groove, number=number, price=float(price))
-                return JsonResponse({'text': f'{round(res_price, 2)}'})
+                return JsonResponse({'text': f'{res_price:.2f}'})
 
         # AJAX request processing
         if 'delivery_type' in request.POST:
@@ -165,7 +166,7 @@ def order(request):
 
                 # product = item.save()
                 total_price += product.price * form.cleaned_data['number']
-                
+
                 product.save()
                 product_instances.append(product)
 
@@ -201,11 +202,12 @@ def order(request):
     elif request.method == 'GET':
         formset = product_formset(request.GET or None)
         for form in formset:
-            form.initial['price'] = Product.get_price(material=form.fields['material'].initial, length=form.fields['length'].initial,
-                                                      width=form.fields['width'].initial, height=form.fields['height'].initial,
-                                                      handles=form.fields['handles'].initial, legs=form.fields['legs'].initial,
-                                                      groove=form.fields['groove'].initial, number=form.fields['number'].initial,
-                                                      price=0.00)
+            price = Product.get_price(material=form.fields['material'].initial, length=form.fields['length'].initial,
+                                      width=form.fields['width'].initial, height=form.fields['height'].initial,
+                                      handles=form.fields['handles'].initial, legs=form.fields['legs'].initial,
+                                      groove=form.fields['groove'].initial, number=form.fields['number'].initial,
+                                      price=0.00)
+            form.initial['price'] = f'{price:.2f}'
         order_form = OrderForm(request.GET or None)
         # Loading page for the first time, we've assigned initials earlier
         pass
@@ -234,7 +236,7 @@ def profile(request):
             return redirect('profile')
     else:
         form = UserUpdateForm(instance=user)
-    return render(request, 'webapp/profile.html', {'form': form,  'orders': user_products})
+    return render(request, 'webapp/profile.html', {'form': form, 'orders': user_products})
 
 
 def signup_view(request):

@@ -4,6 +4,7 @@
 
 {% block head %}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!--- form add/delete -->
     <script type="text/javascript">
         function updateElementIndex(el, prefix, ndx) {
             var id_regex = new RegExp('(' + prefix + '-\\d+)');
@@ -65,6 +66,7 @@
         });
 
     </script>
+    <!--- price -->
     <script type="text/javascript">
         $().ready(function() {
             const baseTimeout = 1000;
@@ -103,6 +105,7 @@
             });
         });
     </script>
+    <!--- delivery price -->
     <script type="text/javascript">
         $().ready(function() {
             $('.order-details select').change( function (e) {
@@ -122,13 +125,38 @@
             });
         });
     </script>
+    <!--- submit -->
     <script type="text/javascript">
         $().ready(function() {
-            function toggleFields(element, target) {
-                if ($(element).val() === '0') {
-                    $(target).slideUp();
+            $('.order-details select').change( function (e) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/order/',
+                    data: {
+                        delivery_type: $(e.target).closest('.form-row').find('[name*="delivery_type"]').val(),
+                        address: $(e.target).closest('.form-row').find('[name*="address"]').val(),
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                    },
+                    dataType: 'json',
+                    success: function(responseData) {
+                        $(e.target).closest('.form-row').find('[id*=delivery_price]').val(responseData.text)
+                    },
+                });
+            });
+        });
+    </script>
+    <!--- fields hiding -->
+    <script type="text/javascript">
+        $().ready(function() {
+            elemSelector = '[name*="delivery_type"]'
+
+            function toggleFields() {
+                elements = $(elemSelector).closest('.form-row').find('.dynamic');
+                source = $(elemSelector);
+                if (source.val() === '0') {
+                    elements.slideUp();
                 } else {
-                    $(target).slideDown();
+                    elements.slideDown();
                 }
             }
 
@@ -136,8 +164,8 @@
             toggleFields();
 
             // Check on change
-            $('[name*="delivery_type"]').change(function() {
-                toggleFields($(this), $(this).closest('.dynamic'));
+            $(elemSelector).change(function() {
+                toggleFields();
             });
         });
     </script>
