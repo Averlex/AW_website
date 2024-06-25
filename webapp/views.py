@@ -29,7 +29,7 @@ def gallery(request):
     return render(request, 'webapp/gallery.html', {'photos': photos})
 
 
-def faq(request):
+def about(request):
     # Getting random top-3 FAQs to display on the page
     faqs = list(FAQ.objects.all())
     random.shuffle(faqs)
@@ -65,7 +65,7 @@ def faq(request):
             pass
     else:
         form = FAQForm()
-    return render(request, 'webapp/faq.html', {'faqs': faqs, 'form': form})
+    return render(request, 'webapp/about.html', {'faqs': faqs, 'form': form})
 
 
 def order(request):
