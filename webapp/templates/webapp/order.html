@@ -33,7 +33,7 @@
         }
 
         function deleteForm(prefix, btn) {
-            var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+            var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
 
             if (total !=  1){
                 $('#id_' + prefix + '-TOTAL_FORMS').val(total-1);
@@ -66,70 +66,43 @@
 
     </script>
     <script type="text/javascript">
-        const baseTimeout = 1000;
+        $().ready(function() {
+            const baseTimeout = 1000;
 
-        // function debounce(callback, wait) {
-        //     let timeout;
-            
-        //     return (...args) => {
-        //         clearTimeout(timeout);
-        //         timeout = setTimeout(function () { callback.apply(this, args); }, wait);
-        //     }
-        // }
+            // function debounce(callback, wait, e) {
+            //     let timeout;
+                
+            //     return (...args) => {
+            //         clearTimeout(timeout);
+            //         timeout = setTimeout(function () { callback.apply(this, args); }, wait);
+            //     }
+            // }
 
-        function ajax_request() {
-            
-        }
-
-        $('#formset-container input').change(function () {
-            $.ajax({
-                type: 'POST',
-                url: '/pricing',
-                data: {
-                    material: parseInt($(this).closest('[name*="material"]').val()),
-                    length: parseInt($(this).closest('[name*="length"]').val()),
-                    width: parseInt($(this).closest('[name*="width"]').val()),
-                    height: parseInt($(this).closest('[name*="height"]').val()),
-                    handles: $(this).closest('[name*="handles"]').is(':checked'),
-                    legs: $(this).closest('[name*="legs"]').is(':checked'),
-                    groove: $(this).closest('[name*="groove"]').is(':checked'),
-                    number: parseInt($(this).closest('[name*="number"]').val()),
-                    price: $(this).closest('[name*="number"]').val(),
-                    someRandomStuff: console.log('dictionary formed'),
-                },
-                dataType: 'text',
-                success: function(data) {
-                    $(this).closest('[id*=price]').val(html(data) + ' ₽');
-                }
-                /* 
-                    Simple: fire ajax request on each form change. Send the changed form only
-                    Hard: manage send cancelation on subsequent
-                */
-                // data: $('#submitRequest').serialize(), // serialize the form
-                // type: $('#submitRequest').attr('method'), // GET or POST from the form
-                // url: $('#submitRequest').attr('action'), // the file to call from the form
-                // success: function(response) { // on success..
-                //     showTable();
-                // }
+            $('#formset-container select,input').change( function (e) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/order/',
+                    data: {
+                        material: $(e.target).closest('.form-row').find('[name*="material"]').val(),
+                        length: $(e.target).closest('.form-row').find('[name*="length"]').val(),
+                        width: $(e.target).closest('.form-row').find('[name*="width"]').val(),
+                        height: $(e.target).closest('.form-row').find('[name*="height"]').val(),
+                        handles: $(e.target).closest('.form-row').find('[name*="handles"]').is(':checked'),
+                        legs: $(e.target).closest('.form-row').find('[name*="legs"]').is(':checked'),
+                        groove: $(e.target).closest('.form-row').find('[name*="groove"]').is(':checked'),
+                        number: $(e.target).closest('.form-row').find('[name*="number"]').val(),
+                        price: $(e.target).closest('.form-row').find('[name*="price"]').val(),
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        something: console.log($(e.target)),
+                    },
+                    dataType: 'json',
+                    success: function(responseData) {
+                        $(e.target).closest('.form-row').find('[id*=price]').val(responseData.text)
+                        // console.log(responseData.text, typeof responseData.text);
+                    },
+                });
             });
         });
-
-        // $('#formset-container input').change(function (e) {
-        //     $.ajax({
-
-        //         /* 
-        //             Simple: fire ajax request on each form change. Send the changed form only
-        //             Hard: manage send cancelation on subsequent
-        //         */
-        //         // data: $('#submitRequest').serialize(), // serialize the form
-        //         // type: $('#submitRequest').attr('method'), // GET or POST from the form
-        //         // url: $('#submitRequest').attr('action'), // the file to call from the form
-        //         // success: function(response) { // on success..
-        //         //     showTable();
-        //         // }
-        //     });
-
-        // });
     </script>
     <script type="text/javascript">
         $().ready(function() {

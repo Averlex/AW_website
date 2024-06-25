@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .models import FAQ, Order, User, UserFeedback, Product, Delivery, ProductList
 from .forms import FAQForm, ProductForm, OrderForm, UserUpdateForm, SignUpForm, LoginForm
 from django.forms import formset_factory
-from django.http import HttpResponse
+from django.http import JsonResponse
 
 from django.contrib.auth import login, authenticate, logout
 import random
@@ -73,23 +73,36 @@ def order(request):
     order_form = OrderForm()
 
     if request.method == 'POST':
-        material = request.POST.get('material', None)
-        length = request.POST.get('length', None)
-        width = request.POST.get('width', None)
-        height = request.POST.get('height', None)
-        handles = request.POST.get('handles', None)
-        legs = request.POST.get('legs', None)
-        groove = request.POST.get('groove', None)
-        number = request.POST.get('number', None)
-        price = request.POST.get('price', None)
+        tmp = request.POST
 
-        # Any should be able or none
-        # TODO: proper validation (including types) should be implemented
-        if material:
-            # Response to ajax request
-            res_price = Product.get_price(material=material, length=length, width=width, height=height, handles=handles,
-                                          legs=legs, groove=groove, number=number, price=float(price))
-            return HttpResponse(f'{round(res_price, 2)}')
+        # AJAX request processing
+        if tmp is not None:
+            material = int(tmp.get('material', None))
+            length = int(tmp.get('length', None))
+            width = int(tmp.get('width', None))
+            height = int(tmp.get('height', None))
+            if tmp.get('handles', False) == 'false':
+                handles = False
+            else:
+                handles = True
+            if tmp.get('legs', False) == 'false':
+                legs = False
+            else:
+                legs = True
+            if tmp.get('groove', False) == 'false':
+                groove = False
+            else:
+                groove = True
+            number = int(tmp.get('number', None))
+            price = float(tmp.get('price', '0.00'))
+
+            # Any should be able or none
+            # TODO: proper validation (including types) should be implemented
+            if material is not None:
+                # Response to ajax request
+                res_price = Product.get_price(material=material, length=length, width=width, height=height, handles=handles,
+                                              legs=legs, groove=groove, number=number, price=float(price))
+                return JsonResponse({'text': f'{round(res_price, 2)}'})
 
         formset = product_formset(request.POST)
         order_form = OrderForm(request.POST)
@@ -173,6 +186,12 @@ def order(request):
 
     elif request.method == 'GET':
         formset = product_formset(request.GET or None)
+        for form in formset:
+            form.initial['price'] = Product.get_price(material=form.fields['material'].initial, length=form.fields['length'].initial,
+                                                      width=form.fields['width'].initial, height=form.fields['height'].initial,
+                                                      handles=form.fields['handles'].initial, legs=form.fields['legs'].initial,
+                                                      groove=form.fields['groove'].initial, number=form.fields['number'].initial,
+                                                      price=0.00)
         order_form = OrderForm(request.GET or None)
         # Loading page for the first time, we've assigned initials earlier
         pass
