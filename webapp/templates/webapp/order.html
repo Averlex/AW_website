@@ -99,7 +99,6 @@
                     dataType: 'json',
                     success: function(responseData) {
                         $(e.target).closest('.form-row').find('[id*=price]').val(responseData.text)
-                        // console.log(responseData.text, typeof responseData.text);
                     },
                 });
             });
@@ -128,35 +127,46 @@
     <!--- submit -->
     <script type="text/javascript">
         $().ready(function() {
-            $('.order-details select').change( function (e) {
+            $('form').submit( function (e) {
+                e.preventDefault();
+                $(this).find('[name*="price"]').prop('disabled', false);
+                dataToSend = $(this).serialize();
+                $(this).find('[name*="price"]').prop('disabled', true);
                 $.ajax({
                     type: 'POST',
                     url: '/order/',
-                    data: {
-                        delivery_type: $(e.target).closest('.form-row').find('[name*="delivery_type"]').val(),
-                        address: $(e.target).closest('.form-row').find('[name*="address"]').val(),
-                        csrfmiddlewaretoken: '{{ csrf_token }}',
-                    },
+                    data: dataToSend,
+                    context: this,
                     dataType: 'json',
                     success: function(responseData) {
-                        $(e.target).closest('.form-row').find('[id*=delivery_price]').val(responseData.text)
+                        $(this).closest('.form-outer').prop("classList").add('visually-hidden');
+
+                        $('.message-prefix').html(responseData.message_prefix);
+                        $('.message-body').html(responseData.message_body + responseData.order_id);
+                        $('.message-suffix').html(responseData.message_suffix);
+
+                        $('.post-message').first().prop("classList").remove('visually-hidden');
                     },
                 });
             });
         });
     </script>
+    <!--- form init -->
+    <script>
+        //  $().ready(function() {
+        //     $('form').classList.remove('visually-hidden');
+        //     $('.post-message').classList.add('visually-hidden');
+        // });
+    </script>
     <!--- fields hiding -->
     <script type="text/javascript">
         $().ready(function() {
-            elemSelector = '[name*="delivery_type"]'
-
+            elemSelector = '[name*="delivery_type"]';
             function toggleFields() {
-                elements = $(elemSelector).closest('.form-row').find('.dynamic');
-                source = $(elemSelector);
-                if (source.val() === '0') {
-                    elements.slideUp();
+                if ($(elemSelector).val() === '0') {
+                    $(elemSelector).closest('.form-row').find('.dynamic').slideUp();
                 } else {
-                    elements.slideDown();
+                    $(elemSelector).closest('.form-row').find('.dynamic').slideDown();
                 }
             }
 
@@ -172,79 +182,88 @@
 {% endblock %}
 
 {% block content %}
-        <h1>Новый заказ</h1>
         <div>
-            <form method="POST" action="">
-                {% csrf_token %}
-                
-                {{ formset.management_form }}
-                <div id="formset-container">
+            <div class="form-outer">
+                <h2>Новый заказ</h1>
 
-                    <button class="btn btn-success add-form-row">+</button>
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    
+                    {{ formset.management_form }}
+                    <div id="formset-container">
 
-                    {% for form in formset %}
+                        <button class="btn btn-success add-form-row">+</button>
 
-                        <div class="row form-row spacer">
-                            <div class="col-1"></div>
-                            <div class="col-6">
-                                <div class="input-group">
-                                    <table>
-                                        {{form.as_table}}
-                                    </table>
-                                    <div class="input-group-append">
-                                        <button class="btn btn-danger remove-form-row">-</button>
+                        {% for form in formset %}
+
+                            <div class="row form-row spacer">
+                                <div class="col-1"></div>
+                                <div class="col-6">
+                                    <div class="input-group">
+                                        <table>
+                                            {{form.as_table}}
+                                        </table>
+                                        <div class="input-group-append">
+                                            <button class="btn btn-danger remove-form-row">-</button>
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="col-5"></div>
                             </div>
-                            <div class="col-5"></div>
-                        </div>
-                    {% endfor %}
-                </div>
-
-                <div class="row form-row spacer order-details">
-                    <div class="col-1"></div>
-                    <div class="col-6">
-                        <div class="input-group">
-                            <table>
-                                <div class="details-group static">
-                                    <tr>
-                                        <th>{{ order_form.description.label_tag }}</th>
-                                        <td>{{ order_form.description }}</td>
-                                    </tr>
-                                </div>
-                                <div class="details-group static">
-                                    <tr>
-                                        <th>{{ order_form.delivery_type.label_tag }}</th>
-                                        <td>{{ order_form.delivery_type }}</td>
-                                    </tr>
-                                </div>
-                                <div class="details-group dynamic" id="dynamic-order">
-                                    <tr>
-                                        <th>{{ order_form.delivery_description.label_tag }}</th>
-                                        <td>{{ order_form.delivery_description }}</td>
-                                    </tr>
-                                </div>
-                                <div class="details-group dynamic" id="dynamic-order">
-                                    <tr>
-                                        <th>{{ order_form.address.label_tag }}</th>
-                                        <td>{{ order_form.address }}</td>
-                                    </tr>
-                                </div>
-                                <div class="details-group static">
-                                    <tr>
-                                        <th>{{ order_form.delivery_price.label_tag }}</th>
-                                        <td>{{ order_form.delivery_price }}</td>
-                                    </tr>
-                                </div>
-                            </table> 
-                        </div>
+                        {% endfor %}
                     </div>
-                    <div class="col-5"></div>
-                </div>
 
-                <button type="submit">Оформить заказ</button>
+                    <div class="row form-row spacer order-details">
+                        <div class="col-1"></div>
+                        <div class="col-6">
+                            <div class="input-group">
+                                <table>
+                                    <div class="details-group static">
+                                        <tr>
+                                            <th>{{ order_form.description.label_tag }}</th>
+                                            <td>{{ order_form.description }}</td>
+                                        </tr>
+                                    </div>
+                                    <div class="details-group static">
+                                        <tr>
+                                            <th>{{ order_form.delivery_type.label_tag }}</th>
+                                            <td>{{ order_form.delivery_type }}</td>
+                                        </tr>
+                                    </div>
+                                    <div class="details-group dynamic" id="dynamic-order">
+                                        <tr>
+                                            <th>{{ order_form.delivery_description.label_tag }}</th>
+                                            <td>{{ order_form.delivery_description }}</td>
+                                        </tr>
+                                    </div>
+                                    <div class="details-group dynamic" id="dynamic-order">
+                                        <tr>
+                                            <th>{{ order_form.address.label_tag }}</th>
+                                            <td>{{ order_form.address }}</td>
+                                        </tr>
+                                    </div>
+                                    <div class="details-group static">
+                                        <tr>
+                                            <th>{{ order_form.delivery_price.label_tag }}</th>
+                                            <td>{{ order_form.delivery_price }}</td>
+                                        </tr>
+                                    </div>
+                                </table> 
+                            </div>
+                        </div>
+                        <div class="col-5"></div>
+                    </div>
 
-            </form>
+                    <button type="submit">Оформить заказ</button>
+
+                </form>
+            </div>
+
+            <div class="post-message visually-hidden">
+                <h2 class='success message-prefix'></h2>
+                <p class='success message-body'></p>
+                <p class='message-suffix'></p>
+            </div>
 
         </div>
 

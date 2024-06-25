@@ -41,12 +41,22 @@ class ProductForm(forms.Form):
     # Number of products in a given order
     number = forms.IntegerField(min_value=1, max_value=99, validators=[], label='', initial=1)
 
-    price = forms.CharField(max_length=20, widget=forms.TextInput, validators=[], label='', initial='0 ₽', disabled=True)
+    price = forms.CharField(max_length=20, widget=forms.TextInput, validators=[], label='', initial='0.00', disabled=True)
     # price = forms.DecimalField(decimal_places=2, min_value=0, widget=forms.TextInput, disabled=True, label='', validators=[])
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.submitted = False
+        self.cleaned_data = {}
+
+    # def clean_price(self):
+    #     price = float(self['price'].value())
+    #     print(price)
+    #     return price
+    #
+    # def clean(self):
+    #     self.cleaned_data = super().clean()
+    #     return self.cleaned_data
 
     # def clean_field(self): ...
 
@@ -56,17 +66,15 @@ class OrderForm(forms.Form):
     delivery_type = forms.ChoiceField(choices=Order.get_delivery_types(), label='Способ получения заказа', initial=0)
     address = forms.CharField(max_length=500, widget=forms.TextInput, label='Адрес доставки', required=False)
     delivery_description = forms.CharField(max_length=1000, widget=forms.Textarea, label='Комментарий курьеру', required=False)
-    # TODO: delivery price calculation
-    delivery_price = forms.CharField(max_length=20, widget=forms.TextInput, validators=[], label='Стоимость доставки', disabled=True, initial='0 ₽')
+    delivery_price = forms.CharField(max_length=20, widget=forms.TextInput, validators=[], label='Стоимость доставки', disabled=True, initial='0.00')
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, data=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Initial states
         self.fields['description'].widget.attrs.update({'placeholder': 'Детали заказа, которые Вам бы хотелось уточнить'})
         self.fields['address'].widget.attrs.update({'placeholder': 'Адрес, по которому необходимо доставить заказ'})
         self.submitted = False
-
-    # def clean_field(self): ...
+        self.cleaned_data = {}
 
 
 class UserUpdateForm(forms.ModelForm):

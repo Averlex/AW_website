@@ -76,7 +76,7 @@ def order(request):
         tmp = request.POST
 
         # AJAX request processing
-        if 'material' in request.POST:
+        if 'material' in request.POST and 'form-TOTAL_FORMS' not in request.POST:
             material = int(tmp.get('material', None))
             length = int(tmp.get('length', None))
             width = int(tmp.get('width', None))
@@ -106,7 +106,7 @@ def order(request):
                 return JsonResponse({'text': f'{res_price:.2f}'})
 
         # AJAX request processing
-        if 'delivery_type' in request.POST:
+        if 'delivery_type' in request.POST and 'form-TOTAL_FORMS' not in request.POST:
             delivery_type = tmp.get('delivery_type', None)
             address = tmp.get('address', None)
 
@@ -129,35 +129,33 @@ def order(request):
 
             # product_forms = formset.save(commit=False)
 
-            if order_form.is_valid():
-                order_form.submitted = True
-
-            else:
-                order_form.submitted = False
-                # TODO: handle order_form errors
-                pass
-
-            # TODO: calcualate new prices for each product if stage <= 1
+            # if order_form.is_valid():
+            #     order_form.submitted = True
+            #
+            # else:
+            #     order_form.submitted = False
+            #     # TODO: handle order_form errors
+            #     pass
 
             # TODO: redirect to success page and save all data
             # TODO: success page = stage == 4 with reset of context so the next call will be a new order
             user = request.user
             # This time with saving to DB
-            total_price = 0
+            total_price = 0.
             product_instances = []
 
-            for form in formset:
+            for indx, form in enumerate(formset):
                 # TODO: proper form save
                 product_attrs = {
-                    'material': form.cleaned_data['material'],
-                    'use_type': form.cleaned_data['use_type'],
-                    'length': form.cleaned_data['length'],
-                    'width': form.cleaned_data['width'],
-                    'height': form.cleaned_data['height'],
-                    'handles': form.cleaned_data['handles'],
-                    'legs': form.cleaned_data['legs'],
-                    'groove': form.cleaned_data['groove'],
-                    'price': float(form.cleaned_data['price'][:-2])
+                    'material': int(form.cleaned_data['material']),
+                    'use_type': int(form.cleaned_data['use_type']),
+                    'length': int(form.cleaned_data['length']),
+                    'width': int(form.cleaned_data['width']),
+                    'height': int(form.cleaned_data['height']),
+                    'handles': bool(form.cleaned_data['handles']),
+                    'legs': bool(form.cleaned_data['legs']),
+                    'groove': bool(form.cleaned_data['groove']),
+                    'price': float(request.POST.get(f'form-{indx}-price')) / float(form.cleaned_data['number'])
                 }
                 try:
                     product = Product.objects.get(**product_attrs)
@@ -165,26 +163,29 @@ def order(request):
                     product = Product(**product_attrs)
 
                 # product = item.save()
-                total_price += product.price * form.cleaned_data['number']
+                total_price += float(request.POST.get(f'form-{indx}-price'))
 
                 product.save()
                 product_instances.append(product)
 
-            delivery_type = request.POST.get('delivery_type')
+            delivery_type = int(request.POST.get('delivery_type'))
             order_attrs = {
-                'description': order_form.cleaned_data['description'],
-                'delivery_type': order_form.cleaned_data['delivery_type'],
+                'description': request.POST.get('description', ''),
+                'delivery_type': int(request.POST.get('delivery_type', 0)),
                 'user': user,
-                'delivery': None
+                'delivery': None,
+                'price': '0.00'
             }
 
             if delivery_type == 1:
-                delivery = Delivery(address=order_form.cleaned_data['address'],
-                                    description=order_form.cleaned_data['delivery_description'],
-                                    price=_DEFAULT_PRICE)
+                delivery = Delivery(address=request.POST.get('address', ''),
+                                    description=request.POST.get('delivery_description'),
+                                    price=float(request.POST.get('delivery_price')))
                 delivery.save()
-                total_price += delivery.price
                 order_attrs['delivery'] = delivery
+
+            total_price += float(request.POST.get('delivery_price'))
+            order_attrs['price'] = f'{total_price:.2f}'
 
             order_instance = Order(**order_attrs)
             order_instance.save()
@@ -193,7 +194,11 @@ def order(request):
                 product_list = ProductList(product=this_item, order=order_instance)
                 product_list.save()
 
-            return redirect('profile')
+            return JsonResponse({'order_id': str(order_instance.order_id),
+                                 'message_prefix': 'Ваш заказ успешно создан!',
+                                 'message_body': 'Номер Вашего заказа: ',
+                                 'message_suffix': 'Отследить статус заказа можно в личном кабинете.'})
+            # return redirect('profile')
         else:
             formset.submitted = False
             # TODO: handle form errors
@@ -209,6 +214,7 @@ def order(request):
                                       price=0.00)
             form.initial['price'] = f'{price:.2f}'
         order_form = OrderForm(request.GET or None)
+        order_form.initial['delivery_price'] = '0.00'
         # Loading page for the first time, we've assigned initials earlier
         pass
     return render(request, 'webapp/order.html', {'formset': formset, 'order_form': order_form})

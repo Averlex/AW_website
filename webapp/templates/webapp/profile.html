@@ -11,7 +11,7 @@
                 {{item.order.registration_date}}: {{ item.order.description }} -> {{ item.order.get_status_display }}
                 <ol>
                 {% for product in item.products %}
-                    <li><div>{{ product.product.get_material_display }}, {{ product.product.get_use_type_display }} - {{ product.product.price }} ₽</div></li>
+                    <li><div>{{ product.product.get_material_display }}, {{ product.product.get_use_type_display }} - {{ product.product.price }}</div></li>
                 {% endfor %}
                 </ol>
             </div>

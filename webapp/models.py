@@ -202,7 +202,7 @@ class Delivery(models.Model):
     delivery_id = models.CharField(max_length=_MAX_TRACK_NUM, blank=True)
 
     # Delivery address
-    address = models.CharField(max_length=_MAX_ADDRESS, default='', db_default='')
+    address = models.TextField(blank=True, max_length=_MAX_ADDRESS, default='', db_default='')
 
     # Delivery status (expanded CDEC classification)
     status = models.SmallIntegerField(default=0, blank=True, choices=_CDEC_STATUS)
