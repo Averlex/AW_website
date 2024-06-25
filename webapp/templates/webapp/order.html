@@ -3,7 +3,6 @@
 {% block title %}Оформление заказа{% endblock %}
 
 {% block head %}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!--- form add/delete -->
     <script type="text/javascript">
         function updateElementIndex(el, prefix, ndx) {
@@ -151,13 +150,6 @@
             });
         });
     </script>
-    <!--- form init -->
-    <script>
-        //  $().ready(function() {
-        //     $('form').classList.remove('visually-hidden');
-        //     $('.post-message').classList.add('visually-hidden');
-        // });
-    </script>
     <!--- fields hiding -->
     <script type="text/javascript">
         $().ready(function() {
@@ -260,8 +252,8 @@
             </div>
 
             <div class="post-message visually-hidden">
-                <h2 class='success message-prefix'></h2>
-                <p class='success message-body'></p>
+                <h2 class='message-prefix'></h2>
+                <p class='message-body'></p>
                 <p class='message-suffix'></p>
             </div>
 

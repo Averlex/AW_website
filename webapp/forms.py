@@ -13,8 +13,8 @@ class FAQForm(forms.ModelForm):
         (5, '5'),
     ]
 
-    rate = forms.ChoiceField(choices=RATING_CHOICES, widget=forms.RadioSelect, label='Оцените работу сервиса')
-    text = forms.CharField(max_length=1000, widget=forms.TextInput, label='Текст отзыва или вопрос, который вы хотели бы задать')
+    rate = forms.ChoiceField(choices=RATING_CHOICES, widget=forms.RadioSelect, label='Оцените работу сервиса', required=False)
+    text = forms.CharField(max_length=1000, widget=forms.Textarea, label='Текст отзыва или вопрос, который Вы хотели бы задать', required=False)
 
     class Meta:
         model = UserFeedback

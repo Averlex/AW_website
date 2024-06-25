@@ -6,29 +6,87 @@
 
 {% block head %}
     <link rel="stylesheet" href="{% static '/css/faq.css' %}">
+
+    <!--- submit -->
+    <script type="text/javascript">
+        $().ready(function() {
+            $('form').submit( function (e) {
+                e.preventDefault();
+                dataToSend = $(this).serialize();
+                $.ajax({
+                    type: 'POST',
+                    url: '/faq/',
+                    data: dataToSend,
+                    context: this,
+                    dataType: 'json',
+                    success: function(responseData) {
+                        $('.message-prefix').html(responseData.message_prefix);
+                        $('.message-body').html(responseData.message_body);
+                        $('.message-error').html(responseData.message_error);
+
+                        if (responseData.message_error !== '') {
+                            $(this).closest('.form-outer').prop("classList").remove('visually-hidden');
+                            $('.message-prefix').first().prop("classList").add('visually-hidden');
+                            $('.message-error').first().prop("classList").remove('visually-hidden');
+                            $('.message-body').first().prop("classList").add('visually-hidden');
+                        }
+                        else {
+                            $(this).closest('.form-outer').prop("classList").add('visually-hidden');
+                            $('.message-prefix').first().prop("classList").remove('visually-hidden');
+                            $('.message-error').first().prop("classList").add('visually-hidden');
+                            $('.message-body').first().prop("classList").remove('visually-hidden');
+                        }
+                        
+                        $('.post-message').first().prop("classList").remove('visually-hidden');
+                    },
+                });
+            });
+        });
+    </script>
 {% endblock %}
 
 {% block content %}
     <h2>FAQ</h2>
+
     <ul>
         {% for faq in faqs %}
             <li>{{ faq.question }}: {{ faq.answer }}</li>
         {% endfor %}
     </ul>
+
     <h2>Обратная связь</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.text.label_tag }}<br>
-        {{ form.text }}<br>
-        {{ form.rate.label_tag }}<br>
-        <div class="rating">
-            {% for choice in form.rate %}
-                {{ choice.tag }}
-                <label for="{{ choice.id_for_label }}">&#9733;</label>
-            {% endfor %}
+
+    <!--- Auth nav -->
+    {% if request.user.is_authenticated %}
+        <div class="form-outer">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.text.label_tag }}<br>
+                {{ form.text }}<br>
+                {{ form.rate.label_tag }}<br>
+                <div class="rating">
+                    {% for choice in form.rate %}
+                        {{ choice.tag }}
+                        <label for="{{ choice.id_for_label }}">&#9733;</label>
+                    {% endfor %}
+                </div>
+                <button type="submit">Отправить</button>
+            </form>
         </div>
-        <button type="submit">Отправить</button>
-    </form>
+
+        <div class="post-message visually-hidden">
+            <h3 class='message-prefix'></h2>
+            <h3 class="message-error visually-hidden"></h2>
+            <p class='message-body'></p>
+        </div>
+    {% else %}
+        <div class="login-required">
+            <p class='login-message'>Для отправки обратной связи, пожалуйста, авторизуйтесь</p>
+            <a href="/login/">
+                <button type="button">Войти</button>
+            </a>
+        </div>
+    {% endif %}
 
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
@@ -50,7 +108,5 @@
 {% endblock %}
 
 {% block externals %}
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
 
 {% endblock %}

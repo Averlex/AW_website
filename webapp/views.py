@@ -41,15 +41,24 @@ def faq(request):
             form = FAQForm(request.POST)
             if form.is_valid():
                 text = form.cleaned_data['text']
-                rate = form.cleaned_data['rate']
+                if 'rate' not in request.POST:
+                    rate = 0
+                else:
+                    rate = int(form.cleaned_data['rate'])
 
-                # TODO: user is unlinked to a feedback
-                feedback = UserFeedback(text=text, rate=rate, feedback_type=1, user=request.user)
-                feedback.save()
-                form.save()
+                if rate > 0 or text != '':
+                    # TODO: user is unlinked to a feedback
+                    feedback = UserFeedback(text=text, rate=rate, feedback_type=1, user=request.user)
+                    feedback.save()
+                    form.save()
+                    error_msg = ''
+                else:
+                    error_msg = 'Пожалуйста, заполните форму обратной связи для отправки.'
 
                 # TODO: change form for a success message
-                return redirect('faq')
+                return JsonResponse({'message_prefix': 'Спасибо за обратную связь!',
+                                     'message_body': 'Мы приложим все усилия, чтобы улучшить наш сервис.',
+                                     'message_error': error_msg})
         else:
             form = FAQForm()
             # TODO: login button here
