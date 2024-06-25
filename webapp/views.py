@@ -76,7 +76,7 @@ def order(request):
         tmp = request.POST
 
         # AJAX request processing
-        if tmp is not None:
+        if 'material' in request.POST:
             material = int(tmp.get('material', None))
             length = int(tmp.get('length', None))
             width = int(tmp.get('width', None))
@@ -103,6 +103,20 @@ def order(request):
                 res_price = Product.get_price(material=material, length=length, width=width, height=height, handles=handles,
                                               legs=legs, groove=groove, number=number, price=float(price))
                 return JsonResponse({'text': f'{round(res_price, 2)}'})
+
+        # AJAX request processing
+        if 'delivery_type' in request.POST:
+            delivery_type = tmp.get('delivery_type', None)
+            address = tmp.get('address', None)
+
+            # Mock for delivery price calculation
+            # TODO: remove delivery price mock
+            if delivery_type is not None:
+                if delivery_type == '1':
+                    delivery_price = '666.00'
+                else:
+                    delivery_price = '0.00'
+                return JsonResponse({'text': delivery_price})
 
         formset = product_formset(request.POST)
         order_form = OrderForm(request.POST)

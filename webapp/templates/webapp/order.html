@@ -93,12 +93,30 @@
                         number: $(e.target).closest('.form-row').find('[name*="number"]').val(),
                         price: $(e.target).closest('.form-row').find('[name*="price"]').val(),
                         csrfmiddlewaretoken: '{{ csrf_token }}',
-                        something: console.log($(e.target)),
                     },
                     dataType: 'json',
                     success: function(responseData) {
                         $(e.target).closest('.form-row').find('[id*=price]').val(responseData.text)
                         // console.log(responseData.text, typeof responseData.text);
+                    },
+                });
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $().ready(function() {
+            $('.order-details select').change( function (e) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/order/',
+                    data: {
+                        delivery_type: $(e.target).closest('.form-row').find('[name*="delivery_type"]').val(),
+                        address: $(e.target).closest('.form-row').find('[name*="address"]').val(),
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                    },
+                    dataType: 'json',
+                    success: function(responseData) {
+                        $(e.target).closest('.form-row').find('[id*=delivery_price]').val(responseData.text)
                     },
                 });
             });
@@ -155,7 +173,7 @@
                     {% endfor %}
                 </div>
 
-                <div class="row form-row spacer">
+                <div class="row form-row spacer order-details">
                     <div class="col-1"></div>
                     <div class="col-6">
                         <div class="input-group">
