@@ -236,7 +236,6 @@ def profile(request):
         return redirect('login')
 
     user = request.user
-    print(user.has_perm('webapp.all_orders_access'))
 
     if user.has_perm('webapp.all_orders_access'):
         # Stuff user -> full access
@@ -263,8 +262,6 @@ def profile(request):
 
 
 def signup_view(request):
-    # TODO: set group by default
-
     # Redirect to profile page if the user is already authenticated
     if request.user.is_authenticated:
         return redirect('profile')
