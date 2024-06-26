@@ -5,7 +5,7 @@
 {% block title %}FAQ{% endblock %}
 
 {% block head %}
-    <link rel="stylesheet" href="{% static '/css/faq.css' %}">
+    <link rel="stylesheet" href="{% static '/css/about.css' %}">
 
     <!--- submit -->
     <script type="text/javascript">
@@ -15,7 +15,7 @@
                 dataToSend = $(this).serialize();
                 $.ajax({
                     type: 'POST',
-                    url: '/faq/',
+                    url: '/about/',
                     data: dataToSend,
                     context: this,
                     dataType: 'json',
