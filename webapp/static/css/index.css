@@ -15,3 +15,7 @@ html {
 main {
   margin-bottom: 5%; /* Margin bottom by footer height */
 }
+
+body {
+  margin-bottom: 5%;
+}

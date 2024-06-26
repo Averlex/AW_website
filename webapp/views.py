@@ -6,6 +6,7 @@ from django.forms import formset_factory
 from django.http import JsonResponse
 
 from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.models import Group
 import random
 import time
 
@@ -273,6 +274,13 @@ def signup_view(request):
             user = User(username=save_form.username, password=save_form.password, name=save_form.name,
                         email=save_form.email, phone=save_form.phone)
             user.save()
+
+            # Managing groups on sign up
+            user_group = user.get_user_group(getattr(user, 'user_group'))
+            group = Group.objects.get(name=user_group)
+            group.user_set.add(user)
+            group.save()
+            user.groups.add(group)
 
             form.success = True
             login(request, user)
