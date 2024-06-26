@@ -61,16 +61,21 @@ def create_groups_and_permissions(sender, **kwargs):
 
         # TODO: change it some day
         try:
+            # Su
             superuser = User.objects.get(username='super')
-            superuser.is_staff = True
-            superuser.is_admin = True
-            superuser.is_active = True
-            admin_group = Group.objects.get(name='Администратор')
-            superuser.groups.add(admin_group)
-            admin_group.user_set.add(superuser)
+
         except User.DoesNotExist as err:
             superuser = User.objects.create_superuser(
                 username="super", password="test", email="super@test.com", phone='00000000000'
             )
+        superuser.is_staff = True
+        superuser.is_admin = True
+        superuser.is_active = True
+        superuser.is_superuser = True
+        admin_group = Group.objects.get(name='Администратор')
+        superuser.groups.add(admin_group)
+        superuser.groups.remove(Group.objects.get(name='Довольный клиент'))
+        admin_group.user_set.add(superuser)
+        Group.objects.get(name='Довольный клиент').user_set.remove(superuser)
         superuser.user_permissions.add(permission)
         superuser.save()

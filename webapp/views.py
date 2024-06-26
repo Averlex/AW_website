@@ -235,14 +235,21 @@ def profile(request):
     if not request.user.is_authenticated:
         return redirect('login')
 
-    # Ensure request.user is a User instance
     user = request.user
-    user_orders = Order.objects.filter(user=user)
+    print(user.has_perm('webapp.all_orders_access'))
+
+    if user.has_perm('webapp.all_orders_access'):
+        # Stuff user -> full access
+        user_orders = Order.objects.all()
+    else:
+        # Common user -> order history
+        user_orders = Order.objects.filter(user=user)
+
     user_products = []
-    for order in user_orders:
+    for order_instance in user_orders:
         user_products.append({
-            'order': order,
-            'products': ProductList.objects.filter(order=order).select_related('product')
+            'order': order_instance,
+            'products': ProductList.objects.filter(order=order_instance).select_related('product')
         })
 
     if request.method == 'POST':

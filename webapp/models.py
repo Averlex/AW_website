@@ -124,7 +124,7 @@ class User(AbstractUser):
         return self._USER_GROUP[num]
 
     def __str__(self):
-        return self.last_name.__str__() + " " + self.name.__str__() + " " + self.second_name.__str__()
+        return self.username
 
 
 class Order(models.Model):
