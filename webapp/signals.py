@@ -2,14 +2,19 @@ from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
-from .models import User
+from .models import User, Order
 
 
 @receiver(post_migrate)
 def create_groups_and_permissions(sender, **kwargs):
     # TODO: remove this option on migrage probably? Wrap in a separate command
     if sender.name == 'webapp':  # Ensure this only runs for your app
-        # content_types = ContentType.objects.all()
+        content_types = ContentType.objects.get_for_model(Order)
+        permission, _ = Permission.objects.get_or_create(
+            codename='webapp.all_orders_access',
+            name='Has an access to all orders (including order editor',
+            content_type=content_types
+        )
         groups_permissions = {
             'Администратор': {
                 'permissions': Permission.objects.all(),
@@ -19,16 +24,16 @@ def create_groups_and_permissions(sender, **kwargs):
             },
             'Сотрудник мастерской': {
                 'permissions': [
-                    # 'view_user',
-                    # More permissions here
+                    # Only one needed to watch and manage orders
+                    permission,
                 ],
                 'is_superuser': False,
-                'is_staff': True,
+                'is_staff': False,
                 'match': 1,
             },
             'Довольный клиент': {
                 'permissions': [
-                    # More permissions here
+                    # Not needed here
                 ],
                 'is_superuser': False,
                 'is_staff': False,
@@ -48,4 +53,24 @@ def create_groups_and_permissions(sender, **kwargs):
                 user.groups.add(group)
                 user.save()
 
+                group = Group.objects.get(name=group_name)
+                group.user_set.add(user)
+                group.save()
+
                 print(f'Successfully assigned permissions to {user.username}')
+
+        # TODO: change it some day
+        try:
+            superuser = User.objects.get(username='super')
+            superuser.is_staff = True
+            superuser.is_admin = True
+            superuser.is_active = True
+            admin_group = Group.objects.get(name='Администратор')
+            superuser.groups.add(admin_group)
+            admin_group.user_set.add(superuser)
+        except User.DoesNotExist as err:
+            superuser = User.objects.create_superuser(
+                username="super", password="test", email="super@test.com", phone='00000000000'
+            )
+        superuser.user_permissions.add(permission)
+        superuser.save()

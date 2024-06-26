@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 from django.utils.timezone import now
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group
 
 _MAX_NAME = 50
 _MAX_PHONE = 20
@@ -183,6 +183,11 @@ class Order(models.Model):
     def get_status():
         return Order._ORDER_STATUS
 
+    class Meta:
+        permissions = [
+            ('webapp.all_orders_access', 'Has an access to all orders (including order editor')
+        ]
+
 
 class Delivery(models.Model):
     """
@@ -261,7 +266,7 @@ class Product(models.Model):
     price = models.FloatField(default=0, db_default=0)
 
     def __str__(self):
-        return self._USE_TYPE[self.use_type.__str__()] + ", " + self._MATERIAL[self.material.__str__()]
+        return self._USE_TYPE[int(self.use_type.__str__())] + ", " + self._MATERIAL[int(self.material.__str__())]
 
     @staticmethod
     def get_materials():
