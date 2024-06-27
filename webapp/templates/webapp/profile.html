@@ -118,8 +118,8 @@
                             aria-controls="order{{ forloop.counter }}"
                             class="accordion-title accordionTitle js-accordionTrigger">
                             <div class="d-flex flex-row">
-                                <div class="col-1 caption">{{ forloop.counter }}. </div>
-                                <div class="col-4 caption">{{ item.order.order_id }} </div>
+                                <div class="col-1 caption">{{ forloop.counter }}.</div>
+                                <div class="col-4 caption">{{ item.order.order_id }}</div>
                                 <div class="col-2 caption">от {{ item.order.registration_date }}</div>
                                 <div class="col-2 caption">{{ item.order.get_status_display }}</div>
                                 <div class="col-2 caption">{{ item.order.price }} ₽</div>
@@ -130,27 +130,63 @@
                         aria-hidden="true">
                         <div class="main">
                             <span id="sub-title">
-                                <p><b>Детали заказа</b></p>
+                                <p><b>Детали заказа {{ item.order.order_id }}</b></p>
                             </span>
-                            {% for product in item.products %}
-                            <div class="row row-main">
-                                <div class="col-1 caption">
-                                    <p><b>{{ forloop.counter }}. </b></p>
-                                </div>
-                                <div class="col-2 caption">
-                                    <p><b>{{ product.product.get_use_type_display }}</b></p>
-                                </div>
-                                <div class="col-2 caption">
-                                    <p class="text-muted">{{ product.product.get_material_display }}</p>
-                                </div>
-                                <div class="col-1 caption">
-                                    <p class="text-muted">{{ product.number }} шт.</p>
-                                </div>
-                                <div class="col-1 caption">
-                                    <p><b>{{ product.product.price }} ₽/шт.</b></p>
-                                </div>
-                            </div>
-                            {% endfor %}
+                            <table class="table table-hover">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Тип предмета</th>
+                                    <th scope="col">Материал</th>
+                                    <th scope="col">Размеры</th>
+                                    <th scope="col">Ручки</th>
+                                    <th scope="col">Ножки</th>
+                                    <th scope="col">Дренажный канал</th>
+                                    <th scope="col">Количество</th>
+                                    <th scope="col">Цена (за шт.)</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {% for product in item.products %}
+                                  <tr>
+                                    <th scope="row">{{ forloop.counter }}</th>
+                                    <td>{{ product.product.get_use_type_display }}</td>
+                                    <td class="text-muted">{{ product.product.get_material_display }}</td>
+                                    <td class="text-muted">{{ product.product.length }} мм × {{ product.product.width }} мм × {{ product.product.height }} мм</td>
+                                    {% if product.product.handles %}
+                                        <td class="text-muted"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked disabled></td>
+                                    {% else %}
+                                        <td class="text-muted"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" disabled></td>
+                                    {% endif %}
+                                    {% if product.product.legs %}
+                                        <td class="text-muted"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked disabled></td>
+                                    {% else %}
+                                        <td class="text-muted"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" disabled></td>
+                                    {% endif %}
+                                    {% if product.product.groove %}
+                                        <td class="text-muted"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked disabled></td>
+                                    {% else %}
+                                        <td class="text-muted"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" disabled></td>
+                                    {% endif %}
+                                    <td class="text-muted">{{ product.number }} шт.</td>
+                                    <td><b>{{ product.product.price }} ₽</b></td>
+                                  </tr>
+                                  {% endfor %}
+                                  {% if item.order.delivery %}
+                                  <tr>
+                                    <th scope="row"></th>
+                                    <td>Доставка</td>
+                                    <td class="text-muted"></td>
+                                    <td class="text-muted"></td>
+                                    <td class="text-muted"></td>
+                                    <td class="text-muted"></td>
+                                    <td class="text-muted"></td>
+                                    <td class="text-muted">1 шт.</td>
+                                    <td><b>{{ item.order.delivery.price }} ₽</b></td>
+                                  </tr>
+                                  {% endif %}
+                                </tbody>
+                              </table>
                             <hr> 
                             <div class="total">
                                 <!--

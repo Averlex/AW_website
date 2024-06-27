@@ -33,7 +33,7 @@ class ProductForm(forms.Form):
 
     handles = forms.BooleanField(widget=forms.CheckboxInput, label='Ручки', initial=True, required=False)
     legs = forms.BooleanField(widget=forms.CheckboxInput, label='Ножки', initial=False, required=False)
-    groove = forms.BooleanField(widget=forms.CheckboxInput, label='Канавка', initial=False, required=False)
+    groove = forms.BooleanField(widget=forms.CheckboxInput, label='Дренажный канал', initial=False, required=False)
 
     # Number of products in a given order
     number = forms.IntegerField(min_value=1, max_value=99, validators=[], label='', initial=1)
