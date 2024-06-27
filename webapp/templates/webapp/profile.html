@@ -104,9 +104,10 @@
     <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
         <div class="container">
             <h2 class="heading-primary">История заказов</h2>
-            {% if order.length == 0 %}
-            <span id="sub-title">
-                <p><b>Ваша история заказов отсутствует :(</b></p>
+            {% if not orders %}
+            <span id="sub-title text-center">
+                <p class="text-muted text-center"><strong>Ваша история заказов отсутствует :(</strong></p>
+                <p class="text-muted text-center"><strong><a href="{% url 'order' %}" class="text-body-secondary" style="text-decoration: none;">Оформите заказ</a></strong> и начните свою историю прямо сейчас!</p>
             </span>
             {% else %}
             <div class="accordion">
@@ -152,6 +153,11 @@
                             {% endfor %}
                             <hr> 
                             <div class="total">
+                                <!--
+                                    Список: включить доп пунктом доставку, если была
+                                    Итоги: сумма штук, общая сумма
+                                    Поправить выравнивание
+                                -->
                                 <div class="d-flex flex-row">
                                     <div class="col-1 caption"></div>
                                     <div class="col-4 caption"><b>Общая стоимость:</b></div>
