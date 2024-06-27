@@ -13,7 +13,7 @@
     });
 </script>
 <script>
-    $().ready ((function () {
+    $().ready((function () {
         var d = document,
             accordionToggles = d.querySelectorAll('.js-accordionTrigger'),
             setAria,
@@ -80,7 +80,7 @@
 {% endblock %}
 
 {% block content %}
-<ul class="nav nav-tabs" id="tabs" role="tablist">
+<ul class="nav nav-tabs py-3" id="tabs" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button"
             role="tab" aria-controls="profile" aria-selected="true">Профиль</button>
@@ -107,7 +107,9 @@
             {% if not orders %}
             <span id="sub-title text-center">
                 <p class="text-muted text-center"><strong>Ваша история заказов отсутствует :(</strong></p>
-                <p class="text-muted text-center"><strong><a href="{% url 'order' %}" class="text-body-secondary" style="text-decoration: none;">Оформите заказ</a></strong> и начните свою историю прямо сейчас!</p>
+                <p class="text-muted text-center"><strong><a href="{% url 'order' %}" class="text-body-secondary"
+                            style="text-decoration: none;">Оформите заказ</a></strong> и начните свою историю прямо
+                    сейчас!</p>
             </span>
             {% else %}
             <div class="accordion">
@@ -126,82 +128,187 @@
                             </div>
                         </a>
                     </dt>
-                    <dd class="accordion-content accordionItem is-collapsed" id="order{{ forloop.counter }}"
-                        aria-hidden="true">
-                        <div class="main">
-                            <span id="sub-title">
-                                <p><b>Детали заказа {{ item.order.order_id }}</b></p>
-                            </span>
-                            <table class="table table-hover">
-                                <thead>
-                                  <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Тип предмета</th>
-                                    <th scope="col">Материал</th>
-                                    <th scope="col">Размеры</th>
-                                    <th scope="col">Ручки</th>
-                                    <th scope="col">Ножки</th>
-                                    <th scope="col">Дренажный канал</th>
-                                    <th scope="col">Количество</th>
-                                    <th scope="col">Цена (за шт.)</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {% for product in item.products %}
-                                  <tr>
-                                    <th scope="row">{{ forloop.counter }}</th>
-                                    <td>{{ product.product.get_use_type_display }}</td>
-                                    <td class="text-muted">{{ product.product.get_material_display }}</td>
-                                    <td class="text-muted">{{ product.product.length }} мм × {{ product.product.width }} мм × {{ product.product.height }} мм</td>
-                                    {% if product.product.handles %}
-                                        <td class="text-muted"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked disabled></td>
+                    <dd class="accordionItem is-collapsed container" id="order{{ forloop.counter }}" aria-hidden="true">
+                        <div class="main accordionContent container">
+                            <div class="mt-4 py-1 container">
+                                <h5>Детали заказа {{ item.order.order_id }}</h5>
+                            </div>
+                            
+                            <div class="tracker container">
+                                <hr>
+                                <span id="sub-title">
+                                    <p><b>Статус заказа</b></p>
+                                </span>
+                                <div class="track">
+                                    <div class="step active"> <span class="icon"> <i class="fa-solid fa-clipboard"></i> </span> <span class="text">Новый заказ</span> </div>
+                                    {% if item.order.status >= 1 %}
+                                        <div class="step active"> <span class="icon"> <i class="fa fa-user"></i> </span> <span class="text">На уточнении</span> </div>
                                     {% else %}
-                                        <td class="text-muted"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" disabled></td>
+                                        <div class="step"> <span class="icon"> <i class="fa fa-user"></i> </span> <span class="text">На уточнении</span> </div>
                                     {% endif %}
-                                    {% if product.product.legs %}
-                                        <td class="text-muted"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked disabled></td>
+                                    {% if item.order.status >= 2 %}
+                                        <div class="step active"> <span class="icon"> <i class="far fa-credit-card"></i> </span> <span class="text">Ожидает оплаты</span> </div>
                                     {% else %}
-                                        <td class="text-muted"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" disabled></td>
+                                        <div class="step"> <span class="icon"> <i class="far fa-credit-card"></i> </span> <span class="text">Ожидает оплаты</span> </div>
                                     {% endif %}
-                                    {% if product.product.groove %}
-                                        <td class="text-muted"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked disabled></td>
+                                    {% if item.order.status >= 3 %}
+                                        <div class="step active"> <span class="icon"> <i class="fas fa-tools"></i> </span> <span class="text">В работе</span> </div>
                                     {% else %}
-                                        <td class="text-muted"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" disabled></td>
+                                        <div class="step"> <span class="icon"> <i class="fas fa-tools"></i> </span> <span class="text">В работе</span> </div>
                                     {% endif %}
-                                    <td class="text-muted">{{ product.number }} шт.</td>
-                                    <td><b>{{ product.product.price }} ₽</b></td>
-                                  </tr>
-                                  {% endfor %}
-                                  {% if item.order.delivery %}
-                                  <tr>
-                                    <th scope="row"></th>
-                                    <td>Доставка</td>
-                                    <td class="text-muted"></td>
-                                    <td class="text-muted"></td>
-                                    <td class="text-muted"></td>
-                                    <td class="text-muted"></td>
-                                    <td class="text-muted"></td>
-                                    <td class="text-muted">1 шт.</td>
-                                    <td><b>{{ item.order.delivery.price }} ₽</b></td>
-                                  </tr>
-                                  {% endif %}
-                                </tbody>
-                              </table>
-                            <hr> 
-                            <div class="total">
-                                <!--
-                                    Список: включить доп пунктом доставку, если была
-                                    Итоги: сумма штук, общая сумма
-                                    Поправить выравнивание
-                                -->
-                                <div class="d-flex flex-row">
-                                    <div class="col-1 caption"></div>
-                                    <div class="col-4 caption"><b>Общая стоимость:</b></div>
-                                    <div class="col-2 caption"></div>
-                                    <div class="col-2 caption"></div>
-                                    <div class="col-2 caption">{<b>{ item.order.price }} ₽</b></div>
+                                    {% if item.order.status >= 4 %}
+                                        <div class="step active"> <span class="icon"> <i class="fa fa-box"></i> </span> <span class="text">Передается в доставку</span> </div>
+                                    {% else %}
+                                        <div class="step"> <span class="icon"> <i class="fa fa-box"></i> </span> <span class="text">Передается в доставку</span> </div>
+                                    {% endif %}
+                                    {% if item.order.status >= 5 %}
+                                        <div class="step active"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text">В доставке</span> </div>
+                                    {% else %}
+                                        <div class="step"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text">В доставке</span> </div>
+                                    {% endif %}
+                                    {% if item.order.status >= 6 %}
+                                        <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">Завершен</span> </div>
+                                    {% else %}
+                                        <div class="step"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">Завершен</span> </div>
+                                    {% endif %}
                                 </div>
                             </div>
+                            
+                            <div class="products container">
+                                <hr>
+                                <span id="sub-title">
+                                    <p><b>Состав заказа</b></p>
+                                </span>
+                                <table class="table table-hover bg-primary">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Тип предмета</th>
+                                            <th scope="col">Материал</th>
+                                            <th scope="col">Размеры</th>
+                                            <th scope="col">Ручки</th>
+                                            <th scope="col">Ножки</th>
+                                            <th scope="col">Дренажный канал</th>
+                                            <th scope="col">Количество</th>
+                                            <th scope="col">Цена (за шт.)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for product in item.products %}
+                                        <tr>
+                                            <th scope="row">{{ forloop.counter }}</th>
+                                            <td>{{ product.product.get_use_type_display }}</td>
+                                            <td class="text-muted">{{ product.product.get_material_display }}</td>
+                                            <td class="text-muted">{{ product.product.length }} мм × {{product.product.width }} мм × {{ product.product.height }} мм</td>
+                                            {% if product.product.handles %}
+                                            <td class="text-muted"><input class="form-check-input" type="checkbox" value=""
+                                                    id="flexCheckDefault" checked disabled></td>
+                                            {% else %}
+                                            <td class="text-muted"><input class="form-check-input" type="checkbox" value=""
+                                                    id="flexCheckDefault" disabled></td>
+                                            {% endif %}
+                                            {% if product.product.legs %}
+                                            <td class="text-muted"><input class="form-check-input" type="checkbox" value=""
+                                                    id="flexCheckDefault" checked disabled></td>
+                                            {% else %}
+                                            <td class="text-muted"><input class="form-check-input" type="checkbox" value=""
+                                                    id="flexCheckDefault" disabled></td>
+                                            {% endif %}
+                                            {% if product.product.groove %}
+                                            <td class="text-muted"><input class="form-check-input" type="checkbox" value=""
+                                                    id="flexCheckDefault" checked disabled></td>
+                                            {% else %}
+                                            <td class="text-muted"><input class="form-check-input" type="checkbox" value=""
+                                                    id="flexCheckDefault" disabled></td>
+                                            {% endif %}
+                                            <td class="text-muted">{{ product.number }} шт.</td>
+                                            <td><b>{{ product.product.price }} ₽</b></td>
+                                        </tr>
+                                        {% endfor %}
+                                        {% if item.order.delivery %}
+                                        <tr>
+                                            <th scope="row"></th>
+                                            <td>Доставка</td>
+                                            <td class="text-muted"></td>
+                                            <td class="text-muted"></td>
+                                            <td class="text-muted"></td>
+                                            <td class="text-muted"></td>
+                                            <td class="text-muted"></td>
+                                            <td class="text-muted">1 шт.</td>
+                                            <td><b>{{ item.order.delivery.price }} ₽</b></td>
+                                        </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="delivery-details container">
+                                {% if item.order.delivery %}
+                                <hr>
+                                <span id="sub-title">
+                                    <p><b>Детали доставки</b></p>
+                                </span>
+                                <div class="row">
+                                    <span id="col">
+                                        <p><b>Трек-номер:</b></p>
+                                    </span>
+                                    {% if item.order.delivery.delivery_id %}
+                                        <span class="col-9"><p>{{ item.order.delivery.delivery_id }}</p></span>
+                                    {% else %}
+                                        <span class="col-9"><p>Трек-номер отсутствует</p></span>
+                                    {% endif %}
+                                </div>
+                                <div class="row">
+                                    <span id="col">
+                                        <p><b>Адрес:</b></p>
+                                    </span>
+                                    {% if item.order.delivery.aspanress %}
+                                        <span class="col-9"><p>{{ item.order.delivery.aspanress }}</p></span>
+                                    {% else %}
+                                        <span class="col-9"><p>Адрес доставки отсутствует</p></span>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="row">
+                                    <span id="col">
+                                        <p><b>Статус:</b></p>
+                                    </span>
+                                    {% if item.order.delivery.delivery_id %}
+                                        <span class="col-9"><p>{{ item.order.delivery.get_status_display }}</p></span>
+                                    {% else %}
+                                        <span class="col-9"><p>Заказ еще не передан в доставку</p></span>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="row">
+                                    <span id="col">
+                                        <p><b>Комментарий курьеру:</b></p>
+                                    </span>
+                                    {% if item.order.delivery.description %}
+                                        <span class="col-9"><p>{{ item.order.delivery.description }}</p></span>
+                                    {% else %}
+                                        <span class="col-9"><p>Заказ еще не передан в доставку</p></span>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                            </div>
+                            
+                            <div class="summary container">
+                                <hr>
+                                <div class="total">
+                                    <div class="d-flex flex-row py-1 justify-content-between">
+                                        <span class="justify-content-start">
+                                            <p><b>Общая стоимость:</b></p>
+                                        </span>
+                                        <span class="col-6"></span>
+                                        <span class="justify-content-start">
+                                            <p><b>{{ item.order.price }} ₽</b></p>
+                                        </span>
+                                        <span class="col-1"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            
                         </div>
                     </dd>
                     {% endfor %}

@@ -1,106 +1,6 @@
-/* body {
-    min-height: 100vh;
-    vertical-align: middle;
-    display: flex;
-    font-size: 14px
-} */
-
-.card {
-    margin: auto;
-    width: 320px;
-    max-width: 600px;
-    border-radius: 20px
-}
-
-.mt-50{
-    margin-top:50px;
-}
-
-.mb-50{
-    margin-bottom:50px;
-}
-
-@media(max-width:767px) {
-    .card {
-        width: 80%
-    }
-}
-
-@media(height:1366px) {
-    .card {
-        width: 75%
-    }
-}
-
-#orderno {
-    padding: 1vh 2vh 0;
-    font-size: smaller
-}
-
-.gap .col-2 {
-    width: 1.2rem;
-    padding: 1.2rem;
-    margin-top: -2.5rem;
-    border-radius: 1.2rem
-}
-
-.title {
-    display: flex;
-    text-align: center;
-    font-size: 2rem;
-    font-weight: bold;
-    padding: 12%
-}
-
-.main {
-    padding: 0 2rem
-}
-
-.main img {
-    border-radius: 7px
-}
-
-.main p {
-    margin-bottom: 0;
-    font-size: 0.75rem
-}
-
-#sub-title p {
-    margin: 1vh 0 2vh 0;
-    font-size: 1rem
-}
-
-.row-main {
-    padding: 1.5vh 0;
-    align-items: center
-}
-
-hr {
-    margin: 1rem -1vh;
-    border-top: 1px solid
-}
-
-.total {
-    font-size: 1rem;
-    padding: 2em;
-}
-
-@media(height: 1366px) {
-    .main p {
-        margin-bottom: 0;
-        font-size: 1.2rem
-    }
-
-    .total {
-        font-size: 1.5rem
-    }
-}
-
-
 * {
   box-sizing:border-box;
 }
-@import url(https://fonts.googleapis.com/css?family=Lato:400,700);
 /* body { 
   font-family:'Lato';
 } */
@@ -111,20 +11,20 @@ hr {
 }
 .accordion dl,
 .accordion-list {
-   border:1px solid #2A3B4C;
+   border:1px solid #212529;
    &:after {
        content: "";
        display:block;
-       height:1em;
+       height:0.5em;
        width:100%;
-       background-color:darken(#E0E0E0, 10%);
+       background-color:darken(#D3D3D3, 10%);
      }
 }
 .accordion dd,
 .accordion__panel {
-   background-color:#2A3B4C;
+   background-color:#212529;
    font-size:1em;
-   line-height:1.5em; 
+   line-height:1.5em;
 }
 .accordion p {
   padding:1em 2em 1em 2em;
@@ -132,22 +32,20 @@ hr {
 
 .accordion {
     position:relative;
-    background-color:#2A3B4C;
+    background-color:#212529;
 }
-.container {
-  padding:2em 0 2em 0;
-}
+
 .accordionTitle,
 .accordion__Heading {
- background-color:#E0E0E0; 
+ background-color:#D3D3D3; 
    text-align:center;
      font-weight:700; 
           padding:2em;
           display:block;
           text-decoration:none;
-          color:#2A3B4C;
+          color:#212529;
           transition:background-color 0.5s ease-in-out;
-  border-bottom:1px solid darken(#E0E0E0, 5%);
+  border-bottom:1px solid darken(#D3D3D3, 5%);
   &:before {
    content: "+";
    font-size:1.5em;
@@ -156,12 +54,12 @@ hr {
    transition: transform 0.3s ease-in-out;
   }
   &:hover {
-    background-color:darken(#E0E0E0, 10%);
+    background-color:darken(#D3D3D3, 10%);
   }
 }
 .accordionTitleActive, 
 .accordionTitle.is-expanded {
-   background-color:darken(#E0E0E0, 10%);
+   background-color:darken(#D3D3D3, 10%);
     &:before {
      
       transform:rotate(-225deg);
@@ -171,25 +69,27 @@ hr {
     height:auto;
     overflow:hidden; 
     
-     max-height:50em;
-    transition:max-height 1s;   
+    max-height:1000em;
+    transition:max-height 15s;   
  
     
     @media screen and (min-width:48em) {
-         max-height:15em;
-        transition:max-height 0.5s
-        
-    }
-    
-   
+        max-height:500em;
+        transition:max-height 7.5s  
+    }  
 }
+
+/* .accordionContent {
+    height: auto !important;
+    max-height: 100em !important;
+} */
  
 .accordionItem.is-collapsed {
     max-height:0;
 }
 .no-js .accordionItem.is-collapsed {
   max-height: auto;
-}
+} */
 .animateIn {
      animation: accordionIn 0.45s normal ease-in-out both 1; 
 }
@@ -217,4 +117,67 @@ hr {
           opacity:0;
            transform:scale(0.9) rotateX(-60deg);
        }
+}
+
+.track {
+    position: relative;
+    background-color: #ddd;
+    height: 7px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    margin-bottom: 60px;
+    margin-top: 50px
+}
+
+.track .step {
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    width: 25%;
+    margin-top: -18px;
+    text-align: center;
+    position: relative
+}
+
+.track .step.active:before {
+    background: #6520ff
+}
+
+.track .step::before {
+    height: 7px;
+    position: absolute;
+    content: "";
+    width: 100%;
+    left: 0;
+    top: 18px
+}
+
+.track .step .icon {
+    background: #ddd;
+    color: #191a1f
+}
+
+.track .step.active .icon {
+    background: #6520ff;
+    color: #fff
+}
+
+.track .icon {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    position: relative;
+    border-radius: 100%;
+    background: #ddd
+}
+
+.track .step.active .text {
+    font-weight: 400;
+}
+
+.track .text {
+    display: block;
+    margin-top: 7px
 }

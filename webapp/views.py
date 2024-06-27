@@ -202,6 +202,8 @@ def order(request):
             order_instance = Order(**order_attrs)
             order_instance.save()
 
+            print(numbers)
+
             for indx, this_item in enumerate(product_instances):
                 product_list = ProductList(product=this_item, order=order_instance, number=numbers[indx])
                 product_list.save()
