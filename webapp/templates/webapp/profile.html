@@ -1,54 +1,175 @@
 {% extends './base.html' %}
+{% load static %}
 
 {% block title %}Личный кабинет{% endblock %}
 
 {% block head %}
 <script>
-    $().ready( function () {
+    $().ready(function () {
         $('.nav-tabs').find('button').on('click', function (e) {
             e.preventDefault();
             $($(this).attr('data-bs-target')).tab('show');
         });
     });
 </script>
+<script>
+    $().ready ((function () {
+        var d = document,
+            accordionToggles = d.querySelectorAll('.js-accordionTrigger'),
+            setAria,
+            setAccordionAria,
+            switchAccordion,
+            touchSupported = ('ontouchstart' in window),
+            pointerSupported = ('pointerdown' in window);
+
+        skipClickDelay = function (e) {
+            e.preventDefault();
+            e.target.click();
+        }
+
+        setAriaAttr = function (el, ariaType, newProperty) {
+            el.setAttribute(ariaType, newProperty);
+        };
+
+        setAccordionAria = function (el1, el2, expanded) {
+            switch (expanded) {
+                case "true":
+                    setAriaAttr(el1, 'aria-expanded', 'true');
+                    setAriaAttr(el2, 'aria-hidden', 'false');
+                    break;
+                case "false":
+                    setAriaAttr(el1, 'aria-expanded', 'false');
+                    setAriaAttr(el2, 'aria-hidden', 'true');
+                    break;
+                default:
+                    break;
+            }
+        };
+
+        //function
+        switchAccordion = function (e) {
+            e.preventDefault();
+            var thisAnswer = e.target.parentNode.nextElementSibling;
+            var thisQuestion = e.target;
+            if (thisAnswer.classList.contains('is-collapsed')) {
+                setAccordionAria(thisQuestion, thisAnswer, 'true');
+            } else {
+                setAccordionAria(thisQuestion, thisAnswer, 'false');
+            }
+            thisQuestion.classList.toggle('is-collapsed');
+            thisQuestion.classList.toggle('is-expanded');
+            thisAnswer.classList.toggle('is-collapsed');
+            thisAnswer.classList.toggle('is-expanded');
+
+            thisAnswer.classList.toggle('animateIn');
+        };
+
+        for (var i = 0, len = accordionToggles.length; i < len; i++) {
+            if (touchSupported) {
+                accordionToggles[i].addEventListener('touchstart', skipClickDelay, false);
+            }
+            if (pointerSupported) {
+                accordionToggles[i].addEventListener('pointerdown', skipClickDelay, false);
+            }
+            accordionToggles[i].addEventListener('click', switchAccordion, false);
+        }
+    }));
+</script>
+
+<link rel="stylesheet" href="{% static '/css/profile.css' %}">
 {% endblock %}
 
 {% block content %}
-    <ul class="nav nav-tabs" id="tabs" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Профиль</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab" aria-controls="orders" aria-selected="false">Заказы</button>
-        </li>
-    </ul>
-    <div class="tab-content" id="tabsContent">
-        <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-            <h2>Обновить данные профиля</h2>
-            <form method="POST">
-                {% csrf_token %}
-                <table>
-                    {{ form.as_table }}
-                </table>
-                <button type="submit">Обновить</button>
-            </form>
-        </div>
-        <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
-            <h2>История заказов</h2>
-            <div>
-                {% for item in orders %}
-                    <div>
-                        {{item.order.registration_date}}: {{ item.order.description }} -> {{ item.order.get_status_display }}
-                        <ol>
-                        {% for product in item.products %}
-                            <li><div>{{ product.product.get_material_display }}, {{ product.product.get_use_type_display }} - {{ product.product.price }}</div></li>
-                        {% endfor %}
-                        </ol>
-                    </div>
-                {% endfor %}
+<ul class="nav nav-tabs" id="tabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button"
+            role="tab" aria-controls="profile" aria-selected="true">Профиль</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab"
+            aria-controls="orders" aria-selected="false">Заказы</button>
+    </li>
+</ul>
+<div class="tab-content" id="tabsContent">
+    <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        <h2>Обновить данные профиля</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <table>
+                {{ form.as_table }}
+            </table>
+            <button type="submit">Обновить</button>
+        </form>
+    </div>
+    <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+        <div class="container">
+            <h2 class="heading-primary">История заказов</h2>
+            {% if order.length == 0 %}
+            <span id="sub-title">
+                <p><b>Ваша история заказов отсутствует :(</b></p>
+            </span>
+            {% else %}
+            <div class="accordion">
+                <dl>
+                    {% for item in orders %}
+                    <dt>
+                        <a href="#order{{ forloop.counter }}" aria-expanded="false"
+                            aria-controls="order{{ forloop.counter }}"
+                            class="accordion-title accordionTitle js-accordionTrigger">
+                            <div class="d-flex flex-row">
+                                <div class="col-1 caption">{{ forloop.counter }}. </div>
+                                <div class="col-4 caption">{{ item.order.order_id }} </div>
+                                <div class="col-2 caption">от {{ item.order.registration_date }}</div>
+                                <div class="col-2 caption">{{ item.order.get_status_display }}</div>
+                                <div class="col-2 caption">{{ item.order.price }} ₽</div>
+                            </div>
+                        </a>
+                    </dt>
+                    <dd class="accordion-content accordionItem is-collapsed" id="order{{ forloop.counter }}"
+                        aria-hidden="true">
+                        <div class="main">
+                            <span id="sub-title">
+                                <p><b>Детали заказа</b></p>
+                            </span>
+                            {% for product in item.products %}
+                            <div class="row row-main">
+                                <div class="col-1 caption">
+                                    <p><b>{{ forloop.counter }}. </b></p>
+                                </div>
+                                <div class="col-2 caption">
+                                    <p><b>{{ product.product.get_use_type_display }}</b></p>
+                                </div>
+                                <div class="col-2 caption">
+                                    <p class="text-muted">{{ product.product.get_material_display }}</p>
+                                </div>
+                                <div class="col-1 caption">
+                                    <p class="text-muted">{{ product.number }} шт.</p>
+                                </div>
+                                <div class="col-1 caption">
+                                    <p><b>{{ product.product.price }} ₽/шт.</b></p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            <hr> 
+                            <div class="total">
+                                <div class="d-flex flex-row">
+                                    <div class="col-1 caption"></div>
+                                    <div class="col-4 caption"><b>Общая стоимость:</b></div>
+                                    <div class="col-2 caption"></div>
+                                    <div class="col-2 caption"></div>
+                                    <div class="col-2 caption">{<b>{ item.order.price }} ₽</b></div>
+                                </div>
+                            </div>
+                        </div>
+                    </dd>
+                    {% endfor %}
+                </dl>
             </div>
+            {% endif %}
+
         </div>
     </div>
-    
-    
+</div>
+
+
 {% endblock %}
