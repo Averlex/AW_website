@@ -290,7 +290,7 @@ def signup_view(request):
             save_form.set_password(form.cleaned_data.get('password'))
 
             user = User(username=save_form.username, password=save_form.password, name=save_form.name,
-                        email=save_form.email, phone=save_form.phone)
+                        email=save_form.email, phone=save_form.phone, last_name=save_form.last_name)
             user.save()
 
             # Managing groups on sign up
