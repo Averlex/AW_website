@@ -190,3 +190,17 @@
     --bs-btn-disabled-bg: #6720ffbd;
     --bs-btn-disabled-border-color: #6720ffbd;
   }
+
+.card-body .row:hover .edit-button {
+    visibility: visible;
+}
+.edit-button {
+    visibility: hidden;
+    padding: 0;
+    border: none;
+    background: none;
+    color: #dee2e6;
+}
+.edit-button:hover {
+    color: #dee2e6;
+}
