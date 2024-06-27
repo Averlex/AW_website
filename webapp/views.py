@@ -177,6 +177,8 @@ def order(request):
                 total_price += float(request.POST.get(f'form-{indx}-price'))
                 numbers.append(int(form.cleaned_data['number']))
 
+                # TODO: several identical products cause the error
+
                 product.save()
                 product_instances.append(product)
 
@@ -249,11 +251,19 @@ def profile(request):
         user_orders = Order.objects.filter(user=user)
 
     user_products = []
+    total_products = 0
+    total_orders = 0
+    orders_in_progress = 0
     for order_instance in user_orders:
+        total_orders += 1
+        # TODO: count all statuses dynamically
+        if getattr(order_instance, 'status') < 6:
+            orders_in_progress += 1
         user_products.append({
             'order': order_instance,
             'products': ProductList.objects.filter(order=order_instance).select_related('product')
         })
+        total_products += len(user_products[-1]['products'])
 
     if request.method == 'POST':
         form = UserUpdateForm(request.POST, instance=user)
@@ -262,7 +272,7 @@ def profile(request):
             return redirect('profile')
     else:
         form = UserUpdateForm(instance=user)
-    return render(request, 'webapp/profile.html', {'form': form, 'orders': user_products})
+    return render(request, 'webapp/profile.html', {'form': form, 'orders': user_products, 'total_orders': total_orders, 'total_products': total_products, 'orders_in_progress': orders_in_progress})
 
 
 def signup_view(request):

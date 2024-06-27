@@ -90,9 +90,116 @@
             aria-controls="orders" aria-selected="false">Заказы</button>
     </li>
 </ul>
-<div class="tab-content" id="tabsContent">
+<div class="tab-content my-2 py-1" id="tabsContent">
     <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-        <h2>Обновить данные профиля</h2>
+        <div class="container">
+            <div class="main-body">
+                  <!-- /Breadcrumb -->
+            
+                  <div class="row gutters-sm">
+                    <div class="col-md-4 mb-3">
+                      <div class="card">
+                        <div class="card-body">
+                          <div class="d-flex flex-column align-items-center text-center">
+                            <i class='far fa-address-card' style='font-size:150px'></i>
+                            <div class="mt-3">
+                              <h4>{{ user.name }} {{ user.last_name }}</h4>
+                              <p class="text-secondary mb-1">{{user.get_user_group_display}}</p>
+                              <p class="text-muted font-size-sm">Наш почетный клиент с {{ user.registration_date }}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="card mt-3">
+                        <ul class="list-group list-group-flush">
+                          <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                            <h6 class="mb-0 pl-2"><i class="fa-solid fa-cart-shopping"></i> Сделано заказов:</h6>
+                            <span class="text-secondary">{{ total_orders }}</span>
+                          </li>
+                          <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                            <h6 class="mb-0 pl-2"><i class="fa-solid fa-clipboard-list"></i> Заказано товаров:</h6>
+                            <span class="text-secondary">{{ total_products }}</span>
+                          </li>
+                          <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                            <h6 class="mb-0 pl-2"><i class="fa-solid fa-screwdriver-wrench"></i> Заказов в работе:</h6>
+                            <span class="text-secondary">{{ orders_in_progress }}</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="col-md-8">
+                      <div class="card mb-3">
+                        <div class="card-body">
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">Полное имя</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                {{ user.name }} {{ user.second_name }} {{ user.last_name }}
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">Email</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                {{ user.email }}
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">Phone</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                {{ user.phone }}
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">Адрес</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                {{ user.main_address }}
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">День рождения</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                {{ user.birthdate }}
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">Предпочитаемый способ доставки</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                {{ user.get_pref_delivery_type_display }}
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-12">
+                              <a class="btn custom-btn" target="__blank" href="#">Редактировать</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>    
+                    </div>
+                  </div>
+        
+                </div>
+            </div>
+
+        <div class="header my-2 py-1"> 
+            <h2>Обновить данные профиля</h2>
+        </div>
         <form method="POST">
             {% csrf_token %}
             <table>
@@ -103,13 +210,14 @@
     </div>
     <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
         <div class="container">
-            <h2 class="heading-primary">История заказов</h2>
+            <div class="header my-2 py-1">  
+                <h2>История заказов</h2>
+            </div>
             {% if not orders %}
             <span id="sub-title text-center">
-                <p class="text-muted text-center"><strong>Ваша история заказов отсутствует :(</strong></p>
+                <p class="text-muted text-center"><strong>Ваша история заказов пуста :(</strong></p>
                 <p class="text-muted text-center"><strong><a href="{% url 'order' %}" class="text-body-secondary"
-                            style="text-decoration: none;">Оформите заказ</a></strong> и начните свою историю прямо
-                    сейчас!</p>
+                            style="text-decoration: none;">Оформите заказ</a></strong> и начните свою историю прямо сейчас!</p>
             </span>
             {% else %}
             <div class="accordion">
