@@ -153,6 +153,7 @@ def order(request):
             # This time with saving to DB
             total_price = 0.
             product_instances = []
+            numbers = []
 
             for indx, form in enumerate(formset):
                 # TODO: proper form save
@@ -174,6 +175,7 @@ def order(request):
 
                 # product = item.save()
                 total_price += float(request.POST.get(f'form-{indx}-price'))
+                numbers.append(int(form.cleaned_data['number']))
 
                 product.save()
                 product_instances.append(product)
@@ -200,8 +202,8 @@ def order(request):
             order_instance = Order(**order_attrs)
             order_instance.save()
 
-            for this_item in product_instances:
-                product_list = ProductList(product=this_item, order=order_instance)
+            for indx, this_item in enumerate(product_instances):
+                product_list = ProductList(product=this_item, order=order_instance, number=numbers[indx])
                 product_list.save()
 
             return JsonResponse({'order_id': str(order_instance.order_id),
