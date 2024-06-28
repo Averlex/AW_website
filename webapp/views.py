@@ -331,7 +331,6 @@ def profile(request):
             'success': success, 'errors': errors
         })
     else:
-        print(form_attr)
         form = UserUpdateForm(None, initial=form_attr)
 
     return render(request, 'webapp/profile.html', {

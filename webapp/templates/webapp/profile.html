@@ -121,7 +121,7 @@
                 dataType: 'json',
                 success: function(responseData) {
                     $(e.target).closest('.row').find('input').prop('disabled', true);
-                    $(e.target).closest('.row').find('input').val(responseData[name]);
+                    $(e.target).closest('.row').find('input').val(responseData['form'][name].initial);
                 },
             });
         });
