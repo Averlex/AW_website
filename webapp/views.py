@@ -324,6 +324,9 @@ def profile(request):
                     # No birthday case
                     setattr(user, attr, None)
                     continue
+                elif attr == 'pref_delivery_type':
+                    setattr(user, attr, int(val))
+                    continue
                 setattr(user, attr, val)
             user.save()
             success.append('Данные профиля успешно обновлены')

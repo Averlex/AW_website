@@ -93,12 +93,12 @@
             
         });
     });
-</script>
+</script> !important;
 
 <script type="text/javascript">
     $().ready(function() {
-        $('.card-body .row #edit-button').prop('aria-hidden', false);
-        $('.card-body .row #edit-button').prop('aria-hidden', true);
+        $('.card-body .row #edit-button').prop('hidden', false);
+        $('.card-body .row #save-edit-button').prop('hidden', true);
     });
 </script>
 
@@ -112,8 +112,8 @@
                 $(e.target).closest('.row').find('select').prop('disabled', false);
             }
             
-            $(this).prop('aria-hidden', true);
-            $(this).siblings('#save-edit-button').prop('aria-hidden', false)
+            $(this).prop('hidden', true);
+            $(this).siblings('#save-edit-button').prop('hidden', false)
         });
     });
 </script>
@@ -153,7 +153,9 @@
                         $(e.target).closest('.row').find('select').prop('disabled', true);
                         $(e.target).closest('.row').find('select').val(responseData['form'][name].initial);
                     }
-                    
+
+                    $(this).prop('hidden', true);
+                    $(this).siblings('#edit-button').prop('hidden', false)
                 },
             });
         });
@@ -224,8 +226,8 @@
                                 {{ form.last_name }}
                             </div>
                             <div class="col-sm-1 text-secondary">
-                                <button type="button" class="action-button" id="edit-button"><i class="fas fa-edit"></i></button>
-                                <button type="button" class="action-button" id="save-edit-button" aria-hidden="true"><i class="fa-solid fa-check"></i></button>
+                                <button class="new-action-button" type="button" id="edit-button"><i class="fas fa-edit"></i></button>
+                                <button class="new-action-button" type="button" id="save-edit-button"><i class="fa-solid fa-check"></i></button>
                             </div>
                           </div>
                           <hr>
@@ -237,8 +239,8 @@
                                 {{ form.name }}
                             </div>
                             <div class="col-sm-1 text-secondary">
-                                <button type="button" class="action-button" id="edit-button"><i class="fas fa-edit"></i></button>
-                                <button type="button" class="action-button" id="save-edit-button"><i class="fa-solid fa-check"></i></button>
+                                <button class="new-action-button" type="button" id="edit-button"><i class="fas fa-edit"></i></button>
+                                <button class="new-action-button" type="button" id="save-edit-button"><i class="fa-solid fa-check"></i></button>
                             </div>
                           </div>
                           <hr>
@@ -250,8 +252,8 @@
                                 {{ form.second_name }}
                             </div>
                             <div class="col-sm-1 text-secondary">
-                                <button type="button" class="action-button" id="edit-button"><i class="fas fa-edit"></i></button>
-                                <button type="button" class="action-button" id="save-edit-button"><i class="fa-solid fa-check"></i></button>
+                                <button class="new-action-button" type="button" id="edit-button"><i class="fas fa-edit"></i></button>
+                                <button class="new-action-button" type="button" id="save-edit-button"><i class="fa-solid fa-check"></i></button>
                             </div>
                           </div>
                           <hr>
@@ -263,8 +265,8 @@
                                 {{ form.email }}
                             </div>
                             <div class="col-sm-1 text-secondary">
-                                <button type="button" class="action-button" id="edit-button"><i class="fas fa-edit"></i></button>
-                                <button type="button" class="action-button" id="save-edit-button"><i class="fa-solid fa-check"></i></button>
+                                <button class="new-action-button" type="button" id="edit-button"><i class="fas fa-edit"></i></button>
+                                <button class="new-action-button" type="button" id="save-edit-button"><i class="fa-solid fa-check"></i></button>
                             </div>
                           </div>
                           <hr>
@@ -276,8 +278,8 @@
                                 {{ form.phone }}
                             </div>
                             <div class="col-sm-1 text-secondary">
-                                <button type="button" class="action-button" id="edit-button"><i class="fas fa-edit"></i></button>
-                                <button type="button" class="action-button" id="save-edit-button"><i class="fa-solid fa-check"></i></button>
+                                <button class="new-action-button" type="button" id="edit-button"><i class="fas fa-edit"></i></button>
+                                <button class="new-action-button" type="button" id="save-edit-button"><i class="fa-solid fa-check"></i></button>
                             </div>
                           </div>
                           <hr>
@@ -289,8 +291,8 @@
                                 {{ form.main_address }}
                             </div>
                             <div class="col-sm-1 text-secondary">
-                                <button type="button" class="action-button" id="edit-button"><i class="fas fa-edit"></i></button>
-                                <button type="button" class="action-button" id="save-edit-button"><i class="fa-solid fa-check"></i></button>
+                                <button class="new-action-button" type="button" id="edit-button"><i class="fas fa-edit"></i></button>
+                                <button class="new-action-button" type="button" id="save-edit-button"><i class="fa-solid fa-check"></i></button>
                             </div>
                           </div>
                           <hr>
@@ -302,8 +304,8 @@
                                 {{ form.birthdate }}
                             </div>
                             <div class="col-sm-1 text-secondary">
-                                <button type="button" class="action-button" id="edit-button"><i class="fas fa-edit"></i></button>
-                                <button type="button" class="action-button" id="save-edit-button" hidden="true"><i class="fa-solid fa-check"></i></button>
+                                <button class="new-action-button" type="button" id="edit-button"><i class="fas fa-edit"></i></button>
+                                <button class="new-action-button" type="button" id="save-edit-button"><i class="fa-solid fa-check"></i></button>
                             </div>
                             
                           </div>
@@ -316,8 +318,8 @@
                                 {{ form.pref_delivery_type }}
                             </div>
                             <div class="col-sm-1 text-secondary">
-                                <button class="btn custom-btn action-button" type="button" id="edit-button"><i class="fas fa-edit"></i></button>
-                                <button class="btn custom-btn action-button" type="button" id="save-edit-button"><i class="fa-solid fa-check"></i></button>
+                                <button class="new-action-button" type="button" id="edit-button"><i class="fas fa-edit"></i></button>
+                                <button class="new-action-button" type="button" id="save-edit-button"><i class="fa-solid fa-check"></i></button>
                             </div>
                           </div>
                         </div>
