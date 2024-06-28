@@ -191,16 +191,17 @@
     --bs-btn-disabled-border-color: #6720ffbd;
   }
 
-.card-body .row:hover .edit-button {
-    visibility: visible;
+.action-button {
+    visibility: hidden !important;
+    padding: 0 !important;
+    border: none !important;
+    background: none !important;
+    color: #dee2e6 !important;
 }
-.edit-button {
-    visibility: hidden;
-    padding: 0;
-    border: none;
-    background: none;
-    color: #dee2e6;
+
+.card-body .row:hover .action-button {
+    visibility: visible !important;
 }
-.edit-button:hover {
-    color: #dee2e6;
+.action-button:hover {
+    color: #dee2e6aa !important;
 }

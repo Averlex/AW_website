@@ -236,6 +236,21 @@ def order(request):
     return render(request, 'webapp/order.html', {'formset': formset, 'order_form': order_form})
 
 
+def serialize_form(form):
+    form_data = {}
+    for field_name, field in form.fields.items():
+        form_data[field_name] = {
+            'label': field.label,
+            'initial': form.initial.get(field_name, None),
+            'widget': field.widget.__class__.__name__,
+            'help_text': field.help_text,
+            'required': field.required
+        }
+        if field.widget.__class__.__name__ == 'Select':
+            form_data[field_name]['choices'] = list(field.choices)
+    return form_data
+
+
 def profile(request):
     # Redirecting unauthorized users
     if not request.user.is_authenticated:
@@ -254,6 +269,21 @@ def profile(request):
     total_products = 0
     total_orders = 0
     orders_in_progress = 0
+    success = []
+    errors = []
+
+    form_attr = {
+        'name': getattr(user, 'name'),
+        'second_name': getattr(user, 'second_name'),
+        'last_name': getattr(user, 'last_name'),
+        'phone': getattr(user, 'phone'),
+        'email': getattr(user, 'email'),
+        'pref_delivery_type': getattr(user, 'pref_delivery_type'),
+        'main_address': getattr(user, 'main_address'),
+        'birthdate': getattr(user, 'birthdate'),
+    }
+
+    # GET part
     for order_instance in user_orders:
         total_orders += 1
         # TODO: count all statuses dynamically
@@ -266,13 +296,48 @@ def profile(request):
         total_products += len(user_products[-1]['products'])
 
     if request.method == 'POST':
-        form = UserUpdateForm(request.POST, instance=user)
-        if form.is_valid():
-            form.save()
-            return redirect('profile')
+        # form = UserUpdateForm(request.POST)
+
+        # Extracting POST
+        form_attr = {
+            'name': request.POST.get('name', getattr(user, 'name')),
+            'second_name': request.POST.get('second_name', getattr(user, 'second_name')),
+            'last_name': request.POST.get('last_name', getattr(user, 'last_name')),
+            'pref_delivery_type': request.POST.get('pref_delivery_type', getattr(user, 'pref_delivery_type')),
+            'main_address': request.POST.get('main_address', getattr(user, 'main_address')),
+            'birthdate': request.POST.get('birthdate', getattr(user, 'birthdate')),
+            'phone': request.POST.get('phone', getattr(user, 'phone')),
+            'email': request.POST.get('email', getattr(user, 'email')),
+        }
+
+        if form_attr['phone'] != getattr(user, 'phone') and User.objects.filter(phone=form_attr['phone']):
+            errors.append('Пользователь с таким номером телефона уже зарегистрирован')
+        if form_attr['email'] != getattr(user, 'email') and User.objects.filter(email=form_attr['email']):
+            errors.append('Пользователь с таким адресом электронной почты уже зарегистрирован')
+
+        form = UserUpdateForm(None, initial=form_attr)
+
+        # user.update(form_attr)
+        if not errors:
+            for attr, val in form_attr.items():
+                setattr(user, attr, val)
+            user.save()
+            success.append('Данные профиля успешно обновлены')
+
+        return JsonResponse({
+            'form': serialize_form(form),
+            'orders': user_products,
+            'total_orders': total_orders, 'total_products': total_products, 'orders_in_progress': orders_in_progress,
+            'success': success, 'errors': errors
+        })
     else:
-        form = UserUpdateForm(instance=user)
-    return render(request, 'webapp/profile.html', {'form': form, 'orders': user_products, 'total_orders': total_orders, 'total_products': total_products, 'orders_in_progress': orders_in_progress})
+        print(form_attr)
+        form = UserUpdateForm(None, initial=form_attr)
+
+    return render(request, 'webapp/profile.html', {
+        'form': form, 'orders': user_products,
+        'total_orders': total_orders, 'total_products': total_products, 'orders_in_progress': orders_in_progress,
+        'errors': errors, 'success': success})
 
 
 def signup_view(request):

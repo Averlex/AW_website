@@ -76,6 +76,58 @@
     }));
 </script>
 
+<!-- TODO: finish this part -->
+<script>
+    $().ready(function() {
+        $().on('click', '#edit-button', function(e){
+            e.preventDefault();
+
+            $(this).prop('disabled', 'true');
+            $(this).siblings('#save-edit-button').prop('disabled', 'false');
+            $(e.target).closest('.row').find('input').prop('disabled', 'false');
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $().ready(function() {
+        $('.card-body .row #edit-button').prop('aria-hidden', false);
+        $('.card-body .row #edit-button').prop('aria-hidden', true);
+    });
+</script>
+
+<script type="text/javascript">
+    $().ready(function() {
+        $('.card-body .row #edit-button').click( function (e) {
+            $(e.target).closest('.row').find('input').prop('disabled', false);
+            $(this).prop('aria-hidden', true);
+            $(this).siblings('#save-edit-button').prop('aria-hidden', false)
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $().ready(function() {
+        $('.card-body .row #save-edit-button').click( function (e) {
+            const name = $(e.target).closest('.row').find('input').attr('id').slice(3);
+            const val = $(e.target).closest('.row').find('input').val();
+            $.ajax({
+                type: 'POST',
+                url: '/profile/',
+                data: {
+                    [name]: val,
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                },
+                dataType: 'json',
+                success: function(responseData) {
+                    $(e.target).closest('.row').find('input').prop('disabled', true);
+                    $(e.target).closest('.row').find('input').val(responseData[name]);
+                },
+            });
+        });
+    });
+</script>
+
 <link rel="stylesheet" href="{% static '/css/profile.css' %}">
 {% endblock %}
 
@@ -129,16 +181,19 @@
                     </div>
                     <div class="col-md-8">
                       <div class="card mb-3">
+                        <form method="POST">
+                            {% csrf_token %}
                         <div class="card-body">
                           <div class="row">
                             <div class="col-sm-4">
                               <h6 class="mb-0">Фамилия</h6>
                             </div>
                             <div class="col-sm-7 text-secondary">
-                                {{ user.last_name }}
+                                {{ form.last_name }}
                             </div>
                             <div class="col-sm-1 text-secondary">
-                                <button class="edit-button"><i class="fas fa-edit"> </i></button>
+                                <button type="button" class="action-button" id="edit-button"><i class="fas fa-edit"></i></button>
+                                <button type="button" class="action-button" id="save-edit-button" aria-hidden="true"><i class="fa-solid fa-check"></i></button>
                             </div>
                           </div>
                           <hr>
@@ -147,10 +202,11 @@
                               <h6 class="mb-0">Имя</h6>
                             </div>
                             <div class="col-sm-7 text-secondary">
-                                {{ user.name }}
+                                {{ form.name }}
                             </div>
                             <div class="col-sm-1 text-secondary">
-                                <button class="edit-button"><i class="fas fa-edit"> </i></button>
+                                <button type="button" class="action-button" id="edit-button"><i class="fas fa-edit"></i></button>
+                                <button type="button" class="action-button" id="save-edit-button"><i class="fa-solid fa-check"></i></button>
                             </div>
                           </div>
                           <hr>
@@ -159,10 +215,11 @@
                               <h6 class="mb-0">Отчество</h6>
                             </div>
                             <div class="col-sm-7 text-secondary">
-                                {{ user.second_name }}
+                                {{ form.second_name }}
                             </div>
                             <div class="col-sm-1 text-secondary">
-                                <button class="edit-button"><i class="fas fa-edit"> </i></button>
+                                <button type="button" class="action-button" id="edit-button"><i class="fas fa-edit"></i></button>
+                                <button type="button" class="action-button" id="save-edit-button"><i class="fa-solid fa-check"></i></button>
                             </div>
                           </div>
                           <hr>
@@ -171,10 +228,11 @@
                               <h6 class="mb-0">Email</h6>
                             </div>
                             <div class="col-sm-7 text-secondary">
-                                {{ user.email }}
+                                {{ form.email }}
                             </div>
                             <div class="col-sm-1 text-secondary">
-                                <button class="edit-button"><i class="fas fa-edit"> </i></button>
+                                <button type="button" class="action-button" id="edit-button"><i class="fas fa-edit"></i></button>
+                                <button type="button" class="action-button" id="save-edit-button"><i class="fa-solid fa-check"></i></button>
                             </div>
                           </div>
                           <hr>
@@ -183,10 +241,11 @@
                               <h6 class="mb-0">Телефон</h6>
                             </div>
                             <div class="col-sm-7 text-secondary">
-                                {{ user.phone }}
+                                {{ form.phone }}
                             </div>
                             <div class="col-sm-1 text-secondary">
-                                <button class="edit-button"><i class="fas fa-edit"> </i></button>
+                                <button type="button" class="action-button" id="edit-button"><i class="fas fa-edit"></i></button>
+                                <button type="button" class="action-button" id="save-edit-button"><i class="fa-solid fa-check"></i></button>
                             </div>
                           </div>
                           <hr>
@@ -195,10 +254,11 @@
                               <h6 class="mb-0">Адрес</h6>
                             </div>
                             <div class="col-sm-7 text-secondary">
-                                {{ user.main_address }}
+                                {{ form.main_address }}
                             </div>
                             <div class="col-sm-1 text-secondary">
-                                <button class="edit-button"><i class="fas fa-edit"> </i></button>
+                                <button type="button" class="action-button" id="edit-button"><i class="fas fa-edit"></i></button>
+                                <button type="button" class="action-button" id="save-edit-button"><i class="fa-solid fa-check"></i></button>
                             </div>
                           </div>
                           <hr>
@@ -206,7 +266,7 @@
                             <div class="col-sm-4">
                               <h6 class="mb-0">День рождения</h6>
                             </div>
-                            {% if user.birthdate %}
+                            {% if form.birthdate.value %}
                                 <div class="col-sm-7 text-secondary">
                                     {{ user.birthdate }}
                                 </div>
@@ -214,7 +274,8 @@
                             {% else %}
                                 <div class="col-sm-7 text-secondary">Не указана</div>
                                 <div class="col-sm-1 text-secondary">
-                                    <button class="edit-button"><i class="fas fa-edit"> </i></button>
+                                    <button type="button" class="action-button" id="edit-button"><i class="fas fa-edit"></i></button>
+                                    <button type="button" class="action-button" id="save-edit-button" hidden="true"><i class="fa-solid fa-check"></i></button>
                                 </div>
                             {% endif %}
                             
@@ -225,10 +286,11 @@
                               <h6 class="mb-0">Предпочитаемый способ доставки</h6>
                             </div>
                             <div class="col-sm-7 text-secondary">
-                                {{ user.get_pref_delivery_type_display }}
+                                {{ form.get_pref_delivery_type_display }}
                             </div>
                             <div class="col-sm-1 text-secondary">
-                                <button class="edit-button"><i class="fas fa-edit"> </i></button>
+                                <button type="button" class="action-button" id="edit-button"><i class="fas fa-edit"></i></button>
+                                <button type="button" class="action-button" id="save-edit-button"><i class="fa-solid fa-check"></i></button>
                             </div>
                           </div>
                           <hr>
@@ -238,23 +300,13 @@
                             </div>
                           </div>
                         </div>
+                    </form>
                       </div>    
                     </div>
                   </div>
         
                 </div>
             </div>
-
-        <div class="header my-2 py-1"> 
-            <h2>Обновить данные профиля</h2>
-        </div>
-        <form method="POST">
-            {% csrf_token %}
-            <table>
-                {{ form.as_table }}
-            </table>
-            <button type="submit">Обновить</button>
-        </form>
     </div>
     <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
         <div class="container">

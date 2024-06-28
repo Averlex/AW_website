@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 from django.utils.timezone import now
 from django.contrib.auth.models import AbstractUser, Group
+from datetime import date
 
 _MAX_NAME = 50
 _MAX_PHONE = 20
@@ -107,9 +108,9 @@ class User(AbstractUser):
     name = models.CharField(max_length=_MAX_NAME, blank=True)
     second_name = models.CharField(max_length=_MAX_NAME, blank=True)
     last_name = models.CharField(max_length=_MAX_NAME, blank=True)
-    phone = models.CharField(max_length=_MAX_PHONE, help_text='Основной контактный номер', unique=True)
-    email = models.CharField(max_length=_MAX_EMAIL, help_text='Действующий адрес электронной почты', unique=True)
-    birthdate = models.DateField(blank=True, null=True)
+    phone = models.CharField(max_length=_MAX_PHONE, unique=True)
+    email = models.CharField(max_length=_MAX_EMAIL, unique=True)
+    birthdate = models.DateField(blank=True, null=True, )
 
     # Auth params
     username = models.CharField(max_length=_MAX_NAME, unique=True)
@@ -125,6 +126,14 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
+    @staticmethod
+    def date_init():
+        return date(year=date.today().year - 18, month=date.today().month, day=date.today().day)
+
+    @staticmethod
+    def get_delivery_types():
+        return User._DELIVERY_TYPE
 
 
 class Order(models.Model):

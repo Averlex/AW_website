@@ -74,16 +74,29 @@ class OrderForm(forms.Form):
         self.cleaned_data = {}
 
 
-class UserUpdateForm(forms.ModelForm):
+class UserUpdateForm(forms.Form):
+    help_text = 'Обязательное поле'
     # TODO: smart password change
     # TODO: success messages here
+    name = forms.CharField(max_length=50, disabled=True, required=False)
+    second_name = forms.CharField(max_length=50, disabled=True, required=False)
+    last_name = forms.CharField(max_length=50, disabled=True, required=False)
+    phone = forms.CharField(max_length=20, disabled=True)
+    email = forms.CharField(max_length=50, disabled=True)
+
+    # Possible delivery info
+    pref_delivery_type = forms.ChoiceField(choices=User.get_delivery_types())
+    main_address = forms.CharField(max_length=150, disabled=True)
+
+    birthdate = forms.DateField(label='', widget=forms.DateInput)
     class Meta:
-        model = User
-        fields = ['name', 'second_name', 'last_name', 'phone', 'email', 'birthdate', 'main_address']
-        labels = {
-            'name': 'Имя', 'second_name': 'Отчество', 'last_name': 'Фамилия', 'phone': 'Телефон',
-            'email': 'Почта', 'birthdate': 'Дата рождения', 'main_address': 'Основной адрес'
-        }
+        pass
+        # model = User
+        # fields = ['name', 'second_name', 'last_name', 'phone', 'email', 'main_address']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
 
 
 class SignUpForm(forms.ModelForm):
