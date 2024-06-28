@@ -333,7 +333,7 @@ def profile(request):
 
         return JsonResponse({
             'form': serialize_form(form),
-            'orders': user_products,
+            # 'orders': user_products,
             'total_orders': total_orders, 'total_products': total_products, 'orders_in_progress': orders_in_progress,
             'success': success, 'errors': errors
         })
