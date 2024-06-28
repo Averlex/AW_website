@@ -211,17 +211,15 @@
     color: #dee2e6aa !important;
 } */
 
-
 .new-action-button {
   visibility: hidden !important;
-  /* padding: 10px 10px !important;  /* Add padding to make them look like buttons */
   width: 25px !important;
   height: 25px !important;
   border: none !important;
   text-align: center;
   border-radius: 4px !important;  /* Rounded corners */
-  background: var(--bs-btn-bg, none) !important;
-  color: var(--bs-btn-color, #dee2e6) !important;
+  background: #6520ff !important;  /* Button background color */
+  color: #dee2e6 !important;  /* Button text/icon color */
   transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  /* Add a subtle shadow */
   cursor: pointer;  /* Change cursor to pointer */
@@ -232,44 +230,27 @@
 }
 
 .new-action-button:hover {
-  background-color: var(--bs-btn-hover-bg, #6720ffae) !important;
-  color: var(--bs-btn-hover-color, #dee2e6b3) !important;
+  background-color: #6720ffae !important;  /* Hover background color */
+  color: #dee2e6b3 !important;  /* Hover text/icon color */
 }
 
 .new-action-button:active {
-  background-color: var(--bs-btn-active-bg, #6520ff) !important;
-  color: var(--bs-btn-active-color, #dee2e6) !important;
-  box-shadow: var(--bs-btn-active-shadow, inset 0 3px 5px rgba(0, 0, 0, 0.125)) !important;
+  background-color: #6520ff !important;  /* Active background color */
+  color: #dee2e6 !important;  /* Active text/icon color */
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;  /* Active shadow */
 }
 
 .new-action-button:disabled {
-  background-color: var(--bs-btn-disabled-bg, #6720ffbd) !important;
-  color: var(--bs-btn-disabled-color, #dee2e6) !important;
-  border-color: var(--bs-btn-disabled-border-color, #6720ffbd) !important;
+  background-color: #6720ffbd !important;  /* Disabled background color */
+  color: #dee2e6 !important;  /* Disabled text/icon color */
+  border-color: #6720ffbd !important;  /* Disabled border color */
+  cursor: not-allowed;  /* Disabled cursor style */
 }
 
 .new-action-button i {
-  color: var(--bs-btn-color, #dee2e6) !important;
+  color: #dee2e6 !important;  /* Icon color */
 }
 
 .new-action-button:hover i {
-  color: var(--bs-btn-hover-color, #dee2e6b3) !important;
-}
-
-/* Variables for button colors */
-:root {
-  --bs-btn-color: #dee2e6 !important;
-  --bs-btn-bg: #6520ff !important;
-  --bs-btn-border-color: #6520ff !important;
-  --bs-btn-hover-color: #dee2e6b3 !important;
-  --bs-btn-hover-bg: #6720ffae !important;
-  --bs-btn-hover-border-color: #6520ff !important;
-  --bs-btn-focus-shadow-rgb: 11, 172, 204 !important;
-  --bs-btn-active-color: #dee2e6 !important;
-  --bs-btn-active-bg: #6520ff !important;
-  --bs-btn-active-border-color: #6520ff !important;
-  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
-  --bs-btn-disabled-color: #dee2e6 !important;
-  --bs-btn-disabled-bg: #6720ffbd !important;
-  --bs-btn-disabled-border-color: #6720ffbd !important;
+  color: #dee2e6b3 !important;  /* Hover icon color */
 }
