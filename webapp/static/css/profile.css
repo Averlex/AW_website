@@ -254,3 +254,35 @@
 .new-action-button:hover i {
   color: #dee2e6b3 !important;  /* Hover icon color */
 }
+
+input, select {
+  box-sizing: border-box;
+  padding: 8px; /* Adjust padding as needed */
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  border: 1px solid #495057; /* Dark border color */
+  outline: none;
+  background-color: #343a40; /* Dark background color */
+  color: #ffffff; /* Light text color */
+}
+
+/* Optional: Customize appearance */
+input {
+  border-radius: 4px; /* Rounded corners for input */
+}
+
+select {
+  appearance: none; /* Removes default arrow */
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" width="8" height="8"><polygon points="0,0 8,0 4,4"/></svg>'
+  ); /* Custom arrow icon */
+  background-repeat: no-repeat;
+  background-position: right 8px center; /* Position arrow on the right */
+  padding-right: 24px; /* Adjust as needed to accommodate arrow */
+  border-radius: 4px; /* Rounded corners for select */
+}
+
+/* Optional: Hover and focus styles */
+input:hover, input:focus, select:hover, select:focus {
+  border-color: #ffffff; /* Light border color on hover/focus */
+}
