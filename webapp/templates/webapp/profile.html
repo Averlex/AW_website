@@ -84,7 +84,13 @@
 
             $(this).prop('disabled', 'true');
             $(this).siblings('#save-edit-button').prop('disabled', 'false');
-            $(e.target).closest('.row').find('input').prop('disabled', 'false');
+            if (typeof $(e.target).closest('.row').find('input').attr('id') !== 'undefined') {
+                $(e.target).closest('.row').find('input').prop('disabled', 'false');
+            }
+            else {
+                $(e.target).closest('.row').find('select').prop('disabled', 'false');
+            }
+            
         });
     });
 </script>
@@ -99,7 +105,13 @@
 <script type="text/javascript">
     $().ready(function() {
         $('.card-body .row #edit-button').click( function (e) {
-            $(e.target).closest('.row').find('input').prop('disabled', false);
+            if (typeof $(e.target).closest('.row').find('input').attr('id') !== 'undefined') {
+                $(e.target).closest('.row').find('input').prop('disabled', false);
+            }
+            else {
+                $(e.target).closest('.row').find('select').prop('disabled', false);
+            }
+            
             $(this).prop('aria-hidden', true);
             $(this).siblings('#save-edit-button').prop('aria-hidden', false)
         });
@@ -109,8 +121,21 @@
 <script type="text/javascript">
     $().ready(function() {
         $('.card-body .row #save-edit-button').click( function (e) {
-            const name = $(e.target).closest('.row').find('input').attr('id').slice(3);
-            const val = $(e.target).closest('.row').find('input').val();
+            let name = undefined
+            let val = undefined
+
+            if (typeof $(e.target).closest('.row').find('input').attr('id') !== 'undefined') {
+                name = $(e.target).closest('.row').find('input').attr('id').slice(3);
+                val = $(e.target).closest('.row').find('input').val();   
+            }
+            else {
+                name = $(e.target).closest('.row').find('select').attr('id').slice(3);
+                val = $(e.target).closest('.row').find('select').val();
+                
+            }
+
+            console.log(name, val)
+            
             $.ajax({
                 type: 'POST',
                 url: '/profile/',
@@ -120,8 +145,15 @@
                 },
                 dataType: 'json',
                 success: function(responseData) {
-                    $(e.target).closest('.row').find('input').prop('disabled', true);
-                    $(e.target).closest('.row').find('input').val(responseData['form'][name].initial);
+                    if (typeof $(e.target).closest('.row').find('input').attr('id') !== 'undefined') {
+                        $(e.target).closest('.row').find('input').prop('disabled', true);
+                        $(e.target).closest('.row').find('input').val(responseData['form'][name].initial);
+                    }
+                    else {
+                        $(e.target).closest('.row').find('select').prop('disabled', true);
+                        $(e.target).closest('.row').find('select').val(responseData['form'][name].initial);
+                    }
+                    
                 },
             });
         });
@@ -266,18 +298,13 @@
                             <div class="col-sm-4">
                               <h6 class="mb-0">День рождения</h6>
                             </div>
-                            {% if form.birthdate.value %}
-                                <div class="col-sm-7 text-secondary">
-                                    {{ user.birthdate }}
-                                </div>
-                                <div class="col-sm-1 text-secondary"></div>
-                            {% else %}
-                                <div class="col-sm-7 text-secondary">Не указана</div>
-                                <div class="col-sm-1 text-secondary">
-                                    <button type="button" class="action-button" id="edit-button"><i class="fas fa-edit"></i></button>
-                                    <button type="button" class="action-button" id="save-edit-button" hidden="true"><i class="fa-solid fa-check"></i></button>
-                                </div>
-                            {% endif %}
+                            <div class="col-sm-7 text-secondary">
+                                {{ form.birthdate }}
+                            </div>
+                            <div class="col-sm-1 text-secondary">
+                                <button type="button" class="action-button" id="edit-button"><i class="fas fa-edit"></i></button>
+                                <button type="button" class="action-button" id="save-edit-button" hidden="true"><i class="fa-solid fa-check"></i></button>
+                            </div>
                             
                           </div>
                           <hr>
@@ -286,17 +313,11 @@
                               <h6 class="mb-0">Предпочитаемый способ доставки</h6>
                             </div>
                             <div class="col-sm-7 text-secondary">
-                                {{ form.get_pref_delivery_type_display }}
+                                {{ form.pref_delivery_type }}
                             </div>
                             <div class="col-sm-1 text-secondary">
-                                <button type="button" class="action-button" id="edit-button"><i class="fas fa-edit"></i></button>
-                                <button type="button" class="action-button" id="save-edit-button"><i class="fa-solid fa-check"></i></button>
-                            </div>
-                          </div>
-                          <hr>
-                          <div class="row">
-                            <div class="col-sm-12">
-                              <button class="btn custom-btn" type="button">Обновить</button>
+                                <button class="btn custom-btn action-button" type="button" id="edit-button"><i class="fas fa-edit"></i></button>
+                                <button class="btn custom-btn action-button" type="button" id="save-edit-button"><i class="fa-solid fa-check"></i></button>
                             </div>
                           </div>
                         </div>

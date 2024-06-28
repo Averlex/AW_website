@@ -320,6 +320,10 @@ def profile(request):
         # user.update(form_attr)
         if not errors:
             for attr, val in form_attr.items():
+                if not val and attr == 'birthdate':
+                    # No birthday case
+                    setattr(user, attr, None)
+                    continue
                 setattr(user, attr, val)
             user.save()
             success.append('Данные профиля успешно обновлены')

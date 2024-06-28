@@ -84,11 +84,10 @@ class UserUpdateForm(forms.Form):
     phone = forms.CharField(max_length=20, disabled=True)
     email = forms.CharField(max_length=50, disabled=True)
 
-    # Possible delivery info
-    pref_delivery_type = forms.ChoiceField(choices=User.get_delivery_types())
+    pref_delivery_type = forms.ChoiceField(choices=User.get_delivery_types(), disabled=True)
     main_address = forms.CharField(max_length=150, disabled=True)
+    birthdate = forms.DateField(label='', widget=forms.DateInput, disabled=True)
 
-    birthdate = forms.DateField(label='', widget=forms.DateInput)
     class Meta:
         pass
         # model = User
@@ -96,7 +95,6 @@ class UserUpdateForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
 
 
 class SignUpForm(forms.ModelForm):
