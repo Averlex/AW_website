@@ -82,8 +82,8 @@
         $().on('click', '#edit-button', function(e){
             e.preventDefault();
 
-            $(this).prop('disabled', 'true');
-            $(this).siblings('#save-edit-button').prop('disabled', 'false');
+            $(this).prop('hidden', true);
+            $(this).siblings('#save-edit-button').prop('hidden', false);
             if (typeof $(e.target).closest('.row').find('input').attr('id') !== 'undefined') {
                 $(e.target).closest('.row').find('input').prop('disabled', 'false');
             }
@@ -112,8 +112,8 @@
                 $(e.target).closest('.row').find('select').prop('disabled', false);
             }
             
-            $(this).prop('hidden', true);
             $(this).siblings('#save-edit-button').prop('hidden', false)
+            $(this).prop('hidden', true);
         });
     });
 </script>
@@ -121,6 +121,7 @@
 <script type="text/javascript">
     $().ready(function() {
         $('.card-body .row #save-edit-button').click( function (e) {
+            let $button = $(this);
             let name = undefined
             let val = undefined
 
@@ -133,8 +134,6 @@
                 val = $(e.target).closest('.row').find('select').val();
                 
             }
-
-            console.log(name, val)
             
             $.ajax({
                 type: 'POST',
@@ -154,8 +153,8 @@
                         $(e.target).closest('.row').find('select').val(responseData['form'][name].initial);
                     }
 
-                    $(this).prop('hidden', true);
-                    $(this).siblings('#edit-button').prop('hidden', false)
+                    $button.siblings('#edit-button').prop('hidden', false);
+                    $button.prop('hidden', true);
                 },
             });
         });
