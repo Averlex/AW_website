@@ -326,6 +326,16 @@ class Product(models.Model):
 
         return res
 
+    @staticmethod
+    def is_identical(prod1, prod2):
+        # TODO: run check on validating cart list
+        attrs = ['material', 'use_type', 'length', 'width', 'height', 'handles', 'legs', 'groove']
+        for attr in attrs:
+            if getattr(prod1, attr) != getattr(prod2, attr):
+                return False
+
+        return True
+
 
 class ProductList(models.Model):
     """

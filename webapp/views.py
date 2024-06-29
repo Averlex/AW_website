@@ -207,6 +207,14 @@ def order(request):
             print(numbers)
 
             for indx, this_item in enumerate(product_instances):
+                # Cart already contains such product
+                pl_query = ProductList.objects.filter(product=this_item, order=order_instance).first()
+                if pl_query:
+                    pl_query.number += numbers[indx]
+                    pl_query.save()
+                    continue
+
+                # New product for a given order
                 product_list = ProductList(product=this_item, order=order_instance, number=numbers[indx])
                 product_list.save()
 
