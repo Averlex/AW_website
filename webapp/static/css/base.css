@@ -1,0 +1,21 @@
+.footer {
+  padding: 1rem; /* Adjust padding as needed */
+  font-size: 0.9rem; /* Reduce font size as needed */
+}
+
+body {
+  margin-bottom: 5%;
+} */
+
+html, body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex-grow: 1;
+}
