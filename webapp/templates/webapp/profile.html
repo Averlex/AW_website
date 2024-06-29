@@ -5,136 +5,50 @@
 
 {% block head %}
 <script>
-    $().ready(function () {
+    $().ready(function() {
+        // Tab functionality
         $('.nav-tabs').find('button').on('click', function (e) {
             e.preventDefault();
             $($(this).attr('data-bs-target')).tab('show');
         });
-    });
-</script>
-<script>
-    $().ready((function () {
-        var d = document,
-            accordionToggles = d.querySelectorAll('.js-accordionTrigger'),
-            setAria,
-            setAccordionAria,
-            switchAccordion,
-            touchSupported = ('ontouchstart' in window),
-            pointerSupported = ('pointerdown' in window);
 
-        skipClickDelay = function (e) {
-            e.preventDefault();
-            e.target.click();
-        }
+        // Accordion functionality
+        const accordionToggles = document.querySelectorAll('.js-accordionTrigger');
+        accordionToggles.forEach(toggle => {
+            toggle.addEventListener('click', function (e) {
+                e.preventDefault();
+                const thisAnswer = e.target.parentNode.nextElementSibling;
+                const thisQuestion = e.target;
+                const expanded = thisAnswer.classList.contains('is-collapsed') ? 'true' : 'false';
 
-        setAriaAttr = function (el, ariaType, newProperty) {
-            el.setAttribute(ariaType, newProperty);
-        };
+                thisQuestion.setAttribute('aria-expanded', expanded);
+                thisAnswer.setAttribute('aria-hidden', expanded === 'true' ? 'false' : 'true');
 
-        setAccordionAria = function (el1, el2, expanded) {
-            switch (expanded) {
-                case "true":
-                    setAriaAttr(el1, 'aria-expanded', 'true');
-                    setAriaAttr(el2, 'aria-hidden', 'false');
-                    break;
-                case "false":
-                    setAriaAttr(el1, 'aria-expanded', 'false');
-                    setAriaAttr(el2, 'aria-hidden', 'true');
-                    break;
-                default:
-                    break;
-            }
-        };
-
-        //function
-        switchAccordion = function (e) {
-            e.preventDefault();
-            var thisAnswer = e.target.parentNode.nextElementSibling;
-            var thisQuestion = e.target;
-            if (thisAnswer.classList.contains('is-collapsed')) {
-                setAccordionAria(thisQuestion, thisAnswer, 'true');
-            } else {
-                setAccordionAria(thisQuestion, thisAnswer, 'false');
-            }
-            thisQuestion.classList.toggle('is-collapsed');
-            thisQuestion.classList.toggle('is-expanded');
-            thisAnswer.classList.toggle('is-collapsed');
-            thisAnswer.classList.toggle('is-expanded');
-
-            thisAnswer.classList.toggle('animateIn');
-        };
-
-        for (var i = 0, len = accordionToggles.length; i < len; i++) {
-            if (touchSupported) {
-                accordionToggles[i].addEventListener('touchstart', skipClickDelay, false);
-            }
-            if (pointerSupported) {
-                accordionToggles[i].addEventListener('pointerdown', skipClickDelay, false);
-            }
-            accordionToggles[i].addEventListener('click', switchAccordion, false);
-        }
-    }));
-</script>
-
-<!-- TODO: finish this part -->
-<script>
-    $().ready(function() {
-        $().on('click', '#edit-button', function(e){
-            e.preventDefault();
-
-            $(this).prop('hidden', true);
-            $(this).siblings('#save-edit-button').prop('hidden', false);
-            if (typeof $(e.target).closest('.row').find('input').attr('id') !== 'undefined') {
-                $(e.target).closest('.row').find('input').prop('disabled', 'false');
-            }
-            else {
-                $(e.target).closest('.row').find('select').prop('disabled', 'false');
-            }
-            
+                thisQuestion.classList.toggle('is-collapsed');
+                thisQuestion.classList.toggle('is-expanded');
+                thisAnswer.classList.toggle('is-collapsed');
+                thisAnswer.classList.toggle('is-expanded');
+                thisAnswer.classList.toggle('animateIn');
+            });
         });
-    });
-</script>
 
-<script type="text/javascript">
-    $().ready(function() {
+        // Profile editing functionality
         $('.card-body .row #edit-button').prop('hidden', false);
         $('.card-body .row #save-edit-button').prop('hidden', true);
-    });
-</script>
 
-<script type="text/javascript">
-    $().ready(function() {
-        $('.card-body .row #edit-button').click( function (e) {
-            if (typeof $(e.target).closest('.row').find('input').attr('id') !== 'undefined') {
-                $(e.target).closest('.row').find('input').prop('disabled', false);
-            }
-            else {
-                $(e.target).closest('.row').find('select').prop('disabled', false);
-            }
-            
-            $(this).siblings('#save-edit-button').prop('hidden', false)
+        $('.card-body .row #edit-button').click(function (e) {
+            const target = $(e.target).closest('.row').find('input, select');
+            target.prop('disabled', false);
+            $(this).siblings('#save-edit-button').prop('hidden', false);
             $(this).prop('hidden', true);
         });
-    });
-</script>
 
-<script type="text/javascript">
-    $().ready(function() {
-        $('.card-body .row #save-edit-button').click( function (e) {
-            let $button = $(this);
-            let name = undefined
-            let val = undefined
+        $('.card-body .row #save-edit-button').click(function (e) {
+            const $button = $(this);
+            const target = $(e.target).closest('.row').find('input, select');
+            const name = target.attr('id').slice(3);
+            const val = target.val();
 
-            if (typeof $(e.target).closest('.row').find('input').attr('id') !== 'undefined') {
-                name = $(e.target).closest('.row').find('input').attr('id').slice(3);
-                val = $(e.target).closest('.row').find('input').val();   
-            }
-            else {
-                name = $(e.target).closest('.row').find('select').attr('id').slice(3);
-                val = $(e.target).closest('.row').find('select').val();
-                
-            }
-            
             $.ajax({
                 type: 'POST',
                 url: '/profile/',
@@ -144,15 +58,8 @@
                 },
                 dataType: 'json',
                 success: function(responseData) {
-                    if (typeof $(e.target).closest('.row').find('input').attr('id') !== 'undefined') {
-                        $(e.target).closest('.row').find('input').prop('disabled', true);
-                        $(e.target).closest('.row').find('input').val(responseData['form'][name].initial);
-                    }
-                    else {
-                        $(e.target).closest('.row').find('select').prop('disabled', true);
-                        $(e.target).closest('.row').find('select').val(responseData['form'][name].initial);
-                    }
-
+                    target.prop('disabled', true);
+                    target.val(responseData['form'][name].initial);
                     $button.siblings('#edit-button').prop('hidden', false);
                     $button.prop('hidden', true);
                 },
@@ -478,49 +385,55 @@
                                 <span id="sub-title">
                                     <p><b>Детали доставки</b></p>
                                 </span>
-                                <div class="row">
-                                    <span id="col">
+                                <div class="row mb-2">
+                                    <div class="col-3">
                                         <p><b>Трек-номер:</b></p>
-                                    </span>
-                                    {% if item.order.delivery.delivery_id %}
-                                        <span class="col-9"><p>{{ item.order.delivery.delivery_id }}</p></span>
-                                    {% else %}
-                                        <span class="col-9"><p>Трек-номер отсутствует</p></span>
-                                    {% endif %}
+                                    </div>
+                                    <div class="col-9">
+                                        {% if item.order.delivery.delivery_id %}
+                                            <p>{{ item.order.delivery.delivery_id }}</p>
+                                        {% else %}
+                                            <p>Трек-номер отсутствует</p>
+                                        {% endif %}
+                                    </div>
                                 </div>
-                                <div class="row">
-                                    <span id="col">
+                                <div class="row mb-2">
+                                    <div class="col-3">
                                         <p><b>Адрес:</b></p>
-                                    </span>
-                                    {% if item.order.delivery.aspanress %}
-                                        <span class="col-9"><p>{{ item.order.delivery.aspanress }}</p></span>
-                                    {% else %}
-                                        <span class="col-9"><p>Адрес доставки отсутствует</p></span>
-                                    {% endif %}
+                                    </div>
+                                    <div class="col-9">
+                                        {% if item.order.delivery.address %}
+                                            <p>{{ item.order.delivery.address }}</p>
+                                        {% else %}
+                                            <p>Адрес доставки отсутствует</p>
+                                        {% endif %}
+                                    </div>
                                 </div>
-                                
-                                <div class="row">
-                                    <span id="col">
+                                <div class="row mb-2">
+                                    <div class="col-3">
                                         <p><b>Статус:</b></p>
-                                    </span>
-                                    {% if item.order.delivery.delivery_id %}
-                                        <span class="col-9"><p>{{ item.order.delivery.get_status_display }}</p></span>
-                                    {% else %}
-                                        <span class="col-9"><p>Заказ еще не передан в доставку</p></span>
-                                    {% endif %}
+                                    </div>
+                                    <div class="col-9">
+                                        {% if item.order.delivery.delivery_id %}
+                                            <p>{{ item.order.delivery.get_status_display }}</p>
+                                        {% else %}
+                                            <p>Заказ еще не передан в доставку</p>
+                                        {% endif %}
+                                    </div>
                                 </div>
-                                
-                                <div class="row">
-                                    <span id="col">
+                                <div class="row mb-2">
+                                    <div class="col-3">
                                         <p><b>Комментарий курьеру:</b></p>
-                                    </span>
-                                    {% if item.order.delivery.description %}
-                                        <span class="col-9"><p>{{ item.order.delivery.description }}</p></span>
-                                    {% else %}
-                                        <span class="col-9"><p>Заказ еще не передан в доставку</p></span>
-                                    {% endif %}
+                                    </div>
+                                    <div class="col-9">
+                                        {% if item.order.delivery.description %}
+                                            <p>{{ item.order.delivery.description }}</p>
+                                        {% else %}
+                                            <p>Заказ еще не передан в доставку</p>
+                                        {% endif %}
+                                    </div>
                                 </div>
-                            {% endif %}
+                                {% endif %}
                             </div>
                             
                             <div class="summary container">
