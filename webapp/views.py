@@ -109,11 +109,15 @@ def order(request):
             # Any should be able or none
             # TODO: proper validation (including types) should be implemented
             if material is not None:
-                # Response to ajax request
-                res_price = Product.get_price(material=material, length=length, width=width, height=height,
-                                              handles=handles,
-                                              legs=legs, groove=groove, number=number, price=float(price))
-                return JsonResponse({'text': f'{res_price:.2f}'})
+                if number >= 1 and number <= 99:
+
+                    # Response to ajax request
+                    res_price = Product.get_price(material=material, length=length, width=width, height=height,
+                                                  handles=handles,
+                                                  legs=legs, groove=groove, number=number, price=float(price))
+                    return JsonResponse({'text': f'{res_price:.2f}'})
+                else:
+                    return JsonResponse({'text': f'{price:.2f}'})
 
         # AJAX request processing
         if 'delivery_type' in request.POST and 'form-TOTAL_FORMS' not in request.POST:
