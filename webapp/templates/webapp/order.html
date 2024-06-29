@@ -1,4 +1,5 @@
 {% extends './base.html' %}
+{% load static %}
 
 {% block title %}Оформление заказа{% endblock %}
 
@@ -43,7 +44,7 @@
             totalPrice += parseFloat($('.details-group').find('[id*="price"]').val()) || 0;
 
             // Display the overall price
-            $('.overall-price span').each( function () {
+            $('.overall-price div').each( function () {
                 $(this).text(totalPrice.toFixed(2));
             });
         }
@@ -225,6 +226,8 @@
         });
     });
 </script>
+
+<link rel="stylesheet" href="{% static '/css/order.css' %}">
 {% endblock %}
 
 
@@ -232,7 +235,7 @@
 {% block content %}
 <div class="container">
     <div class="form-outer">
-        <div class="header-with-price">
+        <div class="header">
             <h2>Новый заказ</h2>
         </div>
 
@@ -241,86 +244,80 @@
 
             <!-- Step 1: Конфигурация товаров -->
             <div id="step-1" class="form-step">
-                <div class="row mb-3">
-                    <h3 class="col-9">Шаг 1: Конфигурация товаров</h3>
-                    <div class="overall-price col-3 text-end">
-                        <span class="step-overall-price"></span>
+                <div class="row mb-3 my-3">
+                    <div class="col-md-2"></div>
+                    <h3 class="col-md-8 d-flex justify-content-center">#1: Конфигурация товаров</h3>
+                    <div class="overall-price col-2 text-end d-flex justify-content-between align-items-center">
+                        <div class="step-overall-price"></div><i class="fa-solid fa-ruble-sign fa-2x"></i>
                     </div>
                 </div>
 
                 {{ formset.management_form }}
                 <div id="formset-container">
                     <div class="row">
-                        <!-- <div class="col-1"></div> -->
-                        <div class="col-2"><button class="btn btn-success add-form-row">Добавить товар</button></div>
-                        <div class="col-10"></div>
+                        <div class="col-md-2"><button class="btn btn-success add-form-row">Добавить товар</button></div>
+                        <div class="col-md-8"></div>
+                        <div class="step-navigation col-md-2 d-flex justify-content-between">
+                            <div class="col-md d-flex justify-content-end"><button id="prev-step" class="btn btn-success btn-step">Назад</button></div>
+                            <div class="col-md d-flex justify-content-end"><button id="next-step" class="btn btn-success btn-step">Далее</button></div>
+                        </div>
                     </div>
                     {% for form in formset %}
-                    <div class="form-row mb-3">
+                    <div class="form-row card my-3 py-3 px-3">
                             <!-- Общие характеристики -->
-                            <div class="form-section mb-3">
-                                <div class="row">
-                                    <div class="col-md-8"><h4>Общие характеристики</h4></div>
-                                    <div class="col-md-4">
-                                        <div class="input-group mb-3">
-                                                {{ form.price }}
-                                        </div>
+                            <div class="form-sectionpy-3">
+
+                                <div class="row my-3">
+                                    <div class="col-md-1 label-col">{{ form.material.label_tag }}</div>
+                                    <div class="col-md-2 select-col">{{ form.material }}</div>
+
+                                    <div class="col-md-2 label-col">{{ form.length.label_tag }}</div>
+                                    <div class="col-md-1 size-col">{{ form.length }}</div>
+
+                                    <div class="col-md-2 label-col">{{ form.handles.label_tag }}</div>
+                                    <div class="col-md-1 checkbox-col">{{ form.handles }}</div>
+
+                                    <div class="col-md-2 number-col flex d-flex justify-content-around">
+                                        <button type="button" class="btn-decrement">-</button>
+                                        {{ form.number }}
+                                        <button type="button" class="btn-increment">+</button>
                                     </div>
-                                </div>
+                                    <div class="col-md-1 trash-col flex d-flex justify-content-around">
+                                        <button type="button" class="remove-form-row mx-3"><i class="fas fa-trash"></i></button>
+                                    </div>
                                 </div>
                                 
+
                                 <div class="row mb-3">
-                                    <div class="col-md-4">{{ form.material.label_tag }}</div>
-                                    <div class="col-md-4">{{ form.use_type.label_tag }}</div>
+                                    <div class="col-md-1 label-col">{{ form.use_type.label_tag }}</div>
+                                    <div class="col-md-2 select-col">{{ form.use_type }}</div>
+
+                                    <div class="col-md-2 label-col">{{ form.width.label_tag }}</div>
+                                    <div class="col-md-1 size-col">{{ form.width }}</div>
+
+                                    <div class="col-md-2 label-col">{{ form.legs.label_tag }}</div>
+                                    <div class="col-md-1 checkbox-col">{{ form.legs }}</div>
+
+                                    <div class="col-md-3"></div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-3"></div>
+
+                                    <div class="col-md-2 label-col">{{ form.height.label_tag }}</div>
+                                    <div class="col-md-1 size-col">{{ form.height }}</div>
+
+                                    <div class="col-md-2 label-col">{{ form.groove.label_tag }}</div>
+                                    <div class="col-md-1 checkbox-col">{{ form.groove }}</div>
                                     
-                                <div class="row mb-3">
-                                    <div class="col-md-4">{{ form.material }}</div>
-                                    <div class="col-md-4">{{ form.use_type }}</div>
-                                    <div class="col-md-1">
-                                        <button type="button" class="btn btn-outline-danger btn-decrement">-</button>
-                                    </div>
-                                    <div class="col-md-1">
-                                        {{ form.number }}
-                                    </div>
-                                    <div class="col-md-1">
-                                        <button type="button" class="btn btn-outline-success btn-increment">+</button>
-                                    </div>
-                                    <div class="col-md-1">
-                                        <button type="button" class="btn btn-outline-danger remove-form-row"><i class="fas fa-trash"></i></button>
-                                    </div>
-                                </div>
-                            </div>
+                                    <div class="col-md-1 flex d-flex justify-content-around prod-price align-items-center">{{ form.price }}<i class="fa-solid fa-ruble-sign fa-lg"></i></div>
 
-                            
+                                    <div class="col-md-1"></div>
 
-                            <!-- Размеры -->
-                            <div class="form-section mb-3">
-                                <h4>Размеры</h4>
-                                <div class="row mb-3">
-                                    <div class="col-md-2">{{ form.length.label_tag }}</div>
-                                    <div class="col-md-2">{{ form.width.label_tag }}</div>
-                                    <div class="col-md-2">{{ form.height.label_tag }}</div>
+                                    <div class="col-md-1"></div>
+                                    
                                 </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-2">{{ form.length }}</div>
-                                    <div class="col-md-2">{{ form.width }}</div>
-                                    <div class="col-md-2">{{ form.height }}</div>
-                                </div>
-                            </div>
 
-                            <!-- Дополнительные параметры -->
-                            <div class="form-section mb-3">
-                                <h4>Дополнительные параметры</h4>
-                                <div class="row mb-3">
-                                    <div class="col-md-2">{{ form.handles.label_tag }}</div>
-                                    <div class="col-md-2">{{ form.legs.label_tag }}</div>
-                                    <div class="col-md-2">{{ form.groove.label_tag }}</div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-2">{{ form.handles }}</div>
-                                    <div class="col-md-2">{{ form.legs }}</div>
-                                    <div class="col-md-2">{{ form.groove }}</div>
-                                </div>
                             </div>
                     </div>
                     {% endfor %}
@@ -329,10 +326,20 @@
 
             <!-- Step 2: Детали доставки -->
             <div id="step-2" class="form-step visually-hidden">
+                <div class="row mb-3 my-3">
+                    <div class="col-md-2"></div>
+                    <h3 class="col-md-8 d-flex justify-content-center">#2: Уточнение деталей</h3>
+                    <div class="overall-price col-2 text-end">
+                        <div class="step-overall-price"></div>
+                    </div>
+                </div>
                 <div class="row mb-3">
-                    <h3 class="col-9">Шаг 2: Детали доставки</h3>
-                    <div class="overall-price col-3 text-end">
-                        <span class="step-overall-price"></span>
+                    <div class="row">
+                        <div class="col-md-10"></div>
+                        <div class="step-navigation col-md-2 d-flex justify-content-between">
+                            <div class="col-md d-flex justify-content-end"><button id="prev-step" class="btn btn-success btn-step">Назад</button></div>
+                            <div class="col-md d-flex justify-content-end"><button id="next-step" class="btn btn-success btn-step">Далее</button></div>
+                        </div>
                     </div>
                 </div>
                 <div class="order-details">
@@ -361,21 +368,16 @@
 
             <!-- Step 3: Подтверждение -->
             <div id="step-3" class="form-step visually-hidden">
-                <div class="row mb-3">
-                    <h3 class="col-9">Шаг 3: Подтверждение заказа</h3>
-                    <div class="overall-price col-3 text-end">
-                        <span class="step-overall-price"></span>
+                <div class="row mb-3 my-3">
+                    <div class="col-md-2"></div>
+                    <h3 class="col-md-8 d-flex justify-content-center">#3: Подтверждение заказа</h3>
+                    <div class="overall-price col-2 text-end">
+                        <div class="step-overall-price"></div>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Оформить заказ</button>
             </div>
         </form>
-
-        <!-- Navigation buttons -->
-        <div class="step-navigation mt-3">
-            <button id="prev-step" class="btn btn-primary me-3">Назад</button>
-            <button id="next-step" class="btn btn-primary">Далее</button>
-        </div>
     </div>
 
     <!-- Success Message -->
