@@ -3,8 +3,81 @@
 {% block title %}Оформление заказа{% endblock %}
 
 {% block head %}
-    <!--- form add/delete -->
-    <script type="text/javascript">
+<script type="text/javascript">
+    $(document).ready(function () {
+        var currentStep = 1;
+        var totalSteps = $('.form-step').length;
+
+        // Function to show the current step
+        function showStep(step) {
+            $('.form-step').addClass('visually-hidden');
+            $('#step-' + step).removeClass('visually-hidden');
+            updateButtons(step);
+        }
+
+        // Function to update navigation buttons
+        function updateButtons(step) {
+            if (step == 1) {
+                $('#prev-step').hide();
+            } else {
+                $('#prev-step').show();
+            }
+
+            if (step == totalSteps) {
+                $('#next-step').hide();
+            } else {
+                $('#next-step').show();
+            }
+        }
+
+        // Function to update overall price based on form data
+        function updateOverallPrice() {
+            var totalPrice = 0;
+
+            // Sum up prices of each product
+            $('.form-row').each(function () {
+                var price = parseFloat($(this).find('[id*="price"]').val()) || 0;
+                totalPrice += price;
+            });
+
+            totalPrice += parseFloat($('.details-group').find('[id*="price"]').val()) || 0;
+
+            // Display the overall price
+            $('.overall-price span').each( function () {
+                $(this).text(totalPrice.toFixed(2));
+            });
+        }
+
+        // Initial
+        updateOverallPrice();
+
+        // Calculate overall price on formset input change
+        $('.form-step input, select').change(function (e) {
+            updateOverallPrice();
+        });
+
+        // Next step button click handler
+        $('#next-step').click(function (e) {
+            e.preventDefault();
+            if (currentStep < totalSteps) {
+                currentStep++;
+                showStep(currentStep);
+            }
+        });
+
+        // Previous step button click handler
+        $('#prev-step').click(function (e) {
+            e.preventDefault();
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        });
+
+        // Initial setup
+        showStep(currentStep);
+
+        // Function to update element indices
         function updateElementIndex(el, prefix, ndx) {
             var id_regex = new RegExp('(' + prefix + '-\\d+)');
             var replacement = prefix + '-' + ndx;
@@ -13,254 +86,283 @@
             if (el.name) el.name = el.name.replace(id_regex, replacement);
         }
 
+        // Function to clone formset elements
         function cloneMore(selector, prefix) {
             var newElement = $(selector).clone(true, true);
             var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
 
-            $(newElement).find(':input').each(function() {
+            $(newElement).find(':input').each(function () {
                 updateElementIndex(this, prefix, total);
             });
-            $(newElement).find('label').each(function() {
+            $(newElement).find('label').each(function () {
                 updateElementIndex(this, prefix, total);
             });
 
             total++;
             $('#id_' + prefix + '-TOTAL_FORMS').val(total);
-            console.log($('#id_' + prefix + '-TOTAL_FORMS').val());
             $(selector).before(newElement);
-            
+
+            updateOverallPrice();
+
             return false;
         }
 
+        // Function to delete formset elements
         function deleteForm(prefix, btn) {
             var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
 
-            if (total !=  1){
-                $('#id_' + prefix + '-TOTAL_FORMS').val(total-1);
+            if (total != 1) {
+                $('#id_' + prefix + '-TOTAL_FORMS').val(total - 1);
                 btn.closest('.form-row').remove();
                 var forms = $('.form-row');
-                for (var i=0; i<forms.length; i++) {
-                    $(forms.get(i)).find(':input').each(function() {
+                for (var i = 0; i < forms.length; i++) {
+                    $(forms.get(i)).find(':input').each(function () {
                         updateElementIndex(this, prefix, i);
                     });
-                    $(forms.get(i)).find('label').each(function() {
+                    $(forms.get(i)).find('label').each(function () {
                         updateElementIndex(this, prefix, i);
                     });
                 }
             }
 
+            updateOverallPrice();
+
             return false;
         }
 
-        $(document).on('click', '.add-form-row', function(e){
+        // Clone formset elements on button click
+        $(document).on('click', '.add-form-row', function (e) {
             e.preventDefault();
             cloneMore('#formset-container .form-row:first', 'form');
             return false;
         });
-        
-        $(document).on('click', '.remove-form-row', function(e){
+
+        // Delete formset elements on button click
+        $(document).on('click', '.remove-form-row', function (e) {
             e.preventDefault();
             deleteForm('form', $(this));
             return false;
         });
 
-    </script>
-    <!--- price -->
-    <script type="text/javascript">
-        $().ready(function() {
-            const baseTimeout = 1000;
-
-            // function debounce(callback, wait, e) {
-            //     let timeout;
-                
-            //     return (...args) => {
-            //         clearTimeout(timeout);
-            //         timeout = setTimeout(function () { callback.apply(this, args); }, wait);
-            //     }
-            // }
-
-            $('#formset-container select,input').change( function (e) {
-                $.ajax({
-                    type: 'POST',
-                    url: '/order/',
-                    data: {
-                        material: $(e.target).closest('.form-row').find('[name*="material"]').val(),
-                        length: $(e.target).closest('.form-row').find('[name*="length"]').val(),
-                        width: $(e.target).closest('.form-row').find('[name*="width"]').val(),
-                        height: $(e.target).closest('.form-row').find('[name*="height"]').val(),
-                        handles: $(e.target).closest('.form-row').find('[name*="handles"]').is(':checked'),
-                        legs: $(e.target).closest('.form-row').find('[name*="legs"]').is(':checked'),
-                        groove: $(e.target).closest('.form-row').find('[name*="groove"]').is(':checked'),
-                        number: $(e.target).closest('.form-row').find('[name*="number"]').val(),
-                        price: $(e.target).closest('.form-row').find('[name*="price"]').val(),
-                        csrfmiddlewaretoken: '{{ csrf_token }}',
-                    },
-                    dataType: 'json',
-                    success: function(responseData) {
-                        $(e.target).closest('.form-row').find('[id*=price]').val(responseData.text)
-                    },
-                });
+        // Calculate overall price on formset input change
+        $('#formset-container select, #formset-container input').change(function (e) {
+            $.ajax({
+                type: 'POST',
+                url: '/order/',
+                data: {
+                    material: $(e.target).closest('.form-row').find('[id*="material"]').val(),
+                    length: $(e.target).closest('.form-row').find('[id*="length"]').val(),
+                    width: $(e.target).closest('.form-row').find('[id*="width"]').val(),
+                    height: $(e.target).closest('.form-row').find('[id*="height"]').val(),
+                    handles: $(e.target).closest('.form-row').find('[id*="handles"]').is(':checked'),
+                    legs: $(e.target).closest('.form-row').find('[id*="legs"]').is(':checked'),
+                    groove: $(e.target).closest('.form-row').find('[id*="groove"]').is(':checked'),
+                    number: $(e.target).closest('.form-row').find('[id*="number"]').val(),
+                    price: $(e.target).closest('.form-row').find('[id*="price"]').val(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                },
+                dataType: 'json',
+                success: function (responseData) {
+                    $(e.target).closest('.form-row').find('[id*=price]').val(responseData.text);
+                    updateOverallPrice();
+                },
             });
         });
-    </script>
-    <!--- delivery price -->
-    <script type="text/javascript">
-        $().ready(function() {
-            $('.order-details select').change( function (e) {
-                $.ajax({
-                    type: 'POST',
-                    url: '/order/',
-                    data: {
-                        delivery_type: $(e.target).closest('.form-row').find('[name*="delivery_type"]').val(),
-                        address: $(e.target).closest('.form-row').find('[name*="address"]').val(),
-                        csrfmiddlewaretoken: '{{ csrf_token }}',
-                    },
-                    dataType: 'json',
-                    success: function(responseData) {
-                        $(e.target).closest('.form-row').find('[id*=delivery_price]').val(responseData.text)
-                    },
-                });
+
+        // Delivery price
+        $('.order-details select').change(function (e) {
+            $.ajax({
+                type: 'POST',
+                url: '/order/',
+                data: {
+                    delivery_type: $(this).val(),
+                    address: $(e.target).closest('.order-details').find('[id*="address"]').val(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                },
+                dataType: 'json',
+                success: function (responseData) {
+                    $(e.target).closest('.order-details').find('[id*=delivery_price]').val(responseData.text);
+                    updateOverallPrice();
+                },
             });
         });
-    </script>
-    <!--- submit -->
-    <script type="text/javascript">
-        $().ready(function() {
-            $('form').submit( function (e) {
-                e.preventDefault();
-                $(this).find('[name*="price"]').prop('disabled', false);
-                dataToSend = $(this).serialize();
-                $(this).find('[name*="price"]').prop('disabled', true);
-                $.ajax({
-                    type: 'POST',
-                    url: '/order/',
-                    data: dataToSend,
-                    context: this,
-                    dataType: 'json',
-                    success: function(responseData) {
-                        $(this).closest('.form-outer').prop("classList").add('visually-hidden');
 
-                        $('.message-prefix').html(responseData.message_prefix);
-                        $('.message-body').html(responseData.message_body + responseData.order_id);
-                        $('.message-suffix').html(responseData.message_suffix);
-
-                        $('.post-message').first().prop("classList").remove('visually-hidden');
-                    },
-                });
-            });
-        });
-    </script>
-    <!--- fields hiding -->
-    <script type="text/javascript">
-        $().ready(function() {
-            elemSelector = '[name*="delivery_type"]';
-            function toggleFields() {
-                if ($(elemSelector).val() === '0') {
-                    $(elemSelector).closest('.form-row').find('.dynamic').slideUp();
-                } else {
-                    $(elemSelector).closest('.form-row').find('.dynamic').slideDown();
-                }
+        // Toggle dynamic fields based on delivery type selection
+        $('[id*="delivery_type"]').change(function () {
+            if ($(this).val() === '0') {
+                $('.dynamic').slideUp();
+            } else {
+                $('.dynamic').slideDown();
             }
+        });
 
-            // Initial check
-            toggleFields();
 
-            // Check on change
-            $(elemSelector).change(function() {
-                toggleFields();
+        // Initial
+        if ($('[id*="delivery_type"]').val() === '0') {
+            $('.dynamic').slideUp();
+        }
+
+        // Handle form submission
+        $('#order-form').submit(function (e) {
+            e.preventDefault();
+            $(this).find('[name*="price"]').prop('disabled', false);
+            var dataToSend = $(this).serialize();
+            $(this).find('[name*="price"]').prop('disabled', true);
+            $.ajax({
+                type: 'POST',
+                url: '/order/',
+                data: dataToSend,
+                context: this,
+                dataType: 'json',
+                success: function (responseData) {
+                    $(this).closest('.form-outer').addClass('visually-hidden');
+                    $('.message-prefix').html(responseData.message_prefix);
+                    $('.message-body').html(responseData.message_body + responseData.order_id);
+                    $('.message-suffix').html(responseData.message_suffix);
+                    $('.post-message').removeClass('visually-hidden');
+                },
             });
         });
-    </script>
+    });
+</script>
 {% endblock %}
 
+
+
 {% block content %}
-        <div>
-            <div class="form-outer">
-                <h2>Новый заказ</h1>
+<div>
+    <div class="form-outer">
+        <div class="header-with-price">
+            <h2>Новый заказ</h2>
+        </div>
 
-                <form method="POST" action="">
-                    {% csrf_token %}
-                    
-                    {{ formset.management_form }}
-                    <div id="formset-container">
+        <form id="order-form" method="POST" action="">
+            {% csrf_token %}
 
-                        <button class="btn btn-success add-form-row">+</button>
-
-                        {% for form in formset %}
-
-                            <div class="row form-row spacer">
-                                <div class="col-1"></div>
-                                <div class="col-6">
-                                    <div class="input-group">
-                                        <table>
-                                            {{form.as_table}}
-                                        </table>
-                                        <div class="input-group-append">
-                                            <button class="btn btn-danger remove-form-row">-</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-5"></div>
-                            </div>
-                        {% endfor %}
-                    </div>
-
-                    <div class="row form-row spacer order-details">
+            <!-- Step 1: Конфигурация товаров -->
+            <div id="step-1" class="form-step">
+                <h3>Шаг 1: Конфигурация товаров</h3>
+                <div class="overall-price">
+                    <p>Общая стоимость: <span class="step-overall-price"></span></p>
+                </div>
+                {{ formset.management_form }}
+                <div id="formset-container">
+                    <button class="btn btn-success add-form-row">Добавить товар</button>
+                    {% for form in formset %}
+                    <div class="row form-row spacer">
                         <div class="col-1"></div>
                         <div class="col-6">
                             <div class="input-group">
-                                <table>
-                                    <div class="details-group static">
+                                <table class="form-table">
+                                    <tbody>
                                         <tr>
-                                            <th>{{ order_form.description.label_tag }}</th>
-                                            <td>{{ order_form.description }}</td>
+                                            <th>{{ form.material.label_tag }}</th>
+                                            <td>{{ form.material }}</td>
                                         </tr>
-                                    </div>
-                                    <div class="details-group static">
                                         <tr>
-                                            <th>{{ order_form.delivery_type.label_tag }}</th>
-                                            <td>{{ order_form.delivery_type }}</td>
+                                            <th>{{ form.use_type.label_tag }}</th>
+                                            <td>{{ form.use_type }}</td>
                                         </tr>
-                                    </div>
-                                    <div class="details-group dynamic" id="dynamic-order">
                                         <tr>
-                                            <th>{{ order_form.delivery_description.label_tag }}</th>
-                                            <td>{{ order_form.delivery_description }}</td>
+                                            <th>{{ form.length.label_tag }}</th>
+                                            <td>{{ form.length }}</td>
                                         </tr>
-                                    </div>
-                                    <div class="details-group dynamic" id="dynamic-order">
                                         <tr>
-                                            <th>{{ order_form.address.label_tag }}</th>
-                                            <td>{{ order_form.address }}</td>
+                                            <th>{{ form.width.label_tag }}</th>
+                                            <td>{{ form.width }}</td>
                                         </tr>
-                                    </div>
-                                    <div class="details-group static">
                                         <tr>
-                                            <th>{{ order_form.delivery_price.label_tag }}</th>
-                                            <td>{{ order_form.delivery_price }}</td>
+                                            <th>{{ form.height.label_tag }}</th>
+                                            <td>{{ form.height }}</td>
                                         </tr>
-                                    </div>
-                                </table> 
+                                        <tr>
+                                            <th>{{ form.handles.label_tag }}</th>
+                                            <td>{{ form.handles }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ form.legs.label_tag }}</th>
+                                            <td>{{ form.legs }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ form.groove.label_tag }}</th>
+                                            <td>{{ form.groove }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th></th>
+                                            <td>{{ form.number }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th></th>
+                                            <td>{{ form.price }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="input-group-append">
+                                    <button class="btn btn-danger remove-form-row">Удалить товар</button>
+                                </div>
                             </div>
                         </div>
                         <div class="col-5"></div>
                     </div>
-
-                    <button type="submit">Оформить заказ</button>
-
-                </form>
+                    {% endfor %}
+                </div>
             </div>
 
-            <div class="post-message visually-hidden">
-                <h2 class='message-prefix'></h2>
-                <p class='message-body'></p>
-                <p class='message-suffix'></p>
+            <!-- Step 2: Детали доставки -->
+            <div id="step-2" class="form-step visually-hidden">
+                <h3>Шаг 2: Детали доставки</h3>
+                <div class="overall-price">
+                    <p>Общая стоимость: <span class="step-overall-price"></span></p>
+                </div>
+                <div class="order-details">
+                    <div class="details-group static">
+                        <label>{{ order_form.description.label_tag }}</label>
+                        {{ order_form.description }}
+                    </div>
+                    <div class="details-group static">
+                        <label>{{ order_form.delivery_type.label_tag }}</label>
+                        {{ order_form.delivery_type }}
+                    </div>
+                    <div class="details-group dynamic">
+                        <label>{{ order_form.delivery_description.label_tag }}</label>
+                        {{ order_form.delivery_description }}
+                    </div>
+                    <div class="details-group dynamic">
+                        <label>{{ order_form.address.label_tag }}</label>
+                        {{ order_form.address }}
+                    </div>
+                    <div class="details-group static">
+                        <label>{{ order_form.delivery_price.label_tag }}</label>
+                        {{ order_form.delivery_price }}
+                    </div>
+                </div>
             </div>
 
+            <!-- Step 3: Подтверждение -->
+            <div id="step-3" class="form-step visually-hidden">
+                <h3>Шаг 3: Подтверждение заказа</h3>
+                <div class="overall-price">
+                    <p>Общая стоимость: <span class="step-overall-price"></span></p>
+                </div>
+                <button type="submit">Оформить заказ</button>
+            </div>
+        </form>
+
+        <!-- Navigation buttons -->
+        <div class="step-navigation">
+            <button id="prev-step" class="btn btn-primary">Назад</button>
+            <button id="next-step" class="btn btn-primary">Далее</button>
         </div>
+    </div>
 
+    <!-- Success Message -->
+    <div class="post-message visually-hidden">
+        <h2 class='message-prefix'></h2>
+        <p class='message-body'></p>
+        <p class='message-suffix'></p>
+    </div>
+</div>
 {% endblock %}
 
 {% block externals %}
-
 {% endblock %}
