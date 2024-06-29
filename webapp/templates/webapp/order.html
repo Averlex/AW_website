@@ -239,74 +239,112 @@
         <form id="order-form" method="POST" action="">
             {% csrf_token %}
 
-            <!-- Step 1: Конфигурация товаров -->
-            <div id="step-1" class="form-step">
-                <h3>Шаг 1: Конфигурация товаров</h3>
-                <div class="overall-price">
-                    <p>Общая стоимость: <span class="step-overall-price"></span></p>
-                </div>
-                {{ formset.management_form }}
-                <div id="formset-container">
-                    <button class="btn btn-success add-form-row">Добавить товар</button>
-                    {% for form in formset %}
-                    <div class="row form-row spacer">
-                        <div class="col-1"></div>
-                        <div class="col-6">
-                            <div class="input-group">
-                                <table class="form-table">
-                                    <tbody>
-                                        <tr>
-                                            <th>{{ form.material.label_tag }}</th>
-                                            <td>{{ form.material }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>{{ form.use_type.label_tag }}</th>
-                                            <td>{{ form.use_type }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>{{ form.length.label_tag }}</th>
-                                            <td>{{ form.length }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>{{ form.width.label_tag }}</th>
-                                            <td>{{ form.width }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>{{ form.height.label_tag }}</th>
-                                            <td>{{ form.height }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>{{ form.handles.label_tag }}</th>
-                                            <td>{{ form.handles }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>{{ form.legs.label_tag }}</th>
-                                            <td>{{ form.legs }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>{{ form.groove.label_tag }}</th>
-                                            <td>{{ form.groove }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th></th>
-                                            <td>{{ form.number }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th></th>
-                                            <td>{{ form.price }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <div class="input-group-append">
-                                    <button class="btn btn-danger remove-form-row">Удалить товар</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-5"></div>
+           <!-- Step 1: Конфигурация товаров -->
+<div id="step-1" class="form-step">
+    <h3>Шаг 1: Конфигурация товаров</h3>
+    <div class="overall-price">
+        <p>Общая стоимость: <span class="step-overall-price"></span></p>
+    </div>
+    {{ formset.management_form }}
+    <div id="formset-container">
+        <button class="btn btn-success add-form-row">Добавить товар</button>
+        {% for form in formset %}
+        <div class="row form-row spacer">
+            <div class="col-8">
+                <!-- Общие характеристики -->
+                <div class="form-section">
+                    <h4>Общие характеристики</h4>
+                    <div class="input-group col-8">
+                        <table class="form-table">
+                            <tbody>
+                                <tr>
+                                    <td class="col-4">{{ form.material.label_tag }}</td>
+                                    <td class="col-4">{{ form.use_type.label_tag }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-4">{{ form.material }}</td>
+                                    <td class="col-4">{{ form.use_type }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    {% endfor %}
+                </div>
+                
+                <!-- Размеры -->
+                <div class="form-section">
+                    <h4>Размеры</h4>
+                    <div class="input-group col-8">
+                        <table class="form-table">
+                            <tbody>
+                                <tr>
+                                    <td class="col-2">{{ form.length.label_tag }}</td>
+                                    <td class="col-1"></td>
+                                    <td class="col-2">{{ form.width.label_tag }}</td>
+                                    <td class="col-1"></td>
+                                    <td class="col-2">{{ form.height.label_tag }}</td>
+                                    
+                                </tr>
+                                <tr>
+                                    <td class="col-2">{{ form.length }}</td>
+                                    <td class="col-1"></td>
+                                    <td class="col-2">{{ form.width }}</td>
+                                    <td class="col-1"></td>
+                                    <td class="col-2">{{ form.height }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Дополнительные параметры -->
+                <div class="form-section">
+                    <h4>Дополнительные параметры</h4>
+                    <div class="input-group col-8">
+                        <table class="form-table">
+                            <tbody>
+                                <tr>
+                                    <td class="col-4">{{ form.handles.label_tag }}</td>
+                                    <td class="col-4">{{ form.legs.label_tag }}</td>
+                                    
+                                    <td class="col-4">{{ form.groove.label_tag }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-4">{{ form.handles }}</td>
+                                    <td class="col-4">{{ form.legs }}</td>
+                                    <td class="col-4">{{ form.groove }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
+            
+            <div class="col-4">
+                <div class="input-group">
+                    <table class="form-table">
+                        <tbody>
+                            <tr>
+                                <td class="col-1">
+                                    <input type="button" value="-" class="btn-decrement">
+                                    {{ form.number }}
+                                    <input type="button" value="+" class="btn-increment">
+                                </td>
+                                <td class="col-2">{{ form.price }}</td>
+                                <td class="col-1">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-danger remove-form-row">-</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 
             <!-- Step 2: Детали доставки -->
             <div id="step-2" class="form-step visually-hidden">
