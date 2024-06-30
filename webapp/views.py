@@ -85,6 +85,9 @@ def order(request):
     if request.method == 'POST':
         tmp = request.POST
 
+        if 'step_change' in request.POST:
+            print(request.POST)
+
         # AJAX request processing
         if 'material' in request.POST and 'form-TOTAL_FORMS' not in request.POST:
             material = int(tmp.get('material', None))
