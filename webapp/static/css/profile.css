@@ -81,7 +81,7 @@
 }
 .no-js .accordionItem.is-collapsed {
   max-height: auto;
-} */
+}
 .animateIn {
      animation: accordionIn 0.45s normal ease-in-out both 1; 
 }

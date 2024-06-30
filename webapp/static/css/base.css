@@ -12,11 +12,6 @@ body {
   flex-grow: 1;
 }
 
-
-/* Header and Navbar Styling */
-header[data-bs-theme="dark"] {
-}
-
 .navbar {
   transition: padding-top 0.3s, padding-bottom 0.3s; /* Smooth transition for padding */
 }
