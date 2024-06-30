@@ -1,11 +1,3 @@
-.footer {
-  padding: 1rem; /* Adjust padding as needed */
-  font-size: 0.9rem; /* Reduce font size as needed */
-}
-
-body {
-  margin-bottom: 5%;
-} */
 
 html, body {
   height: 100%;
@@ -18,4 +10,62 @@ body {
 
 .main {
   flex-grow: 1;
+}
+
+
+/* Header and Navbar Styling */
+header[data-bs-theme="dark"] {
+  background-color: #343a40; /* Dark background color */
+  padding: 10px 0; /* Padding for header */
+}
+
+.navbar {
+  transition: padding-top 0.3s, padding-bottom 0.3s; /* Smooth transition for padding */
+}
+
+.navbar-brand img.banner {
+  max-height: 40px; /* Adjust height of the banner image */
+  width: auto; /* Allow width to adjust dynamically */
+}
+
+.navbar-nav .nav-link {
+  color: #dee2e6 !important; /* Text color for nav links */
+  transition: color 0.3s; /* Smooth transition for color change */
+}
+
+.navbar-nav .nav-link:hover {
+  color: #ffffff !important; /* Text color on hover */
+}
+
+.navbar-toggler-icon {
+  background-color: #dee2e6; /* Color for toggler icon */
+}
+
+/* Button Styling */
+.btn-outline {
+  color: #dee2e6; /* Text color for outline buttons */
+  border-color: #dee2e6; /* Border color for outline buttons */
+  transition: color 0.3s, border-color 0.3s; /* Smooth transition for color and border */
+}
+
+.btn-outline:hover {
+  color: #ffffff; /* Text color on hover */
+  border-color: #ffffff; /* Border color on hover */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991.98px) {
+  .navbar-brand img.banner {
+      max-height: 30px; /* Adjust height for smaller screens */
+  }
+  
+  .navbar-nav.auth-links {
+      margin-left: auto; /* Push auth links to the right */
+  }
+}
+
+/* Adjust SVG image size */
+.navbar-brand img.banner {
+  max-height: 20px !important; /* Adjust the maximum height as needed */
+  width: 20px; /* Allow width to adjust dynamically */
 }

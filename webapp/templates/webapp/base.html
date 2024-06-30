@@ -31,41 +31,56 @@
     <header data-bs-theme="dark">
         <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
             <div class="container-fluid">
-                <a class="navbar-brand" href="{% url 'home' %}">Axiom Wood</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarCollapse">
+                
+                <div class="collapse navbar-collapse d-flex justify-content-between" id="navbarCollapse">
                     <!--- Main nav -->
-                    <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                        <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="{% url 'home' %}">Главная</a>
-                        </li>
-                        
-                        <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="{% url 'gallery' %}">Галерея работ</a>
-                        </li>
+                    <div class="col-1"></div>
+                    <div class="col-1">
+                        <a class="navbar-brand" href="{% url 'home' %}"><img src="{% static '/img/banner.png' %}" class="banner" style="max-height: 40px;"></a>
+                    </div>
+                    <div class="col-4">
+                        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                            <li class="nav-item col">
+                                <a class="nav-link" aria-current="page" href="{% url 'home' %}">Главная</a>
+                            </li>
+                            
+                            <li class="nav-item col">
+                                <a class="nav-link" aria-current="page" href="{% url 'gallery' %}">Галерея работ</a>
+                            </li>
+    
+                            <li class="nav-item col">
+                                <a class="nav-link" aria-current="page" href="{% url 'order' %}">Оформить заказ</a>
+                            </li>
+    
+                            <li class="nav-item col">
+                                <a class="nav-link" aria-current="page" href="{% url 'about' %}">О нас</a>
+                            </li>
+    
+                        </ul>
+                    </div>
 
-                        <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="{% url 'order' %}">Оформить заказ</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="{% url 'about' %}">О нас</a>
-                        </li>
-
-                    </ul>
-
-                    
+                    <div class="col-4"></div>
 
                     <!--- Auth nav -->
-                    {% if request.user.is_authenticated %}
-                        <a href="{% url 'profile' %}" class="nav-item" aria-current="page"><button class="btn btn-outline" type="button">Личный кабинет</button></a>
-                        <a href="{% url 'logout' %}" class="nav-item" aria-current="page"><button class="btn btn-outline" type="button">Выйти</button></a>
-                    {% else %}
-                        <a href="{% url 'login' %}" class="nav-item" aria-current="page"><button class="btn btn-outline" type="button">Войти в аккаунт</button></a>
-                        <a href="{% url 'signup' %}" aria-current="item"><button class="btn btn-outline" type="button">Зарегистрироваться</button></a>
-                    {% endif %}
+                    <div class="col-2">
+                        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                            {% if request.user.is_authenticated %}
+                            <li class="nav-item col">
+                                <a href="{% url 'profile' %}" class="nav-link" aria-current="page"><div class="me-2">Личный кабинет</div></a>
+                            </li>
+                            <li class="nav-item col">
+                                <a href="{% url 'logout' %}" class="nav-link" aria-current="page"><div class="me-2">Выйти</div></a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item col"></li>
+                                <a href="{% url 'login' %}" class="nav-link" aria-current="page"><div class="me-2">Войти в аккаунт</div></a>
+                            </li>
+                            <li class="nav-item col">
+                                <a href="{% url 'signup' %}" aria-current="nav-link"><div class="me-2">Зарегистрироваться</div></a>
+                            </li>
+                        {% endif %}
+                        </ul>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -85,7 +100,7 @@
         <p class="col-md-4 mb-0 text-body-secondary">&copy; 2024 Axiom Wood</p>
     
         <a href="{% url 'home' %}" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-            <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
+            <img class="" width="30" height="30" src="{% static '/img/logo.svg' %}"/>
         </a>
     
         <ul class="nav col-md-4 justify-content-end small">
