@@ -1,14 +1,19 @@
 {% extends './base.html' %}
+{% load static %}
 
 {% block title %}Политика в отношении обработки персональных данных{% endblock %}
 
+{% block head %}s
+    <link rel="stylesheet" href="{% static '/css/policy.css' %}">
+{% endblock %}
+
 {% block content %}
     <div class="row mb-3">
-        <div class="col" style="border: solid 2px #eee; padding: 20px">
+        <div class="col" style="border: solid 2px #eee; padding: 20px; border-radius: 10px;">
             <div id="inputResult">
                 <div class="row mb-4">
-                    <div class="col">
-                        <h4><strong>Политика в&nbsp;отношении обработки персональных данных</strong></h4>
+                    <div class="col text-center">
+                        <h3><strong>Политика в&nbsp;отношении обработки персональных данных</strong></h3>
                     </div>
                 </div>
                 <div class="row mb-4">
@@ -37,6 +42,7 @@
                         </div>
                     </div>
                 </div>
+                <hr>
                 <div class="row mb-4">
                     <div class="col">
                         <h5>2. Основные понятия, используемые в&nbsp;Политике</h5>
@@ -131,6 +137,7 @@
                         </div>
                     </div>
                 </div>
+                <hr>
                 <div class="row mb-4">
                     <div class="col">
                         <h5>3. Основные права и&nbsp;обязанности Оператора</h5>
@@ -199,6 +206,7 @@
                         </div>
                     </div>
                 </div>
+                <hr>
                 <div class="row mb-4">
                     <div class="col">
                         <h5>4. Основные права и&nbsp;обязанности субъектов персональных данных</h5>
@@ -256,6 +264,7 @@
                         </div>
                     </div>
                 </div>
+                <hr>
                 <div class="row mb-4">
                     <div class="col">
                         <h5>5. Принципы обработки персональных данных</h5>
@@ -306,6 +315,7 @@
                         </div>
                     </div>
                 </div>
+                <hr>
                 <div class="row mb-4">
                     <div class="col">
                         <h5>6. Цели обработки персональных данных</h5>
@@ -354,6 +364,7 @@
                         </div>
                     </div>
                 </div>
+                <hr>
                 <div class="row mb-4">
                     <div class="col">
                         <h5>7. Условия обработки персональных данных</h5>
@@ -400,6 +411,7 @@
                         </div>
                     </div>
                 </div>
+                <hr>
                 <div class="row mb-4">
                     <div class="col">
                         <h5>
@@ -484,6 +496,7 @@
                         </div>
                     </div>
                 </div>
+                <hr>
                 <div class="row mb-4">
                     <div class="col">
                         <h5>
@@ -505,6 +518,7 @@
                         </div>
                     </div>
                 </div>
+                <hr>
                 <div class="row mb-4">
                     <div class="col">
                         <h5>10. Трансграничная передача персональных данных</h5>
@@ -526,6 +540,7 @@
                         </div>
                     </div>
                 </div>
+                <hr>
                 <div class="row mb-4">
                     <div class="col">
                         <h5>11. Конфиденциальность персональных данных</h5>
@@ -537,6 +552,7 @@
                         </div>
                     </div>
                 </div>
+                <hr>
                 <div class="row mb-4">
                     <div class="col">
                         <h5>12. Заключительные положения</h5>
