@@ -160,7 +160,7 @@ input[type=number]::-webkit-inner-spin-button {
   }
 
 
-.prod-price input {
+.prod-price input, .delivery-price input{
     border: none !important;
     background: none !important;
     color: #dee2e6 !important;
@@ -171,7 +171,7 @@ input[type=number]::-webkit-inner-spin-button {
     font-size:larger;
 }
 
-.prod-price i {
+.prod-price i, .details-group i {
     size: 3em !important;
     color: #dee2e6 !important;
 }
@@ -204,3 +204,5 @@ input[type=number]::-webkit-inner-spin-button {
     font-size:xx-large;
 }
   
+
+

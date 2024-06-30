@@ -315,7 +315,7 @@
                     {% for form in formset %}
                     <div class="form-row card my-3 py-3 px-3">
                             <!-- Общие характеристики -->
-                            <div class="form-sectionpy-3">
+                            <div class="form-section py-3">
 
                                 <div class="row my-3">
                                     <div class="col-md-1 label-col">{{ form.material.label_tag }}</div>
@@ -391,28 +391,48 @@
                         <div class="col-md d-flex justify-content-end"><button id="next-step-2" class="btn btn-success btn-step btn-step-inc" type="button">Далее</button></div>
                     </div>
                 </div>
+                <div class="card my-3 py-3 px-3">
+                    <div class="form-section py-3">
                 <div class="order-details">
-                    <div class="details-group mb-3">
-                        <label>{{ order_form.description.label_tag }}</label>
-                        {{ order_form.description }}
+                    <div class="row mb-3">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-8">{{ order_form.description.label_tag }}</div>
+                        <div class="col-md-2 flex d-flex justify-content-start details-group align-items-center">{{ order_form.delivery_type.label_tag }}</div>
+                        <div class="col-md-1"></div>
                     </div>
-                    <div class="details-group mb-3">
-                        <label>{{ order_form.delivery_type.label_tag }}</label>
-                        {{ order_form.delivery_type }}
+                    <div class="row mb-3">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-8">{{ order_form.description }}</div>
+                        <div class="col-md-2 flex d-flex justify-content-start details-group align-items-center">{{ order_form.delivery_type }}</div>
+                        <div class="col-md-1"></div>
                     </div>
-                    <div class="details-group mb-3">
-                        <label>{{ order_form.delivery_description.label_tag }}</label>
-                        {{ order_form.delivery_description }}
+                    <div class="row mb-3">
+                        <div class="col-md-9"></div>
+                        <div class="col-md-2 flex d-flex justify-content-start details-group align-items-center">{{ order_form.delivery_price.label_tag }}</div>
+                        <div class="col-md-1"></div>
                     </div>
-                    <div class="details-group mb-3">
-                        <label>{{ order_form.address.label_tag }}</label>
-                        {{ order_form.address }}
+                    <div class="row mb-3">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4"></div>
+                        <div class="col-md-2 flex d-flex justify-content-start details-group delivery-price align-items-center">{{ order_form.delivery_price }}<i class="fa-solid fa-ruble-sign fa-lg"></i></div>
+                        <div class="col-md-1"></div>
                     </div>
-                    <div class="details-group mb-3">
-                        <label>{{ order_form.delivery_price.label_tag }}</label>
-                        {{ order_form.delivery_price }}
+                    <div class="row mb-3">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-5">{{ order_form.address.label_tag }}</div>
+                        <div class="col-md-5">{{ order_form.delivery_description.label_tag }}</div>
+                        <div class="col-md-1"></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-5">{{ order_form.address }}</div>
+                        <div class="col-md-5">{{ order_form.delivery_description }}</div>
+                        <div class="col-md-1"></div>
                     </div>
                 </div>
+                    </div>
+                    </div>
             </div>
 
             <!-- Step 3: Подтверждение -->
