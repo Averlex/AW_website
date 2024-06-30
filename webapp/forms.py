@@ -61,7 +61,7 @@ class ProductForm(forms.Form):
 class OrderForm(forms.Form):
     description = forms.CharField(max_length=1000, widget=forms.Textarea, label='Комментарий для мастера', required=False)
     delivery_type = forms.ChoiceField(choices=Order.get_delivery_types(), label='Способ получения заказа', initial=0)
-    address = forms.CharField(max_length=500, widget=forms.TextInput, label='Адрес доставки', required=False)
+    address = forms.CharField(max_length=500, widget=forms.Textarea, label='Адрес доставки', required=False)
     delivery_description = forms.CharField(max_length=1000, widget=forms.Textarea, label='Комментарий курьеру', required=False)
     delivery_price = forms.CharField(max_length=20, widget=forms.TextInput, validators=[], label='Стоимость доставки', disabled=True, initial='0.00')
 

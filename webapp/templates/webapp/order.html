@@ -238,20 +238,20 @@
             });
         });
 
-        // Toggle dynamic fields based on delivery type selection
-        $('[id*="delivery_type"]').change(function () {
-            if ($(this).val() === '0') {
-                $('.dynamic').slideUp();
-            } else {
-                $('.dynamic').slideDown();
-            }
-        });
+        // Toggle ` fields based on delivery type selection
+        // $('[id*="delivery_type"]').change(function () {
+        //     if ($(this).val() === '0') {
+        //         $('.dynamic').slideUp();
+        //     } else {
+        //         $('.dynamic').slideDown();
+        //     }
+        // });
 
 
         // Initial
-        if ($('[id*="delivery_type"]').val() === '0') {
-            $('.dynamic').slideUp();
-        }
+        // if ($('[id*="delivery_type"]').val() === '0') {
+        //     $('.dynamic').slideUp();
+        // }
 
         // Handle form submission
         $('#order-form').submit(function (e) {
@@ -286,7 +286,7 @@
 <div class="container">
     <div class="form-outer">
         <div class="header">
-            <h2>Новый заказ</h2>
+            <h2 class="mt-3 my-3">Оформите заказ прямо сейчас и ...</h2>
         </div>
 
         <form id="order-form" method="POST" action="">
@@ -393,41 +393,38 @@
                 </div>
                 <div class="card my-3 py-3 px-3">
                     <div class="form-section py-3">
-                <div class="order-details">
+                <div class="order-details">               
                     <div class="row mb-3">
                         <div class="col-md-1"></div>
-                        <div class="col-md-8">{{ order_form.description.label_tag }}</div>
-                        <div class="col-md-2 flex d-flex justify-content-start details-group align-items-center">{{ order_form.delivery_type.label_tag }}</div>
+                        <div class="col-md-4 flex d-flex justify-content-start details-group static align-items-center">{{ order_form.delivery_type.label_tag }}</div>
+                        <div class="col-md-3"></div>
+                        <div class="col-md-3 flex d-flex justify-content-start details-group static align-items-center">{{ order_form.delivery_price.label_tag }}</div>
                         <div class="col-md-1"></div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-1"></div>
-                        <div class="col-md-8">{{ order_form.description }}</div>
-                        <div class="col-md-2 flex d-flex justify-content-start details-group align-items-center">{{ order_form.delivery_type }}</div>
+                        <div class="col-md-4 flex d-flex justify-content-start details-group static align-items-center">{{ order_form.delivery_type }}</div>
+                        <div class="col-md-3"></div>
+                        <div class="col-md-3 flex d-flex justify-content-start details-group static delivery-price align-items-center">{{ order_form.delivery_price }}<i class="fa-solid fa-ruble-sign fa-lg"></i></div>
                         <div class="col-md-1"></div>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-md-9"></div>
-                        <div class="col-md-2 flex d-flex justify-content-start details-group align-items-center">{{ order_form.delivery_price.label_tag }}</div>
-                        <div class="col-md-1"></div>
-                    </div>
+
                     <div class="row mb-3">
                         <div class="col-md-1"></div>
-                        <div class="col-md-4"></div>
-                        <div class="col-md-4"></div>
-                        <div class="col-md-2 flex d-flex justify-content-start details-group delivery-price align-items-center">{{ order_form.delivery_price }}<i class="fa-solid fa-ruble-sign fa-lg"></i></div>
+                        <div class="col-md-3 details-group static">{{ order_form.description.label_tag }}</div>
                         <div class="col-md-1"></div>
-                    </div>
-                    <div class="row mb-3">
+                        <div class="col-md-2 details-group dynamic">{{ order_form.address.label_tag }}</div>
                         <div class="col-md-1"></div>
-                        <div class="col-md-5">{{ order_form.address.label_tag }}</div>
-                        <div class="col-md-5">{{ order_form.delivery_description.label_tag }}</div>
+                        <div class="col-md-3 details-group dynamic">{{ order_form.delivery_description.label_tag }}</div>
                         <div class="col-md-1"></div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-1"></div>
-                        <div class="col-md-5">{{ order_form.address }}</div>
-                        <div class="col-md-5">{{ order_form.delivery_description }}</div>
+                        <div class="col-md-3">{{ order_form.description }}</div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-2 details-group dynamic">{{ order_form.address }}</div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-3 details-group dynamic">{{ order_form.delivery_description }}</div>
                         <div class="col-md-1"></div>
                     </div>
                 </div>

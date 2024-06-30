@@ -21,7 +21,7 @@
     }
 }
 
-input, select {
+input, select, textarea {
     box-sizing: border-box;
     padding: 8px; /* Adjust padding as needed */
     margin: 0;
@@ -34,10 +34,20 @@ input, select {
   }
   
   /* Optional: Customize appearance */
-  input {
+  input, textarea {
     border-radius: 4px; /* Rounded corners for input */
   }
-  
+
+  textarea {
+    width: auto;
+    height: 5em;
+    resize: none;
+  }
+
+  #id_address {
+    width: 15em;
+  }
+
   select {
     appearance: none; /* Removes default arrow */
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" width="8" height="8"><polygon fill="%23ffffff" points="0,0 8,0 4,4"/></svg>'); /* Custom arrow icon, white color */
@@ -48,7 +58,7 @@ input, select {
   }
   
   /* Optional: Hover and focus styles */
-  input:hover, input:focus, select:hover, select:focus {
+  input:hover, input:focus, select:hover, select:focus, textarea:hover, textarea:focus {
     border-color: #ffffff; /* Light border color on hover/focus */
   }
   
@@ -83,7 +93,7 @@ input, select {
   }
 
 
-  .select-col select {
+select {
     width: 12em;
   }
 
@@ -204,5 +214,3 @@ input[type=number]::-webkit-inner-spin-button {
     font-size:xx-large;
 }
   
-
-
