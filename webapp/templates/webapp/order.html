@@ -4,6 +4,8 @@
 {% block title %}Оформление заказа{% endblock %}
 
 {% block head %}
+<link rel="stylesheet" href="{% static '/css/order.css' %}">
+
 <script type="text/javascript">
     $(document).ready(function () {
         var currentStep = 1;
@@ -67,6 +69,7 @@
             if (currentStep === 2) {
 
                 var formData = {};
+                var orderDetails = {};
 
             // Iterate through each form row
             $('.form-row').each(function(index) {
@@ -86,11 +89,11 @@
                 formData['form_' + index] = rowData;
             });
 
-            orderDetails['delivery_type'] = $('select[name="order_form-delivery_type"] option:selected').text();
-            orderDetails['delivery_price'] = $('input[name="order_form-delivery_price"]').val();
-            orderDetails['description'] = $('textarea[name="order_form-description"]').val();
-            orderDetails['address'] = $('input[name="order_form-address"]').val();
-            orderDetails['delivery_description'] = $('textarea[name="order_form-delivery_description"]').val();
+            orderDetails['delivery_type'] = $('select[id*="delivery_type"] option:selected').text();
+            orderDetails['delivery_price'] = $('input[id*="delivery_price"]').val();
+            orderDetails['description'] = $('textarea[id*="description"]').val();
+            orderDetails['address'] = $('textarea[id*="address"]').val();
+            orderDetails['delivery_description'] = $('textarea[id*="delivery_description"]').val();
 
         // Populate table on step 3
         var tableBody = $('#step-3 .table tbody');
@@ -120,7 +123,7 @@
         });
 
         // Add delivery row
-        if (orderDetails['delivery_type']) {
+        if (orderDetails['delivery_type'] === 'СДЭК') {
             var deliveryRowHtml = `
                 <tr>
                     <th scope="row"></th>
@@ -131,13 +134,64 @@
                     <td class="text-muted"></td>
                     <td class="text-muted"></td>
                     <td class="text-muted">1 шт.</td>
-                    <td id="delivery"><b>${orderDetails['delivery_price']} ₽</b></td>
+                    <td><b>${orderDetails['delivery_price']} ₽</b></td>
                 </tr>
             `;
             tableBody.append(deliveryRowHtml);
 
             
         }
+
+        // Generate and display delivery details section
+        var deliveryDetailsContainer = $('#step-3 .delivery-details');
+        deliveryDetailsContainer.empty();
+
+        function checkDescription(description) {
+            if (typeof description === 'undefined' || description === '') {
+                return 'Не указан';
+            }
+            else {
+                return description;
+            }
+        }
+
+        var addressToShow = checkDescription(orderDetails['address']);
+        var descriptionToShow = checkDescription(orderDetails['description']);
+        var deliveryDescriptionToShow = checkDescription(orderDetails['delivery_description']);
+
+        
+        var deliveryDetailsHtml = `
+        <div class="col-md-12">
+            <div class="order-details">               
+                <div class="row mb-3">
+                    <div class="col-md-3 flex d-flex justify-content-start details-group static align-items-center"><b>{{ order_form.delivery_type.label_tag }}</b></div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-4 details-group static"><b>{{ order_form.address.label_tag }}</b></div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-3 flex d-flex justify-content-start details-group static align-items-center"><b>{{ order_form.delivery_price.label_tag }}</b></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-3 flex d-flex justify-content-start details-group static align-items-center text-muted">${orderDetails['delivery_type']}</div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-4 details-group dynamic text-muted">${addressToShow}</div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-3 flex d-flex justify-content-start details-group static delivery-price align-items-center text-muted"><b>${orderDetails['delivery_price']} ₽</b></div>
+                </div>
+                <hr>
+                <div class="row mb-3 pt-3">
+                    <div class="col-md-5 details-group static"><b>{{ order_form.description.label_tag }}</b></div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-5 details-group dynamic"><b>{{ order_form.delivery_description.label_tag }}</b></div>
+                </div>
+                <div class="row mb-3 pb-3">
+                    <div class="col-md-5 text-muted">${descriptionToShow}</div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-5 details-group dynamic text-muted">${deliveryDescriptionToShow}</div>
+                </div>
+            </div>
+        </div>
+        `;
+        deliveryDetailsContainer.append(deliveryDetailsHtml);
 
             }
 
@@ -358,8 +412,6 @@
         });
     });
 </script>
-
-<link rel="stylesheet" href="{% static '/css/order.css' %}">
 {% endblock %}
 
 
@@ -387,7 +439,7 @@
                 {{ formset.management_form }}
                 <div id="formset-container">
                     <div class="row">
-                        <div class="col-md-2"><button class="btn btn-success add-form-row">Добавить товар</button></div>
+                        <div class="col-md-2"><button class="btn btn-success add-form-row custom-btn-style">Добавить товар</button></div>
                         <div class="col-md-8"></div>
                         <div class="step-navigation col-md-2 d-flex justify-content-between">
                             <div class="col-md"></div>
@@ -530,10 +582,10 @@
                         <div class="col-md"></div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="products container">
-                        <hr>
-                        <span id="sub-title">
+                <div class="card my-3 py-3 px-3">
+                    <div class="form-section pt-3">
+                        <div class="products container">
+                        <span id="sub-title" class="row">
                             <p><b>Состав заказа</b></p>
                         </span>
                         <table class="table table-hover bg-primary">
@@ -551,21 +603,53 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                
                             </tbody>
                         </table>
                     </div>
+
+                    <div class="delivery-details container">
+
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Оформить заказ</button>
+                </div>
+                <div class="row">
+                    <div class="col-md-5"></div>
+                    <div class="col-md-2"><button type="submit" class="btn btn-success custom-btn-style">Оформить заказ</button></div>
+                    <div class="col-md-5"></div>
+                </div>
             </div>
         </form>
     </div>
 
     <!-- Success Message -->
-    <div class="post-message visually-hidden mt-3">
-        <h2 class="message-prefix"></h2>
-        <p class="message-body"></p>
-        <p class="message-suffix"></p>
+    <div id="success-msg" class="form-step post-message visually-hidden">
+        <div class="row mb-3 my-3">
+            <div class="col-md-2"></div>
+            <h3 class="col-md-8 d-flex justify-content-center message-prefix"></h3>
+            <div class="overall-price col-2 text-end d-flex justify-content-end align-items-center"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-10"></div>
+            <div class="step-navigation col-md-2 d-flex justify-content-between">
+                <div class="col-md d-flex justify-content-end"></div>
+                <div class="col-md"></div>
+            </div>
+        </div>
+        <div class="card my-3 py-3 px-3">
+            <div class="form-section pt-3">
+                <div class="container">
+                <span id="sub-title" class="row">
+                    <b><p class="message-body col-md-12 d-flex justify-content-center align-items-center"></p></b>
+                </span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4"><p class="message-suffix"></p></div>
+                <div class="col-md-4"></div>
+            </div>
+        </div>
+        
     </div>
 </div>
 

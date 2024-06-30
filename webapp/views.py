@@ -85,9 +85,6 @@ def order(request):
     if request.method == 'POST':
         tmp = request.POST
 
-        if 'step_change' in request.POST:
-            print(request.POST)
-
         # AJAX request processing
         if 'material' in request.POST and 'form-TOTAL_FORMS' not in request.POST:
             material = int(tmp.get('material', None))
@@ -112,8 +109,7 @@ def order(request):
             # Any should be able or none
             # TODO: proper validation (including types) should be implemented
             if material is not None:
-                if number >= 1 and number <= 99:
-
+                if 1 <= number <= 99:
                     # Response to ajax request
                     res_price = Product.get_price(material=material, length=length, width=width, height=height,
                                                   handles=handles,
@@ -210,8 +206,6 @@ def order(request):
 
             order_instance = Order(**order_attrs)
             order_instance.save()
-
-            print(numbers)
 
             for indx, this_item in enumerate(product_instances):
                 # Cart already contains such product

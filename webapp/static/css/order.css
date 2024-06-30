@@ -153,18 +153,18 @@ input[type=number]::-webkit-inner-spin-button {
     color: #dee2e6b3 !important;
 }
 
-.add-form-row {
+.custom-btn-style {
     border: none !important;
     text-align: center;
     border-radius: 4px !important;  /* Rounded corners */
-    background: #54947b !important;  /* Button background color */
+    background-color: #54947b !important;  /* Button background color */
     color: #dee2e6 !important;  /* Button text/icon color */
-    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  /* Add a subtle shadow */
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;  /* Add a subtle shadow */
     cursor: pointer;  /* Change cursor to pointer */
   }
 
-.add-form-row:hover {
+.custom-btn-style:hover {
     background-color: #4e8670 !important;  /* Hover background color */
     color: #dee2e6b3 !important;  /* Hover text/icon color */
   }
