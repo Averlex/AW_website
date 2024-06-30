@@ -34,53 +34,48 @@
                 
                 <div class="collapse navbar-collapse d-flex justify-content-between" id="navbarCollapse">
                     <!--- Main nav -->
-                    <div class="col-1"></div>
-                    <div class="col-1">
+                    <div class="d-flex justify-content-center align-items-center col-1">
                         <a class="navbar-brand" href="{% url 'home' %}"><img src="{% static '/img/banner.png' %}" class="banner" style="max-height: 40px;"></a>
                     </div>
-                    <div class="col-4">
-                        <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                            <li class="nav-item col">
+                        
+                        <ul class="navbar-nav me-auto mb-2 mb-md-0 col-4">
+                            <li class="nav-item">
                                 <a class="nav-link" aria-current="page" href="{% url 'home' %}">Главная</a>
                             </li>
                             
-                            <li class="nav-item col">
+                            <li class="nav-item">
                                 <a class="nav-link" aria-current="page" href="{% url 'gallery' %}">Галерея работ</a>
                             </li>
     
-                            <li class="nav-item col">
+                            <li class="nav-item">
                                 <a class="nav-link" aria-current="page" href="{% url 'order' %}">Оформить заказ</a>
                             </li>
     
-                            <li class="nav-item col">
+                            <li class="nav-item">
                                 <a class="nav-link" aria-current="page" href="{% url 'about' %}">О нас</a>
                             </li>
     
                         </ul>
-                    </div>
 
-                    <div class="col-4"></div>
-
+                        <div class="col-5"></div>
                     <!--- Auth nav -->
-                    <div class="col-2">
                         <ul class="navbar-nav me-auto mb-2 mb-md-0">
                             {% if request.user.is_authenticated %}
-                            <li class="nav-item col">
+                            <li class="nav-item">
                                 <a href="{% url 'profile' %}" class="nav-link" aria-current="page"><div class="me-2">Личный кабинет</div></a>
                             </li>
-                            <li class="nav-item col">
+                            <li class="nav-item">
                                 <a href="{% url 'logout' %}" class="nav-link" aria-current="page"><div class="me-2">Выйти</div></a>
                             </li>
                         {% else %}
-                            <li class="nav-item col"></li>
+                            <li class="nav-item"></li>
                                 <a href="{% url 'login' %}" class="nav-link" aria-current="page"><div class="me-2">Войти в аккаунт</div></a>
                             </li>
-                            <li class="nav-item col">
+                            <li class="nav-item">
                                 <a href="{% url 'signup' %}" aria-current="nav-link"><div class="me-2">Зарегистрироваться</div></a>
                             </li>
                         {% endif %}
                         </ul>
-                    </div>
                 </div>
             </div>
         </nav>
