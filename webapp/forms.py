@@ -23,7 +23,6 @@ class FAQForm(forms.ModelForm):
 
 class ProductForm(forms.Form):
     # TODO: unify order -> max_length's, min/max values
-    # TODO: fix price count (per stack -> per unit)
     material = forms.ChoiceField(choices=Product.get_materials(), label='Материал', initial=0)
     use_type = forms.ChoiceField(choices=Product.get_use_types(), label='Вид', initial=0)
 
@@ -100,7 +99,7 @@ class UserUpdateForm(forms.Form):
 class SignUpForm(forms.ModelForm):
     help_text = 'Обязательное поле'
     # TODO: change max_length
-    # TODO: password validadors, password help - сделать inline
+    # TODO: password validadors, password help - make inline
     username = forms.CharField(max_length=20, help_text=help_text, label='Логин')
     password = forms.CharField(max_length=50, help_text=help_text, label='Пароль', widget=forms.PasswordInput)
     email = forms.CharField(max_length=150, help_text=help_text, label='Почта')

@@ -85,6 +85,7 @@ class UserFeedback(models.Model):
 class User(AbstractUser):
     """
     Base user info
+    TODO: date str.format
     """
     _USER_GROUP = {
         0: "Администратор",
@@ -142,7 +143,6 @@ class Order(models.Model):
     # TODO: check constraints on all dates
     # TODO: unify delivery types with User
     # TODO: total price (atm = agg by ProductList + price from Delivery)
-    # TODO: add price counting
     """
     _DELIVERY_TYPE = {
         0: "Самовывоз",

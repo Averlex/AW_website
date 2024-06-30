@@ -10,16 +10,11 @@ from django.contrib.auth.models import Group
 import random
 import time
 
-# TODO: fix delivery price
 _DEFAULT_PRICE = 666
 
 
 def index(request):
-    # TODO: add logo
-    # TODO: add button 'наверх' instead of link
-    # TODO: change policy and terms links
-    # TODO: make footer stay at the bottom of the page
-    # TODO: deal with footer svg (center)
+    # TODO: add button 'наверх' instead
     # TODO: navbar fix
     return render(request, 'webapp/index.html')
 
@@ -62,7 +57,6 @@ def about(request):
                                      'message_error': error_msg})
         else:
             form = FAQForm()
-            # TODO: login button here
             pass
     else:
         form = FAQForm()
@@ -71,8 +65,6 @@ def about(request):
 
 def order(request):
     # Redirect to profile page if the user is already authenticated
-    # TODO: handle deleting the last and only form from a formset
-    # TODO: fill forms with initials (change .empty_table -> <filled table>
     # TODO: resolve: forms hide on page reload
     if not request.user.is_authenticated:
         return redirect('profile')
@@ -150,8 +142,6 @@ def order(request):
             #     # TODO: handle order_form errors
             #     pass
 
-            # TODO: redirect to success page and save all data
-            # TODO: success page = stage == 4 with reset of context so the next call will be a new order
             user = request.user
             # This time with saving to DB
             total_price = 0.
@@ -295,7 +285,7 @@ def profile(request):
     # GET part
     for order_instance in user_orders:
         total_orders += 1
-        # TODO: count all statuses dynamically
+        # TODO: count all statuses dynamically <- what does it mean?
         if getattr(order_instance, 'status') < 6:
             orders_in_progress += 1
         user_products.append({

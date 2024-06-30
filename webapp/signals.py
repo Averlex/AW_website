@@ -7,7 +7,7 @@ from .models import User, Order
 
 @receiver(post_migrate)
 def create_groups_and_permissions(sender, **kwargs):
-    # TODO: remove this option on migrage probably? Wrap in a separate command
+    # TODO: remove this option on migrate probably? Wrap in a separate command
     if sender.name == 'webapp':  # Ensure this only runs for your app
         content_types = ContentType.objects.get_for_model(Order)
         permission, _ = Permission.objects.get_or_create(
@@ -61,7 +61,6 @@ def create_groups_and_permissions(sender, **kwargs):
 
         # TODO: change it some day
         try:
-            # Su
             superuser = User.objects.get(username='super')
 
         except User.DoesNotExist as err:
