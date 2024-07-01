@@ -259,10 +259,10 @@ def profile(request):
 
     if user.has_perm('webapp.all_orders_access'):
         # Stuff user -> full access
-        user_orders = Order.objects.all()
+        user_orders = Order.objects.all().order_by('-registration_date')
     else:
         # Common user -> order history
-        user_orders = Order.objects.filter(user=user)
+        user_orders = Order.objects.filter(user=user).order_by('-registration_date')
 
     user_products = []
     total_products = 0
